@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>deSypher</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" sizes="16x16" type="image/png" href="assets/favicon-16x16.png">
+    <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon-32x32.png">
+    <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
+    <!-- Favicon -->
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.2.umd.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+ 
+    <div class="puzzle-container">
+        <img src="assets/logo.png" alt="Game Logo" class="game-logo">
+
+        <!-- Wallet Connectivity Section -->
+        <div class ="wallet-connect-section">
+            <button id ="connect-button">Connect Wallet</button>
+        </div>
+        <!-- Wallet Connectivity Section -->
+
+        <!-- Rules Section -->
+        <div class="rules-dropdown">
+            <button class="dropdown-button">How to Play</button>
+            <div class="dropdown-content">
+                <h3>The goal of the game is to guess the correct word. You have 3 attempts.</h3>
+                <ul class="color-key">
+                    <li><span class="color-box green"></span> Correct letter in the correct position.</li>
+                    <li><span class="color-box orange"></span> Correct letter and position, the letter also appears elsewhere in the word.</li>
+                    <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
+                    <li><span class="color-box red"></span> Incorrect letter.</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Rules Section -->
+
+        <!-- Puzzle Section -->
+        <form id="wordPuzzleForm">
+            <div id="inputContainer" class="input-fields">
+                <input type="text" maxlength="1" class="puzzle-input">
+                <input type="text" maxlength="1" class="puzzle-input">
+                <input type="text" maxlength="1" class="puzzle-input">
+                <input type="text" maxlength="1" class="puzzle-input">
+                <input type="text" maxlength="1" class="puzzle-input">
+            </div>
+       
+            <button type="button" onclick="sendGuess()">Guess!</button>
+
+        </form>
+        <!-- Puzzle Section -->
+
+        <div id="feedback"></div>
+    </div>
+        <!-- Social Media Section -->
+        <div class="social-media-section">
+            <a href="https://twitter.com/TUKYOWAVE" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="https://t.me/tukyogames" target="_blank" class="social-icon"><i class="fab fa-telegram"></i></a>
+            <a href="https://github.com/Tukyo/deSypher" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+        </div>
+        <!-- Social Media Section -->
+        <!-- Branding Section -->
+        <div class="branding-section">
+            Tukyo Games
+        </div>
+        <!-- Branding Section -->
+  
+</body>
+</html>

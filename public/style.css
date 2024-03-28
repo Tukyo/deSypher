@@ -1,0 +1,357 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: monospace, sans-serif;
+    color: white;
+    background-image: url('assets/background.jpg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: repeat;
+}
+
+.game-logo {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    margin-top: -100px;
+    animation: transitionDown 5s;
+    animation-timing-function: ease-in;
+    align-self: center;
+}
+
+/* #region Wallet Connect Button */
+#connect-button {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000; /* High value to ensure it's on top of other elements */
+    padding: 10px 20px;
+    background: black;
+    border-color: #2dc60e;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: monospace, sans-serif;
+    animation: transitionRight 5s;
+}
+
+#connect-button:hover {
+    scale: 1.05;
+    background: #2dc60e;
+    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    color: white;
+    border-color: #2dc60e;
+}
+/* #endregion Wallet Connect Button */
+
+/* #region Rules Dropdown Button */
+.dropdown-button {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000; /* High value to ensure it's on top of other elements */
+    padding: 10px 20px;
+    background: #39e016; /* Change as per your design */
+    color: black;
+    padding: 10px 20px;
+    border: black;
+    border-radius: 10px;
+    cursor: help;
+    text-align: left;
+    font-family: monospace, sans-serif;
+    white-space: nowrap;
+    animation: transitionLeft 5s;
+}
+
+.dropdown-button:hover {
+    scale: 1.05;
+    background: #2dc60e;
+    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    color: white;
+}
+
+/* Dropdown Content */
+.dropdown-content {
+    display: none;
+    position: center;
+    background-color: black;
+    min-width: 160px;
+    text-align: left;
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+.show { display: block; }
+/* #endregion Rules Dropdown Button */
+
+/* #region Puzzle Input Fields */
+.puzzle-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 60%;
+    z-index: 10;
+    padding-bottom: 100px;    
+}
+
+.puzzle-input {
+    scale: 1.5;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    margin: 0 25px;
+    margin-top: 50px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 24px;
+    text-transform: uppercase;
+    box-shadow:  0 0 10px #00ff00c2, 0 0 10px #00ff009e;
+    animation: transitionScale 3s;
+}
+
+.puzzle-input:hover {
+    scale: 2;
+}
+/* #endregion Puzzle Input Fields */
+
+/* #region Submit Button */
+button[type="button"] {
+    background-color: #2dc60e;
+    color: white;
+    margin-top: 50px;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 16px;
+    font-family: 'monospace', sans-serif;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    outline: none;
+    animation: transitionScale 2.5s;
+}
+
+button[type="button"]:hover {
+    scale: 1.15;
+    background: #2dc60e;
+    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    color: white;
+}
+
+button[type="button"]:active {
+    background-color: #194e0f; /* Even darker shade when pressed */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Smaller shadow for pressed effect */
+}
+
+button[type="button"]:focus {
+    border: 2px solid #0f3e07; /* Border for when the button is focused */
+}
+/* #endregion Submit Button */
+
+/* #region Social Media */
+.social-media-section {
+    text-align: center;
+    margin-top: 40px; /* Adjust spacing as needed */
+    padding: 20px 0; /* Spacing at the top and bottom */
+    position: fixed; /* or 'absolute' depending on your layout */
+    bottom: 10px; /* This positions the section at the bottom of the viewport */
+    left: 50%;
+    transform: translateX(-50%); /* This centers the section */
+    z-index: 100; /* Ensures it's on top of other elements */
+}
+
+.social-icon {
+    margin: 0 10px; /* Spacing between icons */
+    color: #2dc60e; /* Icon color */
+    font-size: 32px; /* Icon size */
+}
+
+.social-icon:nth-child(1) {
+    animation: transitionScale 8s;
+}
+
+.social-icon:nth-child(2) {
+    animation: transitionScale 5s;
+}
+
+.social-icon:nth-child(3) {
+    animation: transitionScale 8s;
+}
+
+.social-icon:hover {
+    color: #dddddd; /* Icon hover color */
+    text-shadow:  0 0 10px #00ff00c2, 0 0 10px #00ff009e;
+}
+/* #endregion Social Media */
+
+/* #region Mobile-specific adjustments */
+@media (max-width: 600px) {
+    .game-logo {
+        max-width: 80%; /* Smaller logo on smaller screens */
+        margin-bottom: 5px; /* Less margin on smaller screens */
+        margin-top: 25px;
+    }
+    .puzzle-container {
+        padding-top: 5px; /* Less padding at the top for smaller screens */
+    }
+    #connect-button {
+        scale: .85;
+        padding: 8px 16px; /* Smaller padding on smaller screens */
+        font-size: 14px; /* Smaller font size on smaller screens */
+        right: 15px;
+        top: 15px;
+    }
+    .dropdown-button {
+        scale: .85;
+        width: auto; /* Allow button to adjust based on content size */
+        min-width: 120px; /* Prevent button from becoming too narrow */
+        padding: 8px 16px;
+        font-size: 14px;
+        left: 15px;
+        top: 15px;
+        right: auto;
+    }
+    .puzzle-input {
+        scale: 1;
+        margin: 0 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .puzzle-input:hover {
+        scale: 1.25;
+    }
+}
+/* #endregion Mobile-specific adjustments */
+
+/* Style the scrollbar track (background) */
+::-webkit-scrollbar {
+    width: 12px; /* width of the entire scrollbar */
+  }
+  
+  /* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888; /* scrollbar handle color */
+    border-radius: 6px;
+  }
+  
+  /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* scrollbar handle color on hover */
+  }
+
+  
+.color-key {
+    list-style-type: none;
+    padding: 0;
+}
+
+.color-key li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.color-box {
+    flex-shrink: 0; /* Prevent the color box from shrinking */
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 1px solid #000000;
+}
+
+.color-box.green {
+    background-color: lightgreen;
+}
+
+.color-box.orange {
+    background-color: orange;
+}
+
+.color-box.yellow {
+    background-color: yellow;
+}
+
+.color-box.red {
+    background-color: lightcoral;
+}
+
+.input-fields {
+    margin: 10px 0;
+}
+
+/* #region Animations */
+@keyframes transitionDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px); /* Start slightly above the final position */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes transitionLeft {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes transitionRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes transitionScale {
+    from {
+        opacity: 0;
+        scale: 1.25;
+    }
+    to {
+        opacity: 1;
+        transform: scale(var(--default-scale));
+    }
+}
+
+@keyframes fall {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(50vh);
+    }
+}
+/* #endregion Animations */
+
+/* #region Visual Effects */
+.spritesheet {
+    position: fixed;
+    top: 0;
+    background-image: url('spritesheet.png');
+    background-repeat: no-repeat;
+    width: 128px; /* Your frame width */
+    height: 1024px; /* Your frame height */
+    animation: fall 5s linear forwards;
+    scale: .25;
+}
+/* #endregion Visual Effects */
