@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {})
 
     //#region WordGame Main
     // Calculates the frequency of each letter in the word
-    function getLetterFrequency(word) {
-        const frequency = {};
-        for (let letter of word) {
-            frequency[letter] = (frequency[letter] || 0) + 1;
-        }
-        return frequency;
-    }
+    // function getLetterFrequency(word) {
+    //     const frequency = {};
+    //     for (let letter of word) {
+    //         frequency[letter] = (frequency[letter] || 0) + 1;
+    //     }
+    //     return frequency;
+    // }
 
     // function checkWord(inputs) {
     //     const enteredWord = Array.from(inputs).map(input => input.value.toUpperCase()).join('');
