@@ -9,6 +9,7 @@ let attempts = 0;
 const maxAttempts = 3;
 const correctWord = "tokyo";
 
+/* #region Setup & CORS */
 // Define your website's origin
 const allowedOrigins = ['http://localhost:3000']; // Add your website's domain here
 
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
+/* #endregion Setup & CORS */
 
 // Backend function call with CORS applied only to this route
 app.get('/guess', (req, res) => {
@@ -95,7 +97,7 @@ function checkWord(inputWord) {
         if (res.status === 'incorrect' && correctWord.includes(inputLetters[index])) {
             // This handles the case for duplicate letters where one is correct, and others are not
             res.status = 'misplaced';
-        }
+        } 
     });
 
     return result;

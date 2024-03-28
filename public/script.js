@@ -1,22 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {})
-    // let attemptCount = 0;
+    
     let gameOver = false; // Checks if game is over
-    // const maxAttempts = 3;
-    // const correctWord = "TOKYO";
-    // const letterFrequency = getLetterFrequency(correctWord);
+    
     const form = document.getElementById('wordPuzzleForm');
     const inputContainer = document.getElementById('inputContainer');
     const feedback = document.getElementById('feedback');
 
     //#region WordGame Main
-    // Calculates the frequency of each letter in the word
-    // function getLetterFrequency(word) {
-    //     const frequency = {};
-    //     for (let letter of word) {
-    //         frequency[letter] = (frequency[letter] || 0) + 1;
-    //     }
-    //     return frequency;
-    // }
 
     // function checkWord(inputs) {
     //     const enteredWord = Array.from(inputs).map(input => input.value.toUpperCase()).join('');
@@ -272,4 +262,3 @@ document.addEventListener('DOMContentLoaded', function () {})
         });
     });
     //#endregion Rules Dropdown
-
