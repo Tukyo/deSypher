@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {})
     let gameOver = false; // Checks if game is over
     // const maxAttempts = 3;
     // const correctWord = "TOKYO";
-    const letterFrequency = getLetterFrequency(correctWord);
+    // const letterFrequency = getLetterFrequency(correctWord);
     const form = document.getElementById('wordPuzzleForm');
     const inputContainer = document.getElementById('inputContainer');
     const feedback = document.getElementById('feedback');
@@ -191,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {})
 
     //#region Background VFX
     function spawnSpritesheet() {
+        console.log("spawning matrix rain");
         const sprite = document.createElement('div');
         sprite.className = 'spritesheet';
         sprite.style.left = Math.random() * (window.innerWidth - 128) + 'px'; // Randomize the horizontal position
@@ -262,12 +263,13 @@ document.addEventListener('DOMContentLoaded', function () {})
 
     //#region Rules Dropdown
     // Get the dropdown button and content elements
-    var dropdown = document.querySelector('.dropdown-button');
-    var dropdownContent = document.querySelector('.dropdown-content');
-
-    // Toggle the display of the dropdown content
-    dropdown.addEventListener('click', function () {
-        dropdownContent.classList.toggle('show');
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdown = document.querySelector('.dropdown-button');
+        var dropdownContent = document.querySelector('.dropdown-content');
+    
+        dropdown.addEventListener('click', function () {
+            dropdownContent.classList.toggle('show');
+        });
     });
     //#endregion Rules Dropdown
 

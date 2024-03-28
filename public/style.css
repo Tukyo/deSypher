@@ -85,7 +85,7 @@ body {
     z-index: 1;
 }
 
-.show { display: block; }
+.dropdown-content.show { display: block; }
 /* #endregion Rules Dropdown Button */
 
 /* #region Puzzle Input Fields */
@@ -347,7 +347,7 @@ button[type="button"]:focus {
 .spritesheet {
     position: fixed;
     top: 0;
-    background-image: url('spritesheet.png');
+    background-image: url('assets/spritesheet.png');
     background-repeat: no-repeat;
     width: 128px; /* Your frame width */
     height: 1024px; /* Your frame height */
