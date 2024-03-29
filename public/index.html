@@ -15,8 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.2.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body bgcolor=black>
- 
+<body background-color= black>
     <div class="puzzle-container">
         <img src="assets/logo.png" alt="Game Logo" class="game-logo">
 
@@ -25,6 +24,8 @@
             <button id ="connect-button">Connect Wallet</button>
         </div>
         <!-- Wallet Connectivity Section -->
+
+        <button id="playButton" type="button" class="game-button play-button">Play!</button>
 
         <!-- Rules Section -->
         <div class="rules-dropdown">
@@ -42,7 +43,7 @@
         <!-- Rules Section -->
 
         <!-- Puzzle Section -->
-        <form id="wordPuzzleForm">
+        <form id="wordPuzzleForm" style="display: none;">
             <div id="inputContainer" class="input-fields">
                 <input type="text" maxlength="1" class="puzzle-input">
                 <input type="text" maxlength="1" class="puzzle-input">
@@ -51,7 +52,7 @@
                 <input type="text" maxlength="1" class="puzzle-input">
             </div>
        
-            <button type="submit" id="submitButton">Submit</button>
+            <button type="submit" class="game-button">Submit</button>
             
         </form>
         <!-- Puzzle Section -->

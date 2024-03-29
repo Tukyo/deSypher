@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {})
     const inputContainer = document.getElementById('inputContainer');
     const feedback = document.getElementById('feedback');
 
+    const playButton = document.getElementById('playButton');
+
     //#region Color Palette
     const colorPalette = {
         green: '#2dc60e',
@@ -14,58 +16,15 @@ document.addEventListener('DOMContentLoaded', function () {})
     };
     //#endregion Color Palette
 
-    //#region WordGame Main
+    //#region WordGame Main 
+    playButton.addEventListener('click', function() {
+        // Hide the Play button
+        playButton.style.display = 'none';
+        // Show the form
+        form.style.display = 'block';
 
-    // function checkWord(inputs) {
-    //     const enteredWord = Array.from(inputs).map(input => input.value.toUpperCase()).join('');
-    //     let currentFrequency = {...letterFrequency}; // Copy of the letter frequency for manipulation
-
-    //     // First pass for exact matches (potentially green or orange)
-    //     Array.from(inputs).forEach((input, index) => {
-    //         if (input.value.toUpperCase() === correctWord[index]) {
-    //             // Temporarily mark as green, might change to orange later
-    //             input.style.backgroundColor = 'lightgreen';
-    //             currentFrequency[input.value.toUpperCase()] -= 1;
-    //         }
-    //     });
-
-    //     // Second pass for correct letters that are also elsewhere (orange) and letters in wrong place (yellow)
-    //     Array.from(inputs).forEach((input, index) => {
-    //         const char = input.value.toUpperCase();
-    //         if (char === correctWord[index] && currentFrequency[char] > 0) {
-    //             // If the letter matches and is still in frequency, it's also elsewhere
-    //             input.style.backgroundColor = 'orange';
-    //         } else if (input.style.backgroundColor !== 'lightgreen') { // Skip already marked green
-    //             if (correctWord.includes(char) && currentFrequency[char] > 0) {
-    //                 input.style.backgroundColor = 'yellow';
-    //                 currentFrequency[char] -= 1;
-    //             }
-    //         }
-    //     });
-
-    //     // Third pass for incorrect letters (red)
-    //     Array.from(inputs).forEach((input, index) => {
-    //         if (input.style.backgroundColor !== 'lightgreen' && input.style.backgroundColor !== 'orange' && input.style.backgroundColor !== 'yellow') {
-    //             input.style.backgroundColor = 'lightcoral';
-    //         }
-    //     });
-
-    //     if (enteredWord === correctWord) {
-    //         // Disable all input fields on success
-    //         Array.from(document.querySelectorAll('.puzzle-input')).forEach(input => {
-    //             input.disabled = true;
-    //         });
-    //         // Display the success message without removing the fields
-    //         feedback.textContent = 'Success!';
-    //         feedback.style.color = 'green';
-    //         feedback.style.fontSize = '24px';
-    //         feedback.style.marginTop = '20px';
-    //         gameOver = true; // Add this line to indicate the game is over
-    //         return true; // Word is correct
-    //     } else {
-    //         return false; // Word is not correct
-    //     }
-    // }
+        console.log("Game started: Play button clicked.");
+    });
     
     function sendGuess() {
         const inputs = document.querySelectorAll('.puzzle-input');
@@ -93,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {})
         event.preventDefault();
         sendGuess();
     });
-    
 
     function updateUI(data) {
         const inputs = document.querySelectorAll('.puzzle-input');
@@ -141,38 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {})
         inputContainer.appendChild(row);
         return row.querySelectorAll('.puzzle-input');
     }
-
-    // function handleAttempt() {
-    //     // Check if the game is already over
-    //     if (gameOver) {
-    //         return; // Exit the function early if the game is over
-    //     }
-
-    //     if (isCorrect) {
-    //         feedback.textContent = 'Success!';
-    //         feedback.style.color = 'green';
-    //         gameOver = true; // Set the flag to true as the game is over
-    //         // Disable all inputs
-    //         Array.from(document.querySelectorAll('.puzzle-input')).forEach(input => {
-    //             input.disabled = true;
-    //         });
-    //     } else {
-    //         attemptCount++;
-    //         if (attemptCount < maxAttempts && !gameOver) {
-    //             // Only add a new row if the game is not over
-    //             const newInputs = createInputRow();
-    //             newInputs[0].focus();
-    //             addInputListeners(newInputs);
-    //         } else {
-    //             feedback.textContent = 'Game Over!';
-    //             feedback.style.color = 'red';
-    //             gameOver = true; // Set the flag to true as the game is over
-    //             Array.from(document.querySelectorAll('.puzzle-input')).forEach(input => {
-    //                 input.disabled = true;
-    //             });
-    //         }
-    //     }
-    // }
 
     function addInputListeners(inputs) {
         inputs.forEach((input, index) => {

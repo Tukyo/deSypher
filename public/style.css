@@ -122,8 +122,8 @@ body {
 }
 /* #endregion Puzzle Input Fields */
 
-/* #region Submit Button */
-button[type="submit"] {
+/* #region Game Button */
+.game-button {
     background-color: #2dc60e;
     color: white;
     margin-top: 50px;
@@ -140,22 +140,31 @@ button[type="submit"] {
     animation: transitionScale 2.5s;
 }
 
-button[type="submit"]:hover {
+.game-button:hover {
     scale: 1.15;
     background: #2dc60e;
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
 }
 
-button[type="submit"]:active {
+.game-button:active {
     background-color: #194e0f; /* Even darker shade when pressed */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Smaller shadow for pressed effect */
 }
 
-button[type="submit"]:focus {
+.game-button:focus {
     border: 2px solid #0f3e07; /* Border for when the button is focused */
 }
-/* #endregion Submit Button */
+.play-button {
+    display: inline-block; /* or 'block' depending on your layout needs */
+    width: 35%; /* Adjust the width as needed */
+    margin: 0 auto; /* Centers the button horizontally in its container */
+    text-align: center; /* Centers the text horizontally */
+    padding: 15px 30px; /* Adjust as needed. Also helps in vertical spacing */
+    font-size: 24px; /* Adjust based on your design */
+    line-height: 1.25; /* Adjusting the line height can help center the text vertically */
+}
+/* #endregion Game Button */
 
 /* #region Social Media */
 .social-media-section {
@@ -202,6 +211,7 @@ button[type="submit"]:focus {
     bottom: 5px;
     z-index: 100;
     color: #166009;
+    animation: transitionScale 3.5s;
 }
 .branding-section:hover {
     cursor: wait;
