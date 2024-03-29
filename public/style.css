@@ -1,3 +1,9 @@
+:root {
+    --coinbase-blue: #0052ff;
+    --desypher-green-main: #2dc60e;
+    --desypher-green-dark: #166009;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -22,33 +28,50 @@ body {
     align-self: center;
 }
 
-/* #region Wallet Connect Button */
+/* #region Wallet Connect Section */
 #connect-button {
+    opacity: 0%;
     position: fixed;
     top: 15px;
     right: 15px;
     z-index: 1000; /* High value to ensure it's on top of other elements */
     padding: 10px 20px;
     background: black;
-    border-color: #2dc60e;
+    border-color: var(--desypher-green-main);
     color: white;
     border-radius: 10px;
     cursor: pointer;
     font-family: monospace, sans-serif;
-    animation: transitionRight 5s;
+    animation: transitionRight 1s forwards;
+    animation-delay: 0.5s;
 }
 
 #connect-button:hover {
     scale: 1.05;
-    background: #2dc60e;
+    background: var(--desypher-green-main);
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
-    border-color: #2dc60e;
+    border-color: var(--desypher-green-main);
 }
-/* #endregion Wallet Connect Button */
+#base-logo {
+    /* Default style when not connected */
+    display: none;
+    /* Default style when not connected */
+    opacity: 0%;
+    scale: 0.25;
+    position: fixed;
+    top: -23px;
+    right: 120px;
+    z-index: 500;
+    animation: transitionScaleDelayed .5s forwards;
+    animation-delay: .5s;
+    /* filter: drop-shadow(0 0 10px var(--coinbase-blue)) drop-shadow(0 0 20px var(--coinbase-blue)); */
+}
+/* #endregion Wallet Connect Section */
 
 /* #region Rules Dropdown Button */
 .dropdown-button {
+    opacity: 0%;
     position: fixed;
     top: 15px;
     left: 15px;
@@ -63,12 +86,13 @@ body {
     text-align: left;
     font-family: monospace, sans-serif;
     white-space: nowrap;
-    animation: transitionLeft 5s;
+    animation: transitionLeft 1s forwards;
+    animation-delay: 1s;
 }
 
 .dropdown-button:hover {
     scale: 1.05;
-    background: #2dc60e;
+    background: var(--desypher-green-main);
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
 }
@@ -127,7 +151,7 @@ body {
 
 /* #region Game Buttons */
 .game-button {
-    background-color: #2dc60e;
+    background-color: var(--desypher-green-main);
     color: white;
     margin-top: 50px;
     border: none;
@@ -145,7 +169,7 @@ body {
 
 .game-button:hover {
     scale: 1.15;
-    background: #2dc60e;
+    background: var(--desypher-green-main);
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
 }
@@ -162,6 +186,8 @@ body {
     display: inline-block;
     width: 35%;
     margin: 0 auto; /* Centers the button horizontally in its container */
+    margin-top: 100px;;
+    margin-bottom: 25px;
     text-align: center; /* Centers the text horizontally */
     padding: 15px 30px;
     font-size: 24px;
@@ -177,7 +203,7 @@ body {
     margin-top: 40px;
     padding: 1px 0; /* Spacing at the top and bottom */
     position: sticky;
-    top: 2px; /* Adjust the offset as needed */
+    top: 2px;
     bottom: 2px; /* This positions the section at the bottom of the viewport */
     left: 50%;
     transform: translateX(-50%); /* This centers the section */
@@ -186,7 +212,7 @@ body {
 
 .social-icon {
     margin: 0 10px; /* Spacing between icons */
-    color: #2dc60e; /* Icon color */
+    color: var(--desypher-green-main);
     font-size: 32px; /* Icon size */
 }
 
@@ -216,12 +242,12 @@ body {
     position: sticky;
     bottom: 1px;
     z-index: 100;
-    color: #166009;
+    color: var(--desypher-green-dark);
     animation: transitionScale 3.5s;
 }
 .branding-section:hover {
     cursor: wait;
-    color: #2dc60e;
+    color: var(--desypher-green-main);
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
 }
 /* #endregion Branding Section */
@@ -279,7 +305,7 @@ body {
   
   /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #166009;
+    background: var(--desypher-green-dark);
   }
 /* #endregion Scrollbar */
 
@@ -324,21 +350,31 @@ body {
         transform: scale(var(--default-scale));
     }
 }
-@keyframes fall {
-    from {
-        transform: translateY(-100%);
-    }
-    to {
-        transform: translateY(50vh);
-    }
-}
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1); /* Original size */
+@keyframes transitionScaleDelayed {
+    0% {
+        opacity: 0;
+        scale: 0.05;
     }
     50% {
-        transform: scale(1.1); /* Slightly larger */
+        opacity: 0;
+        scale: 0.05;
     }
+    75% {
+        opacity: .5;
+        scale: 0.35;
+    }
+    100% {
+        opacity: 1;
+        scale: 0.25;
+    }
+}
+@keyframes fall {
+    from {transform: translateY(-100%);}
+    to {transform: translateY(50vh);}
+}
+@keyframes pulse {
+    0%, 100% {transform: scale(1);}
+    50% {transform: scale(1.1);}
 }
 @keyframes tvScreenOn {
     0% { opacity: 0; transform: scaleY(0); }
@@ -350,7 +386,6 @@ body {
     50% {transform: scaleY(1.1); }
     100% {transform: scaleY(0); }
 }
-
 /* #endregion Animations */
 
 /* #region Visual Effects */

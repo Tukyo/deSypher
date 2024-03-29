@@ -1,10 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {})
-
-    let ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
     
     let gameOver = false; // Checks if game is over
-
-    const REQUIRED_CHAIN_ID = '8453'; // Base L2
     
     const form = document.getElementById('wordPuzzleForm');
     const inputContainer = document.getElementById('inputContainer');
@@ -12,8 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {})
 
     const playButton = document.getElementById('playButton');
 
-    // const address = ""; // Contract address
-    // const abi = // Contract ABI list
+    const REQUIRED_CHAIN_ID = 8453; // Base L2
 
     //#region Audio
     const audioPool = [];
@@ -51,12 +46,29 @@ document.addEventListener('DOMContentLoaded', function () {})
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const accounts = await provider.listAccounts();
-            if (accounts.length === 0) {
+            const network = await provider.getNetwork();
+            const chainId = network.chainId;
+            if (accounts.length === 0 ) {
                 // No wallet is connected, prevent the button from doing anything
                 event.preventDefault();
                 playButton.textContent = "No Wallet Connected!";
                 console.log("No wallet connected");
                 return;
+            }
+            if (chainId !== REQUIRED_CHAIN_ID) {
+                // The player is on the wrong chain, prevent the button from doing anything
+                event.preventDefault();
+                playButton.textContent = "Please switch to Base Mainnet!";
+                console.log("Wrong chain");
+                return;
+            }
+            if (chainId === REQUIRED_CHAIN_ID) {
+                // Hide the Play button
+                playButton.style.display = 'none';
+                // Show the form
+                form.style.display = 'block';
+    
+                console.log("Wallet connected, and player is on the correct chain, game started.");
             }
         } else {
             // MetaMask is not installed, prevent the button from doing anything
@@ -65,13 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {})
             console.log("MetaMask is not installed");
             return;
         }
-
-        // Hide the Play button
-        playButton.style.display = 'none';
-        // Show the form
-        form.style.display = 'block';
-
-        console.log("Game started: Play button clicked.");
     });
     function sendGuess() {
         const rows = document.querySelectorAll('.input-fields');
@@ -195,9 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {})
     //#endregion WordGame Main
 
     //#region Effects & Extras
+
     //#region Cyber Rain
     function spawnSpritesheet() {
-        console.log("spawning matrix rain");
+        // console.log("spawning matrix rain");
         const sprite = document.createElement('div');
         sprite.className = 'spritesheet';
         sprite.style.left = Math.random() * (window.innerWidth - 128) + 'px'; // Randomize the horizontal position
@@ -226,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {})
     // Spawn a new spritesheet element every few seconds
     setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
     //#endregion Cyber Rain
+    
     //#region Cheat Codes
     document.addEventListener('DOMContentLoaded', (event) => {
         let konamiCode = [
@@ -269,79 +276,8 @@ document.addEventListener('DOMContentLoaded', function () {})
         }
     });
     //#endregion Cheat Codes
+    
     //#endregion Effects & Extras
-
-    //#region Web3 Connectivity
-    // Function to connect to the wallet
-    function connectWallet() {
-        if (window.ethereum) {
-            ethereum.request({ method: 'eth_requestAccounts' })
-            .then(() => document.getElementById("count").click())
-            .catch((error) => console.error(error.message));
-    
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
-                // const signer = provider.getSigner();
-    
-                // const contract = new ethers.Contract(address, abi, signer);
-            }
-            else {
-                console.error("Please install MetaMask!");
-            }
-    }
-
-    if (window.ethereum) {
-        ethereum.on("chainChanged", () => window.location.reload());
-        
-        ethereum.on("message", (message) => console.log(message));
-    
-        ethereum.on("connect", (connectInfo) => {
-            console.log(`Connected to ${connectInfo.chainId} network`);
-        });
-
-        ethereum.on("disconnect", () => window.location.reload());
-        ethereum.on("accountsChanged", (accounts) => {
-            if (accounts.length > 0) {
-                console.log(`Using account ${accounts[0]}`);
-                document.getElementById('connect-button').textContent = 'Connected: ' + accounts[0];
-            } else {
-                console.error("0 accounts available!");
-            }
-            // Reload the page whenever the accounts change
-            window.location.reload();
-        });
-    }
-
-    // Function to update the button text with the wallet address
-    function updateButtonWithAddress(address) {
-        const connectButton = document.getElementById('connect-button');
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        provider.lookupAddress(address).then(ensName => {
-            if (ensName) {
-                connectButton.textContent = `${ensName}`; // Display the ENS name if one exists
-            } else {
-                connectButton.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
-            }
-        }).catch(error => {
-            console.error("ENS is not supported on this network");
-            connectButton.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
-        });
-    }
-
-    // Add click event listener to the connect button
-    document.getElementById('connect-button').addEventListener('click', connectWallet);
-
-    // Check if MetaMask is already connected when the page loads
-    window.addEventListener('load', async () => {
-        if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const accounts = await provider.listAccounts();
-            if (accounts.length > 0) {
-                updateButtonWithAddress(accounts[0]); // Update the button if an account is already connected
-            }
-        }
-    });
-    //#endregion Web3 Connectivity
 
     //#region Rules Dropdown
     // Get the dropdown button and content elements

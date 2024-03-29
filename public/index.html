@@ -19,12 +19,13 @@
         <img src="assets/logo.png" alt="Game Logo" class="game-logo">
 
         <!-- #region Wallet Connectivity Section -->
-        <div class ="wallet-connect-section">
-            <button id ="connect-button">Connect Wallet</button>
+        <div class="wallet-connection-section">
+            <button id="connect-button">Connect Wallet</button>
+            <div id="base-logo">
+                <img src="https://raw.githubusercontent.com/base-org/brand-kit/7d3531058f5d89aeb627ab2045e1c5df3efb5de8/logo/symbol/Base_Symbol_Blue.svg" alt="Base Logo">
+            </div>
         </div>
         <!-- #endregion Wallet Connectivity Section -->
-
-        <button id="playButton" type="button" class="game-button play-button">Play!</button>
 
         <!-- #region Rules Section -->
         <div class="rules-dropdown">
@@ -40,6 +41,8 @@
         </div>
         <!-- #endregion Rules Section -->
 
+        <button id="playButton" type="button" class="game-button play-button">Play!</button>
+        
         <!-- #region Puzzle Section -->
         <form id="wordPuzzleForm" style="display: none;">
             <div id="inputContainer" class="input-fields">
@@ -72,5 +75,6 @@
     </div>
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="script.js"></script>
+    <script src="wallet.js"></script>
 </body>
 </html>
