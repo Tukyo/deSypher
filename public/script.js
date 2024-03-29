@@ -1,12 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {})
+
+    let ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
     
     let gameOver = false; // Checks if game is over
+
+    const REQUIRED_CHAIN_ID = '8453'; // Base L2
     
     const form = document.getElementById('wordPuzzleForm');
     const inputContainer = document.getElementById('inputContainer');
     const feedback = document.getElementById('feedback');
 
     const playButton = document.getElementById('playButton');
+
+    // const address = ""; // Contract address
+    // const abi = // Contract ABI list
 
     //#region Audio
     const audioPool = [];
@@ -40,7 +47,25 @@ document.addEventListener('DOMContentLoaded', function () {})
     //#endregion Color Palette
 
     //#region WordGame Main 
-    playButton.addEventListener('click', function() {
+    playButton.addEventListener('click', async function(event) {
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const accounts = await provider.listAccounts();
+            if (accounts.length === 0) {
+                // No wallet is connected, prevent the button from doing anything
+                event.preventDefault();
+                playButton.textContent = "No Wallet Connected!";
+                console.log("No wallet connected");
+                return;
+            }
+        } else {
+            // MetaMask is not installed, prevent the button from doing anything
+            event.preventDefault();
+            playButton.textContent = "No Wallet Connected!";
+            console.log("MetaMask is not installed");
+            return;
+        }
+
         // Hide the Play button
         playButton.style.display = 'none';
         // Show the form
@@ -48,9 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {})
 
         console.log("Game started: Play button clicked.");
     });
-
     function sendGuess() {
-        const inputs = document.querySelectorAll('.puzzle-input');
+        const rows = document.querySelectorAll('.input-fields');
+        const lastRow = rows[rows.length - 1];
+        const inputs = lastRow.querySelectorAll('.puzzle-input');
         let word = '';
         inputs.forEach(input => {
             word += input.value;
@@ -63,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function () {})
             .then(response => response.json())
             .then(data => {
                 console.log('Guess result:', data);
-                //handleAttempt();
                 updateUI(data);
             })
             .catch((error) => {
@@ -77,9 +102,10 @@ document.addEventListener('DOMContentLoaded', function () {})
     });
 
     function updateUI(data) {
-        const inputs = document.querySelectorAll('.puzzle-input');
+        const rows = document.querySelectorAll('.input-fields');
+        const lastRow = rows[rows.length - 1];
+        const inputs = lastRow.querySelectorAll('.puzzle-input');
         const button = document.getElementById('submitButton');
-        const inputContainer = document.getElementById('inputContainer'); // Ensure you have this container in your HTML
     
         // Color the inputs based on the guess result
         data.result.forEach((item, index) => {
@@ -117,6 +143,18 @@ document.addEventListener('DOMContentLoaded', function () {})
             input.type = 'text';
             input.maxLength = '1';
             input.className = 'puzzle-input';
+    
+            // Add the hover sound effect to the input
+            input.addEventListener('mouseenter', function() {
+                // Use an audio object from the pool
+                const sound = audioPool[audioIndex];
+                sound.currentTime = 0; // Rewind to start
+                sound.play().catch(error => console.log("Error playing sound:", error));
+    
+                // Move to the next audio object in the pool for the next event
+                audioIndex = (audioIndex + 1) % poolSize;
+            });
+    
             row.appendChild(input);
         }
         inputContainer.appendChild(row);
@@ -188,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {})
     // Spawn a new spritesheet element every few seconds
     setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
     //#endregion Cyber Rain
-    //#region Konami Code
+    //#region Cheat Codes
     document.addEventListener('DOMContentLoaded', (event) => {
         let konamiCode = [
             'ArrowUp', 'ArrowUp', 'ArrowDown',
@@ -197,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {})
         ];
         let currentPosition = 0;
         let timer;
-        const KONAMI_CODE_TIMEOUT = 2000; // Time allowed between key presses in milliseconds
+        const CODE_TIMEOUT = 2000; // Time allowed between key presses in milliseconds
     
         document.addEventListener('keydown', (e) => {
             if (konamiCode[currentPosition] === e.code) {
@@ -206,17 +244,17 @@ document.addEventListener('DOMContentLoaded', function () {})
     
                 clearTimeout(timer);
                 if (currentPosition === konamiCode.length) {
-                    console.log("Konami code entered!");
+                    console.log("Code entered!");
                     playMusic();
                     currentPosition = 0; // Reset the position for the next attempt
                 } else {
                     timer = setTimeout(() => {
-                        console.log("Timeout, resetting Konami code sequence.");
+                        console.log("Timeout, try again.");
                         currentPosition = 0; // Reset the position due to timeout
-                    }, KONAMI_CODE_TIMEOUT);
+                    }, CODE_TIMEOUT);
                 }
             } else {
-                console.log("Incorrect key, resetting Konami code sequence.");
+                console.log("Incorrect key, try again.");
                 currentPosition = 0; // Reset the position if the wrong key is pressed
             }
         });
@@ -230,31 +268,64 @@ document.addEventListener('DOMContentLoaded', function () {})
                 .catch(error => console.error("Error starting music playback:", error));
         }
     });
-    //#endregion Konami Code
+    //#endregion Cheat Codes
     //#endregion Effects & Extras
 
     //#region Web3 Connectivity
+    // Function to connect to the wallet
+    function connectWallet() {
+        if (window.ethereum) {
+            ethereum.request({ method: 'eth_requestAccounts' })
+            .then(() => document.getElementById("count").click())
+            .catch((error) => console.error(error.message));
+    
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
+                // const signer = provider.getSigner();
+    
+                // const contract = new ethers.Contract(address, abi, signer);
+            }
+            else {
+                console.error("Please install MetaMask!");
+            }
+    }
+
+    if (window.ethereum) {
+        ethereum.on("chainChanged", () => window.location.reload());
+        
+        ethereum.on("message", (message) => console.log(message));
+    
+        ethereum.on("connect", (connectInfo) => {
+            console.log(`Connected to ${connectInfo.chainId} network`);
+        });
+
+        ethereum.on("disconnect", () => window.location.reload());
+        ethereum.on("accountsChanged", (accounts) => {
+            if (accounts.length > 0) {
+                console.log(`Using account ${accounts[0]}`);
+                document.getElementById('connect-button').textContent = 'Connected: ' + accounts[0];
+            } else {
+                console.error("0 accounts available!");
+            }
+            // Reload the page whenever the accounts change
+            window.location.reload();
+        });
+    }
+
     // Function to update the button text with the wallet address
     function updateButtonWithAddress(address) {
         const connectButton = document.getElementById('connect-button');
-        connectButton.textContent = `Connected: ${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
-    }
-
-    // Function to connect to the wallet
-    async function connectWallet() {
-        if (window.ethereum) { // Check if MetaMask is installed
-            try {
-                updateButtonWithAddress(account); // Update the button with the connected wallet address
-                await window.ethereum.request({ method: 'eth_requestAccounts' }); // Request account access
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const account = await signer.getAddress();
-            } catch (error) {
-                console.error(error);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        provider.lookupAddress(address).then(ensName => {
+            if (ensName) {
+                connectButton.textContent = `${ensName}`; // Display the ENS name if one exists
+            } else {
+                connectButton.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
             }
-        } else {
-            console.log("MetaMask is not installed. Please consider installing it: https://metamask.io/download.html");
-        }
+        }).catch(error => {
+            console.error("ENS is not supported on this network");
+            connectButton.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
+        });
     }
 
     // Add click event listener to the connect button
@@ -279,7 +350,15 @@ document.addEventListener('DOMContentLoaded', function () {})
         var dropdownContent = document.querySelector('.dropdown-content');
     
         dropdown.addEventListener('click', function () {
-            dropdownContent.classList.toggle('show');
+            if (dropdownContent.classList.contains('show')) {
+                dropdownContent.style.animation = 'tvScreenOff 0.25s ease forwards';
+                setTimeout(function() {
+                    dropdownContent.style.animation = '';
+                    dropdownContent.classList.remove('show');
+                }, 500);
+            } else {
+                dropdownContent.classList.add('show');
+            }
         });
     });
     //#endregion Rules Dropdown   

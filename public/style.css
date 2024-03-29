@@ -76,7 +76,8 @@ body {
 /* Dropdown Content */
 .dropdown-content {
     display: none;
-    position: center;
+    position: sticky;
+    top: 5px;
     background-color: black;
     min-width: 160px;
     text-align: left;
@@ -85,7 +86,10 @@ body {
     z-index: 1;
 }
 
-.dropdown-content.show { display: block; }
+.dropdown-content.show { 
+    display: block;
+    animation: tvScreenOn 0.5s ease;
+}
 /* #endregion Rules Dropdown Button */
 
 /* #region Puzzle Input Fields */
@@ -170,6 +174,7 @@ body {
 /* #region Social Media */
 .social-media-section {
     text-align: center;
+    align-self: center;
     margin-top: 40px;
     padding: 1px 0; /* Spacing at the top and bottom */
     position: sticky;
@@ -336,6 +341,16 @@ body {
         transform: scale(1.1); /* Slightly larger */
     }
 }
+@keyframes tvScreenOn {
+    0% { opacity: 0; transform: scaleY(0); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+    100% { opacity: 1; transform: scaleY(1); }
+}
+@keyframes tvScreenOff {
+    0% {transform: scaleY(1); }
+    50% {transform: scaleY(1.1); }
+    100% {transform: scaleY(0); }
+}
 
 /* #endregion Animations */
 
@@ -373,10 +388,6 @@ body {
 
 .color-box.green {
     background-color: lightgreen;
-}
-
-.color-box.orange {
-    background-color: orange;
 }
 
 .color-box.yellow {
