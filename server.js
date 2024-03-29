@@ -9,7 +9,7 @@ let attempts = 0;
 const maxAttempts = 3;
 const correctWord = "tokyo";
 
-/* #region Setup & CORS */
+// #region Setup & CORS
 // Define your website's origin
 const allowedOrigins = ['http://localhost:3000']; // Add your website's domain here
 
@@ -35,9 +35,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
-/* #endregion Setup & CORS */
+// #endregion Setup & CORS
 
-// Backend function call with CORS applied only to this route
+// Getter function that handles the guess check, and the attempts of guesses
 app.get('/guess', (req, res) => {
     console.log(req.query.word);
     const guessedWord = req.query.word;
@@ -62,6 +62,7 @@ app.get('/guess', (req, res) => {
     res.send({ result, gameOver: false, isWin:  guessedWord.toLowerCase() == correctWord.toLowerCase(),  attemptsLeft: maxAttempts - attempts });
 });
 
+// Function that checks the guessed word based on the input word against the correct word
 function checkWord(inputWord) {
     let result = new Array(inputWord.length).fill(null).map(() => ({ letter: '', status: 'incorrect' }));
     const targetLetters = correctWord.split('');
@@ -102,7 +103,6 @@ function checkWord(inputWord) {
 
     return result;
 }
-
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

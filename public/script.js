@@ -6,6 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {})
     const inputContainer = document.getElementById('inputContainer');
     const feedback = document.getElementById('feedback');
 
+    //#region Color Palette
+    const colorPalette = {
+        green: '#2dc60e',
+        yellow: '#f6f626cb',
+        red: '#f02020ad',
+    };
+    //#endregion Color Palette
+
     //#region WordGame Main
 
     // function checkWord(inputs) {
@@ -81,10 +89,29 @@ document.addEventListener('DOMContentLoaded', function () {})
             });
     }
 
+    document.getElementById('wordPuzzleForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        sendGuess();
+    });
+    
 
     function updateUI(data) {
-        const button = document.getElementById('guessButton');
-
+        const inputs = document.querySelectorAll('.puzzle-input');
+        const button = document.getElementById('submitButton');
+        const inputContainer = document.getElementById('inputContainer'); // Ensure you have this container in your HTML
+    
+        // Color the inputs based on the guess result
+        data.result.forEach((item, index) => {
+            if (item.status === 'correct') {
+                inputs[index].style.backgroundColor = colorPalette.green;
+            } else if (item.status === 'misplaced') {
+                inputs[index].style.backgroundColor = colorPalette.yellow;
+            } else {
+                inputs[index].style.backgroundColor = colorPalette.red;
+            }
+            inputs[index].disabled = true; // Disable the input after the guess
+        });
+    
         if (data.isWin) {
             alert('Congratulations, you won!');
             button.disabled = true; // Disable the button
@@ -94,10 +121,14 @@ document.addEventListener('DOMContentLoaded', function () {})
         } else {
             // Update the UI to reflect the number of remaining attempts
             console.log(`Try again! Attempts left: ${data.attemptsLeft}`);
+            // Create a new row for the next guess
+            const newInputs = createInputRow();
+            addInputListeners(newInputs);
         }
     }
 
     function createInputRow() {
+        const inputContainer = document.getElementById('inputContainer'); // Ensure you have this container in your HTML
         const row = document.createElement('div');
         row.className = 'input-fields';
         for (let i = 0; i < 5; i++) {
@@ -116,9 +147,6 @@ document.addEventListener('DOMContentLoaded', function () {})
     //     if (gameOver) {
     //         return; // Exit the function early if the game is over
     //     }
-
-    //     const currentInputs = document.querySelectorAll('.input-fields')[attemptCount].querySelectorAll('.puzzle-input');
-    //     const isCorrect = checkWord(currentInputs);
 
     //     if (isCorrect) {
     //         feedback.textContent = 'Success!';
@@ -179,7 +207,8 @@ document.addEventListener('DOMContentLoaded', function () {})
     });
     //#endregion WordGame Main
 
-    //#region Background VFX
+    //#region Effects & Extras
+    //#region Cyber Rain
     function spawnSpritesheet() {
         console.log("spawning matrix rain");
         const sprite = document.createElement('div');
@@ -207,10 +236,53 @@ document.addEventListener('DOMContentLoaded', function () {})
             document.body.removeChild(sprite);
         });
     }
-
     // Spawn a new spritesheet element every few seconds
     setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
-    //#endregion Background VFX
+    //#endregion Cyber Rain
+    //#region Konami Code
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let konamiCode = [
+            'ArrowUp', 'ArrowUp', 'ArrowDown',
+            'ArrowDown', 'ArrowLeft', 'ArrowRight',
+            'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA', 'Enter'
+        ];
+        let currentPosition = 0;
+        let timer;
+        const KONAMI_CODE_TIMEOUT = 2000; // Time allowed between key presses in milliseconds
+    
+        document.addEventListener('keydown', (e) => {
+            if (konamiCode[currentPosition] === e.code) {
+                console.log("Correct key: " + e.code);
+                currentPosition++;
+    
+                clearTimeout(timer);
+                if (currentPosition === konamiCode.length) {
+                    console.log("Konami code entered!");
+                    playMusic();
+                    currentPosition = 0; // Reset the position for the next attempt
+                } else {
+                    timer = setTimeout(() => {
+                        console.log("Timeout, resetting Konami code sequence.");
+                        currentPosition = 0; // Reset the position due to timeout
+                    }, KONAMI_CODE_TIMEOUT);
+                }
+            } else {
+                console.log("Incorrect key, resetting Konami code sequence.");
+                currentPosition = 0; // Reset the position if the wrong key is pressed
+            }
+        });
+    
+        function playMusic() {
+            var music = new Audio('/assets/h4ck3rm0d3act1v4t3d.ogg');
+            music.loop = true; // Enable looping
+        
+            music.play()
+                .then(() => console.log("Music playback started successfully and will loop."))
+                .catch(error => console.error("Error starting music playback:", error));
+        }
+    });
+    //#endregion Konami Code
+    //#endregion Effects & Extras
 
     //#region Web3 Connectivity
     // Function to update the button text with the wallet address
@@ -261,4 +333,4 @@ document.addEventListener('DOMContentLoaded', function () {})
             dropdownContent.classList.toggle('show');
         });
     });
-    //#endregion Rules Dropdown
+    //#endregion Rules Dropdown   

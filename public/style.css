@@ -123,7 +123,7 @@ body {
 /* #endregion Puzzle Input Fields */
 
 /* #region Submit Button */
-button[type="button"] {
+button[type="submit"] {
     background-color: #2dc60e;
     color: white;
     margin-top: 50px;
@@ -140,19 +140,19 @@ button[type="button"] {
     animation: transitionScale 2.5s;
 }
 
-button[type="button"]:hover {
+button[type="submit"]:hover {
     scale: 1.15;
     background: #2dc60e;
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
 }
 
-button[type="button"]:active {
+button[type="submit"]:active {
     background-color: #194e0f; /* Even darker shade when pressed */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Smaller shadow for pressed effect */
 }
 
-button[type="button"]:focus {
+button[type="submit"]:focus {
     border: 2px solid #0f3e07; /* Border for when the button is focused */
 }
 /* #endregion Submit Button */
@@ -160,10 +160,10 @@ button[type="button"]:focus {
 /* #region Social Media */
 .social-media-section {
     text-align: center;
-    margin-top: 40px; /* Adjust spacing as needed */
-    padding: 20px 0; /* Spacing at the top and bottom */
-    position: fixed; /* or 'absolute' depending on your layout */
-    bottom: 10px; /* This positions the section at the bottom of the viewport */
+    margin-top: 40px;
+    padding: 40px 0; /* Spacing at the top and bottom */
+    position: fixed;
+    bottom: 20px; /* This positions the section at the bottom of the viewport */
     left: 50%;
     transform: translateX(-50%); /* This centers the section */
     z-index: 100; /* Ensures it's on top of other elements */
@@ -192,6 +192,23 @@ button[type="button"]:focus {
     text-shadow:  0 0 10px #00ff00c2, 0 0 10px #00ff009e;
 }
 /* #endregion Social Media */
+
+/* #region Branding Section */
+.branding-section {
+    margin-top: 40px;
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
+    bottom: 5px;
+    z-index: 100;
+    color: #166009;
+}
+.branding-section:hover {
+    cursor: wait;
+    color: #2dc60e;
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+}
+/* #endregion Branding Section */
 
 /* #region Mobile-specific adjustments */
 @media (max-width: 600px) {
@@ -232,6 +249,10 @@ button[type="button"]:focus {
 }
 /* #endregion Mobile-specific adjustments */
 
+
+
+
+
 /* Style the scrollbar track (background) */
 ::-webkit-scrollbar {
     width: 12px; /* width of the entire scrollbar */
@@ -249,6 +270,10 @@ button[type="button"]:focus {
   }
 
   
+
+
+
+
 .color-key {
     list-style-type: none;
     padding: 0;
