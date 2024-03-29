@@ -8,6 +8,29 @@ document.addEventListener('DOMContentLoaded', function () {})
 
     const playButton = document.getElementById('playButton');
 
+    //#region Audio
+    const audioPool = [];
+    const poolSize = 5; // Adjust based on needs and testing
+    for (let i = 0; i < poolSize; i++) {
+        audioPool.push(new Audio('assets/hover_sound.ogg'));
+    }
+    let audioIndex = 0;
+
+    const elements = document.querySelectorAll('button, input');
+
+    elements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            // Use an audio object from the pool
+            const sound = audioPool[audioIndex];
+            sound.currentTime = 0; // Rewind to start
+            sound.play().catch(error => console.log("Error playing sound:", error));
+
+            // Move to the next audio object in the pool for the next event
+            audioIndex = (audioIndex + 1) % poolSize;
+        });
+    });
+    //#endregion Audio
+
     //#region Color Palette
     const colorPalette = {
         green: '#2dc60e',
@@ -25,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {})
 
         console.log("Game started: Play button clicked.");
     });
-    
+
     function sendGuess() {
         const inputs = document.querySelectorAll('.puzzle-input');
         let word = '';

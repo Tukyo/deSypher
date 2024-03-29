@@ -15,8 +15,8 @@ body {
 .game-logo {
     max-width: 100%;
     height: auto;
-    margin-bottom: 20px;
-    margin-top: -100px;
+    margin-bottom: 2px;
+    margin-top: -50px;
     animation: transitionDown 5s;
     animation-timing-function: ease-in;
     align-self: center;
@@ -122,7 +122,7 @@ body {
 }
 /* #endregion Puzzle Input Fields */
 
-/* #region Game Button */
+/* #region Game Buttons */
 .game-button {
     background-color: #2dc60e;
     color: white;
@@ -156,23 +156,25 @@ body {
     border: 2px solid #0f3e07; /* Border for when the button is focused */
 }
 .play-button {
-    display: inline-block; /* or 'block' depending on your layout needs */
-    width: 35%; /* Adjust the width as needed */
+    display: inline-block;
+    width: 35%;
     margin: 0 auto; /* Centers the button horizontally in its container */
     text-align: center; /* Centers the text horizontally */
-    padding: 15px 30px; /* Adjust as needed. Also helps in vertical spacing */
-    font-size: 24px; /* Adjust based on your design */
-    line-height: 1.25; /* Adjusting the line height can help center the text vertically */
+    padding: 15px 30px;
+    font-size: 24px;
+    line-height: 1.25;
+    animation: transitionScale 2.5s, pulse 2s infinite ease-in-out 2.5s;
 }
-/* #endregion Game Button */
+/* #endregion Game Buttons */
 
 /* #region Social Media */
 .social-media-section {
     text-align: center;
     margin-top: 40px;
-    padding: 40px 0; /* Spacing at the top and bottom */
-    position: fixed;
-    bottom: 20px; /* This positions the section at the bottom of the viewport */
+    padding: 1px 0; /* Spacing at the top and bottom */
+    position: sticky;
+    top: 2px; /* Adjust the offset as needed */
+    bottom: 2px; /* This positions the section at the bottom of the viewport */
     left: 50%;
     transform: translateX(-50%); /* This centers the section */
     z-index: 100; /* Ensures it's on top of other elements */
@@ -205,10 +207,10 @@ body {
 /* #region Branding Section */
 .branding-section {
     margin-top: 40px;
-    padding: 20px 0;
+    padding: 1px 0;
     text-align: center;
-    position: fixed;
-    bottom: 5px;
+    position: sticky;
+    bottom: 1px;
     z-index: 100;
     color: #166009;
     animation: transitionScale 3.5s;
@@ -259,30 +261,96 @@ body {
 }
 /* #endregion Mobile-specific adjustments */
 
-
-
-
-
-/* Style the scrollbar track (background) */
+/* #region Scrollbar */
 ::-webkit-scrollbar {
-    width: 12px; /* width of the entire scrollbar */
+    background: black;
+    width: 12px;
   }
   
   /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #888; /* scrollbar handle color */
+    background: #0f3e07;
     border-radius: 6px;
   }
   
   /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555; /* scrollbar handle color on hover */
+    background: #166009;
   }
+/* #endregion Scrollbar */
 
-  
+/* #region Animations */
+@keyframes transitionDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px); /* Start slightly above the final position */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes transitionLeft {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes transitionRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes transitionScale {
+    from {
+        opacity: 0;
+        scale: 1.25;
+    }
+    to {
+        opacity: 1;
+        transform: scale(var(--default-scale));
+    }
+}
+@keyframes fall {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(50vh);
+    }
+}
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1); /* Original size */
+    }
+    50% {
+        transform: scale(1.1); /* Slightly larger */
+    }
+}
 
+/* #endregion Animations */
 
-
+/* #region Visual Effects */
+.spritesheet {
+    position: fixed;
+    top: 0;
+    background-image: url('assets/spritesheet.png');
+    background-repeat: no-repeat;
+    width: 128px; /* Your frame width */
+    height: 1024px; /* Your frame height */
+    animation: fall 5s linear forwards;
+    scale: .25;
+}
+/* #endregion Visual Effects */
 
 .color-key {
     list-style-type: none;
@@ -322,71 +390,3 @@ body {
 .input-fields {
     margin: 10px 0;
 }
-
-/* #region Animations */
-@keyframes transitionDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px); /* Start slightly above the final position */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes transitionLeft {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes transitionRight {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes transitionScale {
-    from {
-        opacity: 0;
-        scale: 1.25;
-    }
-    to {
-        opacity: 1;
-        transform: scale(var(--default-scale));
-    }
-}
-
-@keyframes fall {
-    from {
-        transform: translateY(-100%);
-    }
-    to {
-        transform: translateY(50vh);
-    }
-}
-/* #endregion Animations */
-
-/* #region Visual Effects */
-.spritesheet {
-    position: fixed;
-    top: 0;
-    background-image: url('assets/spritesheet.png');
-    background-repeat: no-repeat;
-    width: 128px; /* Your frame width */
-    height: 1024px; /* Your frame height */
-    animation: fall 5s linear forwards;
-    scale: .25;
-}
-/* #endregion Visual Effects */
