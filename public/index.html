@@ -6,26 +6,27 @@
     <title>deSypher</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- Favicon -->
+    <!-- #region Favicon -->
     <link rel="icon" sizes="16x16" type="image/png" href="assets/favicon-16x16.png">
     <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon-32x32.png">
     <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
-    <!-- Favicon -->
+    <!-- #endregion Favicon -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body background-color= black>
     <div class="puzzle-container">
         <img src="assets/logo.png" alt="Game Logo" class="game-logo">
 
-        <!-- Wallet Connectivity Section -->
+        <!-- #region Wallet Connectivity Section -->
         <div class ="wallet-connect-section">
             <button id ="connect-button">Connect Wallet</button>
         </div>
-        <!-- Wallet Connectivity Section -->
+        <!-- #endregion Wallet Connectivity Section -->
 
         <button id="playButton" type="button" class="game-button play-button">Play!</button>
 
-        <!-- Rules Section -->
+        <!-- #region Rules Section -->
         <div class="rules-dropdown">
             <button class="dropdown-button">How to Play</button>
             <div class="dropdown-content">
@@ -37,9 +38,9 @@
                 </ul>
             </div>
         </div>
-        <!-- Rules Section -->
+        <!-- #endregion Rules Section -->
 
-        <!-- Puzzle Section -->
+        <!-- #region Puzzle Section -->
         <form id="wordPuzzleForm" style="display: none;">
             <div id="inputContainer" class="input-fields">
                 <input type="text" maxlength="1" class="puzzle-input">
@@ -52,21 +53,22 @@
             <button type="submit" class="game-button">Submit</button>
             
         </form>
-        <!-- Puzzle Section -->
-
-        <!-- Social Media Section -->
+        <!-- #endregion Puzzle Section -->
+    </div>
+    <div class= "footer">   
+        <!-- #region Social Media Section -->
         <div class="social-media-section">
             <a href="https://twitter.com/TUKYOWAVE" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
             <a href="https://t.me/tukyogames" target="_blank" class="social-icon"><i class="fab fa-telegram"></i></a>
             <a href="https://github.com/Tukyo/deSypher" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
         </div>
-        <!-- Social Media Section -->
+        <!-- #endregion Social Media Section -->
         
-        <!-- Branding Section -->
+        <!-- #region Branding Section -->
         <div class="branding-section">
             • Tukyo Games •
         </div>
-        <!-- Branding Section -->
+        <!-- #endregion Branding Section -->
     </div>
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="script.js"></script>
