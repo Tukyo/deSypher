@@ -84,7 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // #region On Page Load Events for Connectivity/Network Checks
     if (window.ethereum) {
-        ethereum.on("chainChanged", () => window.location.reload());
+        ethereum.on("chainChanged", () => {
+            if (!ethereum.isCoinbaseWallet) {
+                window.location.reload();
+            }
+        });
         
         ethereum.on("message", (message) => console.log(message));
     
