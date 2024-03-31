@@ -1,10 +1,31 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    const REQUIRED_CHAIN_ID = 8453; // Base L2
+    // Base Mainnet
+    const REQUIRED_CHAIN_ID = 8453;
+
+    // Replace with actual token contract address <<<<!!!
+    const tokenContractAddress = '0xa66083ABC73BAdf691Fc45178577216410264C0A';
+
+    // Replace with actual token contract ABI <<<<!!!
+    const tokenContractABI = [
+        {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"_Token","type":"address"},{"internalType":"bool","name":"_status","type":"bool"}],"name":"SetLimitd","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"Tokenbuysasa","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"Tokesbb3286d","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"Tokssds415a9x","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"initToken","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"_tradingSD6","type":"address[]"},{"internalType":"bool","name":"_status","type":"bool"}],"name":"openTt","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}
+    ];
 
     // #region Manual Wallet Connection
     // Add click event listener to the connect button
-    document.getElementById('connect-button').addEventListener('click', connectWallet);
+    document.getElementById('connect-button').addEventListener('click', async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    
+        if (accounts.length !== 0) {
+            // Wallet is already connected
+            console.log("Wallet is already connected.");
+        } else {
+            // Wallet is not connected, connect it
+            connectWallet();
+        }
+    });
     // Function to connect to the wallet
     async function connectWallet() {
         if (window.ethereum) {
@@ -51,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Please install MetaMask!");
         }
     }
+
     // #endregion Manual Wallet Connection
 
     // #region Updating Wallet Connect Button
@@ -108,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.reload();
         });
     }
-    // Check if MetaMask is already connected when the page loads
+    // Check if wallet is already connected when the page loads, if it is, do stuff..
     window.addEventListener('load', async () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -124,7 +146,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 UpdateButtonWithIncorrectChainMessage();
                 console.error(`Please connect to the ${REQUIRED_CHAIN_ID} network`);
             }
+            // Call the function to check the wallet balance
+            checkTokenBalance();
         }
     });
     // #endregion On Page Load Events for Connectivity/Network Checks
+
+    // #region Wallet Balance Check
+    // Function to check the wallet balance
+    async function checkTokenBalance() {
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+            const balance = await tokenContract.balanceOf(await signer.getAddress());
+            const decimals = await tokenContract.decimals();
+            const adjustedBalance = ethers.utils.formatUnits(balance, decimals);
+            console.log(`Token balance: ${adjustedBalance}`);
+            const truncatedBalance = adjustedBalance.slice(0, 8); // Truncate the balance for cleaner display
+            document.getElementById('token-balance').textContent = truncatedBalance; // Update the token balance element with the truncated balance
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    // #endregion Wallet Balance Check
 });

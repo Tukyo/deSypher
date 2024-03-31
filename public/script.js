@@ -94,7 +94,11 @@ document.addEventListener('DOMContentLoaded', function () {})
             .then(response => response.json())
             .then(data => {
                 console.log('Guess result:', data);
-                updateUI(data);
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    updateUI(data);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);

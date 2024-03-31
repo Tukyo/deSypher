@@ -12,9 +12,25 @@
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
     "cors": "^2.8.5",
-    "ethers": "^6.11.1",
     "express": "^4.19.2",
+    "node": "^18.20.0",
     "web3": "^4.7.0"
   },
-  "description": ""
+  "description": "<p align=\"center\">\r   <img src=\"https://github.com/Tukyo/deSypher/blob/main/public/assets/logo.png?raw=true\" alt=\"Logo\" width=\"1400\">\r </p>",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "chai": "^5.1.0",
+    "ethereum-waffle": "^4.0.10",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.22.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tukyo/deSypher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tukyo/deSypher/issues"
+  },
+  "homepage": "https://github.com/Tukyo/deSypher#readme"
 }

@@ -6,8 +6,24 @@ const app = express();
 const port = 3000;
 
 let attempts = 0;
-const maxAttempts = 3;
-const correctWord = "tokyo";
+const maxAttempts = 4;
+
+// Function to generate a random word
+const fs = require('fs');
+
+// Function to generate a random word
+function generateRandomWord() {
+    const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
+    const fiveLetterWords = words.filter(word => word.trim().replace('\r', '').length === 5);
+    return fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].replace('\r', '').toLowerCase();
+}
+
+// Generate a random word when the server launches
+let correctWord = generateRandomWord();
+
+// const correctWord = "risen"
+
+// console.log(`The correct word is: ${correctWord}`);
 
 // #region Setup & CORS
 // Define your website's origin
@@ -39,27 +55,38 @@ app.get('/', (req, res) => {
 
 // Getter function that handles the guess check, and the attempts of guesses
 app.get('/guess', (req, res) => {
-    console.log(req.query.word);
     const guessedWord = req.query.word;
 
     if (!guessedWord) {
         return res.status(400).send({ error: 'No word provided' });
     }
+
+    // Check if the word is in the word list
+    const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
+    const fiveLetterWords = words.map(word => word.replace('\r', '')).filter(word => word.length === 5);
+    console.log('Word list:', fiveLetterWords); // Print out the word list
+    console.log('Guessed word:', guessedWord.toLowerCase()); // Print out the guessed word
+    if (!fiveLetterWords.includes(guessedWord.toLowerCase())) {
+        return res.send({ error: 'This word is not valid!' });
+    }
+
+
     attempts++
 
-    
     const result = checkWord(guessedWord.toLowerCase());
+    const isWin = guessedWord.toLowerCase() === correctWord;
 
-    if (attempts >= maxAttempts || guessedWord.toLowerCase() == correctWord) {
-        res.send({
+    if (attempts >= maxAttempts || isWin) {
+        return res.send({
             result, 
             gameOver: true,
             correctWord,
-            isWin: guessedWord.toLowerCase() == correctWord,
+            isWin,
             attemptsLeft: maxAttempts - attempts
-        })
+        });
     }
-    res.send({ result, gameOver: false, isWin:  guessedWord.toLowerCase() == correctWord.toLowerCase(),  attemptsLeft: maxAttempts - attempts });
+
+    res.send({ result, gameOver: false, isWin, attemptsLeft: maxAttempts - attempts });
 });
 
 // Function that checks the guessed word based on the input word against the correct word
@@ -79,26 +106,13 @@ function checkWord(inputWord) {
 
     // Handle correct letters in incorrect positions
     inputLetters.forEach((letter, index) => {
-        if (result[index].status !== 'correct' && targetLetters.includes(letter)) {
-            // Find the letter in the target, preferring incorrect positions first
-            let targetIndex = targetLetters.findIndex((tl, ti) => tl === letter && ti !== index);
-            if (targetIndex === -1) {
-                targetIndex = targetLetters.findIndex((tl) => tl === letter);
-            }
-
-            if (targetIndex !== -1) {
+        if (result[index].status !== 'correct') {
+            const targetIndex = targetLetters.indexOf(letter);
+            if (targetIndex !== -1 && targetIndex !== index) {
                 result[index].status = 'misplaced';
                 targetLetters[targetIndex] = null; // Mark this target letter as used
             }
         }
-    });
-
-    // Final pass to update any remaining letters to 'incorrect' if not already marked
-    result.forEach((res, index) => {
-        if (res.status === 'incorrect' && correctWord.includes(inputLetters[index])) {
-            // This handles the case for duplicate letters where one is correct, and others are not
-            res.status = 'misplaced';
-        } 
     });
 
     return result;

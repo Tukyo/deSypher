@@ -1,3 +1,7 @@
 /node_modules
-/public/sypher.sol
+/contracts
+/scripts
+/cache
+/artifacts
+hardhat.config.js
 .env
