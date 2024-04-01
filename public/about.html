@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>deSypher • About</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- #region Favicon -->
+    <link rel="icon" sizes="16x16" type="image/png" href="assets/favicon-16x16.png">
+    <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon-32x32.png">
+    <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
+    <!-- #endregion Favicon -->
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body class = "about-page-body" background-color= black>
+    <div class = "what-is-desypher-section">
+        <h1>What is deSypher?</h1>
+        <p>deSypher is an Onchain word puzzle game where you have to guess the correct five letter word within the alloted guesses.
+            <ul class="color-key">
+                <li><span class="color-box green"></span> Correct letter, correct position.</li>
+                <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
+                <li><span class="color-box red"></span> Incorrect letter.</li>
+            </ul>
+        <p>To start playing, you will need a wallet. After you have a wallet, you will need to acquire $SYPHER tokens to play.</p>
+    </div>
+    <break></break>
+    <div class="getting-started-section">
+        <h1>Getting Started</h1>
+        <p>If you don't have a wallet, use one of the buttons below to begin the onboarding process. Please note: you may run into issues with multiple wallets installed.</p>
+        <div class="wallet-buttons">
+            <img src="https://raw.githubusercontent.com/MetaMask/brand-resources/e9cddbf787c62bb387f9b586e7433ab6be440206/SVG/SVG_MetaMask_Horizontal_Color.svg" class="wallet-button metamask-button" onclick="installMetamask()"></a>
+            <img src="https://raw.githubusercontent.com/gist/taycaldwell/2291907115c0bb5589bc346661435007/raw/280eafdc84cb80ed0c60e36b4d0c563f6dca6b3e/cbw.svg" class="wallet-button coinbase-button" onclick="installCoinbaseWallet()"></a>
+            <img src="https://raw.githubusercontent.com/RabbyHub/logo/297c81228f53e1db863ee44e49faf68d96719951/logo-white.svg" class="wallet-button rabby-button" onclick="installRabby()"></a>
+        </div>
+    </div>
+    <div class="funding-wallet-section">
+        <h1>Funding Your Wallet</h1>
+        <p>After you have installed a wallet, you will need to acquire $SYPHER tokens to play. You can do this by swapping for the token on Uniswap.</p>
+        <div class="dex-buttons">
+            <img src="https://raw.githubusercontent.com/Uniswap/brand-assets/df53e86d0cea2e4cf3761d849e57de44bf85ac52/Uniswap%20Brand%20Assets/Uniswap_icon_white.svg" class="dex-button uniswap-button" onclick="openUniswap()"></a>
+        </div>
+    </div>
+</body>
+<div class= "footer">     
+    <!-- #region Branding Section -->
+    <div class="branding-section">
+        <a href="/index.html">Home</a> • <a href="/tokenomics.html">Tokenomics</a>
+    </div>
+    <!-- #endregion Branding Section -->
+</div>
+<script src="about.js"></script>
+</body>
+</html>

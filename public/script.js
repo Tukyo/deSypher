@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {})
     const inputContainer = document.getElementById('inputContainer');
     const feedback = document.getElementById('feedback');
 
-    const playButton = document.getElementById('playButton');
-
     const REQUIRED_CHAIN_ID = 8453; // Base L2
 
     //#region Audio
@@ -33,51 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {})
     });
     //#endregion Audio
 
-    //#region Color Palette
-    const colorPalette = {
-        green: '#2dc60e',
-        yellow: '#f6f626cb',
-        red: '#f02020ad',
-    };
-    //#endregion Color Palette
-
     //#region WordGame Main 
-    playButton.addEventListener('click', async function(event) {
-        if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const accounts = await provider.listAccounts();
-            const network = await provider.getNetwork();
-            const chainId = network.chainId;
-            if (accounts.length === 0 ) {
-                // No wallet is connected, prevent the button from doing anything
-                event.preventDefault();
-                playButton.textContent = "No Wallet Connected!";
-                console.log("No wallet connected");
-                return;
-            }
-            if (chainId !== REQUIRED_CHAIN_ID) {
-                // The player is on the wrong chain, prevent the button from doing anything
-                event.preventDefault();
-                playButton.textContent = "Please switch to Base Mainnet!";
-                console.log("Wrong chain");
-                return;
-            }
-            if (chainId === REQUIRED_CHAIN_ID) {
-                // Hide the Play button
-                playButton.style.display = 'none';
-                // Show the form
-                form.style.display = 'block';
-    
-                console.log("Wallet connected, and player is on the correct chain, game started.");
-            }
-        } else {
-            // MetaMask is not installed, prevent the button from doing anything
-            event.preventDefault();
-            playButton.textContent = "No Wallet Connected!";
-            console.log("MetaMask is not installed");
-            return;
-        }
-    });
     function sendGuess() {
         const rows = document.querySelectorAll('.input-fields');
         const lastRow = rows[rows.length - 1];
@@ -118,77 +72,96 @@ document.addEventListener('DOMContentLoaded', function () {})
     
         // Color the inputs based on the guess result
         data.result.forEach((item, index) => {
-            if (item.status === 'correct') {
-                inputs[index].style.backgroundColor = colorPalette.green;
-            } else if (item.status === 'misplaced') {
-                inputs[index].style.backgroundColor = colorPalette.yellow;
-            } else {
-                inputs[index].style.backgroundColor = colorPalette.red;
-            }
+            inputs[index].style.backgroundColor = getColorForStatus(item.status); // Use a function to determine color
             inputs[index].disabled = true; // Disable the input after the guess
         });
     
         if (data.isWin) {
             alert('Congratulations, you won!');
-            button.disabled = true; // Disable the button
+            button.disabled = true;
         } else if (data.gameOver) {
             alert(`Game over! The correct word was ${data.correctWord}.`);
-            button.disabled = true; // Disable the button
+            button.disabled = true;
         } else {
-            // Update the UI to reflect the number of remaining attempts
             console.log(`Try again! Attempts left: ${data.attemptsLeft}`);
-            // Create a new row for the next guess
-            const newInputs = createInputRow();
+            // Pass the last guess result to createInputRow
+            const newInputs = createInputRow(data.result); // Pass the result directly
             addInputListeners(newInputs);
         }
     }
-
-    function createInputRow() {
-        const inputContainer = document.getElementById('inputContainer'); // Ensure you have this container in your HTML
+    
+    function createInputRow(lastGuessResult = []) {
+        const inputContainer = document.getElementById('inputContainer');
         const row = document.createElement('div');
         row.className = 'input-fields';
+        let firstEnabledInputIndex = -1; // Initialize to -1 to indicate no enabled input found yet
+    
         for (let i = 0; i < 5; i++) {
             const input = document.createElement('input');
             input.type = 'text';
             input.maxLength = '1';
             input.className = 'puzzle-input';
     
-            // Add the hover sound effect to the input
-            input.addEventListener('mouseenter', function() {
-                // Use an audio object from the pool
-                const sound = audioPool[audioIndex];
-                sound.currentTime = 0; // Rewind to start
-                sound.play().catch(error => console.log("Error playing sound:", error));
-    
-                // Move to the next audio object in the pool for the next event
-                audioIndex = (audioIndex + 1) % poolSize;
-            });
+            // Check if the current letter was correctly guessed
+            if (lastGuessResult[i] && lastGuessResult[i].status === 'correct') {
+                input.value = lastGuessResult[i].letter; // Pre-fill with the correct letter
+                input.style.backgroundColor = getColorForStatus(lastGuessResult[i].status); // Set background color
+                input.disabled = true; // Make field unselectable
+            } else {
+                // If this is the first enabled input, mark its index
+                if (firstEnabledInputIndex === -1) firstEnabledInputIndex = i;
+            }
     
             row.appendChild(input);
         }
         inputContainer.appendChild(row);
-        return row.querySelectorAll('.puzzle-input');
+    
+        const newInputs = row.querySelectorAll('.puzzle-input');
+        // Focus on the first enabled input. If all are enabled, this will be the first input.
+        if (firstEnabledInputIndex !== -1) {
+            newInputs[firstEnabledInputIndex].focus();
+        } else {
+            // If for some reason all inputs are disabled (which shouldn't happen in this context), default to focusing the first input
+            newInputs[0].focus();
+        }
+    
+        return newInputs;
+    }
+    // Helper function to determine the color based on the status
+    function getColorForStatus(status) {
+        const colorPalette = {
+            correct: '#2dc60e',
+            misplaced: '#f6f626cb',
+            incorrect: '#f02020ad',
+        };
+        return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
     }
 
     function addInputListeners(inputs) {
-        inputs.forEach((input, index) => {
-            // Keydown listener for backspace functionality
-            input.addEventListener('keydown', function (event) {
-                if (event.key === "Backspace" && input.value === '' && index > 0) {
-                    // Prevent default backspace behavior
-                    event.preventDefault();
-                    // Clear the previous input
-                    inputs[index - 1].value = '';
-                    // Move focus to the previous input
-                    inputs[index - 1].focus();
+        inputs.forEach((input, index, array) => {
+            // Skip disabled inputs on input
+            input.addEventListener('input', function () {
+                let nextIndex = index + 1;
+                while (nextIndex < array.length && array[nextIndex].disabled) {
+                    nextIndex++; // Skip over disabled inputs
+                }
+                if (input.value.length === 1 && nextIndex < array.length) {
+                    array[nextIndex].focus();
                 }
             });
-
-            // Input event listener to move to the next field
-            input.addEventListener('input', function () {
-                // Move to the next field on input
-                if (input.value.length === 1 && index < inputs.length - 1) {
-                    inputs[index + 1].focus();
+    
+            // Adjust backspace functionality to skip disabled inputs
+            input.addEventListener('keydown', function (event) {
+                if (event.key === "Backspace" && input.value === '' && index > 0) {
+                    event.preventDefault();
+                    let prevIndex = index - 1;
+                    while (prevIndex >= 0 && array[prevIndex].disabled) {
+                        prevIndex--; // Skip over disabled inputs
+                    }
+                    if (prevIndex >= 0) {
+                        array[prevIndex].value = '';
+                        array[prevIndex].focus();
+                    }
                 }
             });
         });

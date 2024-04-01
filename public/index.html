@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body background-color= black>
-    <div class="puzzle-container">
-        <img src="assets/logo.png" alt="Game Logo" class="game-logo">
-
+    
+    <div class= "header">
+        
         <!-- #region Wallet Connectivity Section -->
         <div class="wallet-connection-section">
             <button id="connect-button">Connect Wallet</button>
@@ -30,19 +30,25 @@
         </div>
         <!-- #endregion Wallet Connectivity Section -->
 
-        <!-- #region Rules Section -->
         <div class="rules-dropdown">
             <button class="dropdown-button">How to Play</button>
-            <div class="dropdown-content">
-                <h3>The goal of the game is to guess the correct word.</h3>
-                <ul class="color-key">
-                    <li><span class="color-box green"></span> Correct letter, correct position.</li>
-                    <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
-                    <li><span class="color-box red"></span> Incorrect letter.</li>
-                </ul>
-            </div>
         </div>
-        <!-- #endregion Rules Section -->
+    </div>
+
+        <!-- TODO: Add Keyboard Helper Section-->
+        <!-- <i class="fa-regular fa-keyboard"></i> -->
+
+    <div class="main-content">
+        <img src="assets/logo.png" alt="Game Logo" class="game-logo">
+
+        <div class="dropdown-content">
+            <h3>The goal of the game is to guess the correct word.</h3>
+            <ul class="color-key">
+                <li><span class="color-box green"></span> Correct letter, correct position.</li>
+                <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
+                <li><span class="color-box red"></span> Incorrect letter.</li>
+            </ul>
+        </div>
 
         <button id="playButton" type="button" class="game-button play-button">Play!</button>
         
@@ -61,7 +67,9 @@
         </form>
         <!-- #endregion Puzzle Section -->
     </div>
+
     <div class= "footer">   
+        
         <!-- #region Social Media Section -->
         <div class="social-media-section">
             <a href="https://twitter.com/TUKYOWAVE" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
@@ -72,10 +80,12 @@
         
         <!-- #region Branding Section -->
         <div class="branding-section">
-            • Tukyo Games •
+            <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a>
         </div>
         <!-- #endregion Branding Section -->
+    
     </div>
+
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>

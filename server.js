@@ -8,6 +8,8 @@ const port = 3000;
 let attempts = 0;
 const maxAttempts = 4;
 
+let guesses = [];
+
 // Function to generate a random word
 const fs = require('fs');
 
@@ -65,6 +67,7 @@ app.get('/guess', (req, res) => {
     const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
     const fiveLetterWords = words.map(word => word.replace('\r', '')).filter(word => word.length === 5);
     console.log('Word list:', fiveLetterWords); // Print out the word list
+    console.log('Correct word:', correctWord.toLowerCase()); // Print out the correct word
     console.log('Guessed word:', guessedWord.toLowerCase()); // Print out the guessed word
     if (!fiveLetterWords.includes(guessedWord.toLowerCase())) {
         return res.send({ error: 'This word is not valid!' });
@@ -76,6 +79,13 @@ app.get('/guess', (req, res) => {
     const result = checkWord(guessedWord.toLowerCase());
     const isWin = guessedWord.toLowerCase() === correctWord;
 
+    // Store the guess and its result
+    guesses.push({
+        word: guessedWord.toLowerCase(),
+        result: result,
+        isWin: isWin
+    });
+
     if (attempts >= maxAttempts || isWin) {
         return res.send({
             result, 
@@ -86,7 +96,13 @@ app.get('/guess', (req, res) => {
         });
     }
 
-    res.send({ result, gameOver: false, isWin, attemptsLeft: maxAttempts - attempts });
+    res.send({
+        result,
+        guesses: guesses, // Send the guesses array in the response
+        gameOver: false,
+        isWin,
+        attemptsLeft: maxAttempts - attempts
+    });
 });
 
 // Function that checks the guessed word based on the input word against the correct word
