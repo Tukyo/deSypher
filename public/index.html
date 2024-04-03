@@ -33,11 +33,12 @@
         <div class="rules-dropdown">
             <button class="dropdown-button">How to Play</button>
         </div>
-    </div>
 
         <!-- TODO: Add Keyboard Helper Section-->
         <!-- <i class="fa-regular fa-keyboard"></i> -->
 
+    </div>
+    
     <div class="main-content">
         <img src="assets/logo.png" alt="Game Logo" class="game-logo">
 
@@ -48,6 +49,7 @@
                 <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
                 <li><span class="color-box red"></span> Incorrect letter.</li>
             </ul>
+            <h4>For more help, check out the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
         </div>
 
         <button id="playButton" type="button" class="game-button play-button">Play!</button>
@@ -66,6 +68,7 @@
             
         </form>
         <!-- #endregion Puzzle Section -->
+    
     </div>
 
     <div class= "footer">   
@@ -78,11 +81,29 @@
         </div>
         <!-- #endregion Social Media Section -->
         
-        <!-- #region Branding Section -->
-        <div class="branding-section">
+        <!-- #region Page Navigation Section -->
+        <div class="page-navigation-section">
             <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a>
         </div>
-        <!-- #endregion Branding Section -->
+        <!-- #endregion Page Navigation Section -->
+
+        <!-- #region Music Player Section -->
+        <div class="music-player" id="musicPlayer" style="display: none;">
+            <audio id="music">
+                Your browser does not support the audio element.
+            </audio>
+            <div class="music-controls">
+                <button id="prevTrack"><i class="fa-solid fa-backward-fast"></i></button>
+                <button id="playPauseBtn"><i class="fa-solid fa-play"></i></button>
+                <button id="loopToggle"><i class="fa-solid fa-repeat"></i></button>
+                <button id="nextTrack"><i class="fa-solid fa-forward-fast"></i></button>
+                <div class="music-progress-container" id="musicProgressContainer">
+                    <div id="musicProgressBar" class="music-progress-bar"></div>
+                </div>
+                <div id="song-info"></div>
+            </div>
+        </div>     
+        <!-- #endregion Music Player Section -->
     
     </div>
 

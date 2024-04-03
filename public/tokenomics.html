@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>deSypher • About</title>
+    <title>deSypher • Tokenomics</title>
     <link rel="stylesheet" href="style.css">
 
     <!-- #region Favicon -->
@@ -13,18 +13,34 @@
     <!-- #endregion Favicon -->
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body background-color= black>
-
+<body background-color="black">
+    <div class="tokenomics-main-section">
+        <h1>Tokenomics</h1>
+        <p><span class="tokenomics-sub-header">Contract Address:</span> <span class="tokenomics-content" id="address-text">0xaCb1B77a14058e2a88A12cCE6b4800864f98b521</span> <i id="copy-icon" class="fa-regular fa-copy"></i></p>
+        <p><span class="tokenomics-sub-header">Total Supply:</span> <span class="tokenomics-content">1,000,000,000</span></p>
+        <p><span class="tokenomics-sub-header">Blockchain:</span> <span class="tokenomics-content">Base Mainnet</span></p>
+        <p><span class="tokenomics-sub-header">Liquidity:</span> <span class="tokenomics-content">Uniswap</span></p>
+        <p><span class="tokenomics-sub-header">Ticker:</span> <span class="tokenomics-content">SYPHER</span></p>
+    </div>
+    <div class="distribution-section">
+        <h1>Distribution</h1>
+        <p>The initial circulating supply of tokens is 750,000,000. These tokens have been distributed as seen in the pie chart above. The remaining 250,000,000 tokens will be used as emissions for player rewards, airdrops, and future development purposes.</p>
+        <canvas id="emissionChart" style="float: left; width: 50%;"></canvas>
+        <canvas id="distributionChart" style="float: right; width: 50%;"></canvas>
+        <!-- <p id= "distribution-description-2">The distribution schedule and allocations of SYPHER tokens have been scrutinized to allow for players to win tokens without draining the pool. The goal is to not create strong selling pressure by emitting tokens to holders or for marketing, but to reward skilled players.</p> -->
+    </div>    
 </body>
 
 <div class= "footer">     
-    <!-- #region Branding Section -->
-    <div class="branding-section">
+    <!-- #region Page Navigation Section -->
+    <div class="page-navigation-section">
         <a href="/index.html">Home</a> • <a href="/about.html">About</a>
     </div>
-    <!-- #endregion Branding Section -->
+    <!-- #endregion Page Navigation Section -->
 </div>
+<script src="tokenomics.js"></script>
 </body>
 </html>

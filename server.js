@@ -1,3 +1,6 @@
+// This script handles the main portion of server-side functionality for the word game
+// It serves the static files, and handles the game logic
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -5,27 +8,16 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-let attempts = 0;
 const maxAttempts = 4;
+const fs = require('fs'); // For choosing the random word from the filesystem
+
+let attempts = 0;
 
 let guesses = [];
 
-// Function to generate a random word
-const fs = require('fs');
-
-// Function to generate a random word
-function generateRandomWord() {
-    const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
-    const fiveLetterWords = words.filter(word => word.trim().replace('\r', '').length === 5);
-    return fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].replace('\r', '').toLowerCase();
-}
-
 // Generate a random word when the server launches
-let correctWord = generateRandomWord();
-
-// const correctWord = "risen"
-
-// console.log(`The correct word is: ${correctWord}`);
+// TODO: Change this to generate a new word for each game upon wallet transaction
+let correctWord = chooseWord();
 
 // #region Setup & CORS
 // Define your website's origin
@@ -55,6 +47,7 @@ app.get('/', (req, res) => {
 });
 // #endregion Setup & CORS
 
+// #region Word Game Main Logic
 // Getter function that handles the guess check, and the attempts of guesses
 app.get('/guess', (req, res) => {
     const guessedWord = req.query.word;
@@ -66,8 +59,8 @@ app.get('/guess', (req, res) => {
     // Check if the word is in the word list
     const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
     const fiveLetterWords = words.map(word => word.replace('\r', '')).filter(word => word.length === 5);
-    console.log('Word list:', fiveLetterWords); // Print out the word list
-    console.log('Correct word:', correctWord.toLowerCase()); // Print out the correct word
+    // console.log('Word list:', fiveLetterWords); // Print out the word list
+    // console.log('Correct word:', correctWord.toLowerCase()); // Print out the correct word
     console.log('Guessed word:', guessedWord.toLowerCase()); // Print out the guessed word
     if (!fiveLetterWords.includes(guessedWord.toLowerCase())) {
         return res.send({ error: 'This word is not valid!' });
@@ -105,6 +98,13 @@ app.get('/guess', (req, res) => {
     });
 });
 
+// Function to generate a random word
+function chooseWord() {
+    const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
+    const fiveLetterWords = words.filter(word => word.trim().replace('\r', '').length === 5);
+    return fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].replace('\r', '').toLowerCase();
+}
+
 // Function that checks the guessed word based on the input word against the correct word
 function checkWord(inputWord) {
     let result = new Array(inputWord.length).fill(null).map(() => ({ letter: '', status: 'incorrect' }));
@@ -133,6 +133,7 @@ function checkWord(inputWord) {
 
     return result;
 }
+// #endregion Word Game Main Logic
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

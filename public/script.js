@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {})
     const audioPool = [];
     const poolSize = 5; // Adjust based on needs and testing
     for (let i = 0; i < poolSize; i++) {
-        audioPool.push(new Audio('assets/hover_sound.ogg'));
+        audioPool.push(new Audio('assets/audio/hover-sound.ogg'));
     }
     let audioIndex = 0;
 
@@ -44,6 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {})
             alert('The word must be exactly 5 letters long.');
             return; // Exit the function early if the word is not 5 letters
         }
+
+        if (word.toLowerCase() === 'music') {
+            console.log('Cheat code activated: Revealing music player.');
+            revealMusicPlayer();
+            return; // Do not proceed with the fetch request
+        }
+
         fetch(`/guess?word=${word}`)
             .then(response => response.json())
             .then(data => {
@@ -111,6 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {})
                 // If this is the first enabled input, mark its index
                 if (firstEnabledInputIndex === -1) firstEnabledInputIndex = i;
             }
+
+            addAudioListener(input);
     
             row.appendChild(input);
         }
@@ -167,6 +176,18 @@ document.addEventListener('DOMContentLoaded', function () {})
         });
     }
 
+    function addAudioListener(element) {
+        element.addEventListener('mouseenter', () => {
+            // Use an audio object from the pool
+            const sound = audioPool[audioIndex];
+            sound.currentTime = 0; // Rewind to start
+            sound.play().catch(error => console.log("Error playing sound:", error));
+    
+            // Move to the next audio object in the pool for the next event
+            audioIndex = (audioIndex + 1) % poolSize;
+        });
+    }
+
     // Add listeners to the initial row of inputs
     const initialInputs = document.querySelectorAll('.puzzle-input');
     addInputListeners(initialInputs);
@@ -220,6 +241,9 @@ document.addEventListener('DOMContentLoaded', function () {})
         let currentPosition = 0;
         let timer;
         const CODE_TIMEOUT = 2000; // Time allowed between key presses in milliseconds
+        const songs = [
+            'vaang-h4ck3rm0d3act1v4t3d.ogg', 'tukyo-deSypher.ogg', 'vaang-caliente.ogg'
+        ];
     
         document.addEventListener('keydown', (e) => {
             if (konamiCode[currentPosition] === e.code) {
@@ -229,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {})
                 clearTimeout(timer);
                 if (currentPosition === konamiCode.length) {
                     console.log("Code entered!");
-                    playMusic();
+                    revealMusicPlayer();
                     currentPosition = 0; // Reset the position for the next attempt
                 } else {
                     timer = setTimeout(() => {
@@ -242,14 +266,106 @@ document.addEventListener('DOMContentLoaded', function () {})
                 currentPosition = 0; // Reset the position if the wrong key is pressed
             }
         });
-    
-        function playMusic() {
-            var music = new Audio('/assets/h4ck3rm0d3act1v4t3d.ogg');
-            music.loop = true; // Enable looping
+
+        window.revealMusicPlayer = function() {
+            document.getElementById('musicPlayer').style.display = 'block';
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const nextTrackBtn = document.getElementById('nextTrack');
+            const prevTrackBtn = document.getElementById('prevTrack');
+            const loopToggleBtn = document.getElementById('loopToggle');
+            const music = document.getElementById('music');
+            const progressBar = document.getElementById('musicProgressBar');
+            const progressContainer = document.getElementById('musicProgressContainer');
+            let currentIndex = Math.floor(Math.random() * songs.length);
+            let isLooping = false;
         
-            music.play()
-                .then(() => console.log("Music playback started successfully and will loop."))
-                .catch(error => console.error("Error starting music playback:", error));
+            function playSong(index) {
+                const selectedSong = songs[index];
+                music.src = `assets/audio/${selectedSong}`;
+                music.play()
+                    .then(() => {
+                        console.log("Music playback started successfully with " + selectedSong);
+                        playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+
+                        // Extract artist and song name from the filename
+                        const [artist, songWithExtension] = selectedSong.split('-');
+                        const songName = songWithExtension.replace('.ogg', '');
+
+                        // Update the song info display
+                        document.getElementById('song-info').textContent = `${artist} - ${songName}`;
+                    })
+                    .catch(error => console.error("Error starting music playback:", error));
+            }
+        
+            function goToNextTrack() {
+                currentIndex = (currentIndex + 1) % songs.length; // Go to next track, loop to start if at end
+                playSong(currentIndex);
+            }
+        
+            playSong(currentIndex);
+
+            function updateProgressBar() {
+                if (music.duration) {
+                    const percentage = (music.currentTime / music.duration) * 100;
+                    progressBar.style.width = percentage + '%';
+                }
+            }
+        
+            music.addEventListener('timeupdate', updateProgressBar);
+
+            // Function to jump to a different part of the song
+            function setPlaybackPosition(e) {
+                const width = progressContainer.clientWidth; // Width of the container
+                const clickX = e.offsetX; // X position of the click within the container
+                const duration = music.duration; // Total duration of the song
+
+                music.currentTime = (clickX / width) * duration; // Calculate and set the new current time
+            }
+
+            progressContainer.addEventListener('click', setPlaybackPosition);
+            music.addEventListener('timeupdate', updateProgressBar);
+        
+            playPauseBtn.addEventListener('click', () => {
+                if (music.paused) {
+                    music.play()
+                        .then(() => {
+                            console.log("Music playback resumed with " + songs[currentIndex]);
+                            playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                        })
+                        .catch(error => console.error("Error resuming music playback:", error));
+                } else {
+                    music.pause();
+                    console.log("Music playback paused.");
+                    playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                }
+            });
+        
+            nextTrackBtn.addEventListener('click', () => {
+                goToNextTrack();
+            });
+        
+            prevTrackBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + songs.length) % songs.length; // Go to previous track, loop to end if at start
+                playSong(currentIndex);
+            });
+        
+            loopToggleBtn.addEventListener('click', () => {
+                isLooping = !isLooping;
+                music.loop = isLooping;
+                if (isLooping) {
+                    loopToggleBtn.style.color = '#4CAF50'; // Example: green color when active
+                } else {
+                    loopToggleBtn.style.color = 'white'; // Revert to original color when not active
+                }
+                console.log("Looping " + (isLooping ? "enabled" : "disabled"));
+            });
+        
+            // Handle automatic track change when a song ends
+            music.addEventListener('ended', () => {
+                if (!isLooping) {
+                    goToNextTrack();
+                }
+            });
         }
     });
     //#endregion Cheat Codes
