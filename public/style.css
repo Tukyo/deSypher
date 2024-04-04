@@ -503,7 +503,7 @@ body {
 .about-page-body {
     display: flex;
 }
-.what-is-desypher-section, .getting-started-section, .funding-wallet-section{
+.what-is-desypher-section, .getting-started-section, .funding-wallet-section {
     opacity: 0%;
     position: relative;
     top: 5px;
@@ -606,9 +606,6 @@ body {
     font-weight: bold;
     font-size: 18px
 }
-/* .tokenomics-content {
-
-} */
 #copy-icon {
     opacity: 0%;
     animation: transitionScale .5s forwards;
@@ -634,6 +631,26 @@ body {
 }
 
 /* #endregion Tokenomics Page */
+
+/* #region Disclaimer Page */
+.disclaimer-section {
+    opacity: 0%;
+    position: relative;
+    top: 5px;
+    background-color: #000000a6;
+    border-left: 2px solid #00ff005f;
+    max-width: 600px;
+    text-align: left;
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    padding: 12px 16px;
+    z-index: 1;
+    margin-bottom: 20px;
+}
+.disclaimer-section {
+    animation: tvScreenOn 0.5s forwards;
+    animation-delay: 0.25s;
+}
+/* #endregion Disclaimer Page */
 
 /* #region Page Navigation */
 .page-navigation-section {
@@ -669,6 +686,10 @@ body {
 /* #region Mobile-specific adjustments */
 @media (max-width: 600px) {
     
+    .page-navigation-section {
+        margin-bottom: 25px;
+    }
+
     /* #region Home Page Adjustments */
     .game-logo {
         max-width: 80%; /* Smaller logo on smaller screens */
@@ -709,6 +730,13 @@ body {
         right: 13px;
         padding: 10px 10px;
     }
+    .play-button {
+        max-width: 250px;
+        font-size: 14px;
+    }
+    .social-media-section {
+        margin-bottom: 15px;
+    }
     /* #endregion Home Page Adjustments */
 
     /* #region About Page Adjustments */
@@ -729,6 +757,9 @@ body {
 
     #address-text, #copy-icon {
         font-size: 12px;
+    }
+    #distributionChart, #emissionChart {
+        max-width: 100%;
     }
 
     /* #endregion Tokenomics Page Adjustments */

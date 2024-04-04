@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
         datasets: [{
             label: 'Token Distribution',
             data: Object.values(distributionData),
-            hoverOffset: 40,
+            hoverOffset: 25,
             borderWidth: 0,
             borderRadius: 5,
             spacing: 1
@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 0,
+                    top: 15,
                     right: 15,
-                    bottom: 0,
+                    bottom: 15,
                     left: 15
                 }
             },
@@ -120,7 +120,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: {
                     beginAtZero: true
                 }
-            }
+            },
+            layout: {
+                padding: {
+                    top: 15,
+                    right: 15,
+                    bottom: 15,
+                    left: 15
+                }
+            },
         }
     };
 

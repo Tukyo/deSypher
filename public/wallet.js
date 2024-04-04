@@ -39,53 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
             connectWallet();
         }
     });
-    // Add click event listener to the play button
-    playButton.addEventListener('click', async function(event) {
-        if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const accounts = await provider.listAccounts();
-            const network = await provider.getNetwork();
-            const chainId = network.chainId;
-            if (accounts.length === 0 ) {
-                // No wallet is connected, prevent the button from doing anything
-                event.preventDefault();
-                playButton.textContent = "No Wallet Connected!";
-                console.log("No wallet connected");
-                return;
-            }
-            if (chainId !== REQUIRED_CHAIN_ID) {
-                // The player is on the wrong chain, prevent the button from doing anything
-                event.preventDefault();
-                playButton.textContent = "Please switch to Base Mainnet!";
-                console.log("Wrong chain");
-                return;
-            }
-            if (chainId === REQUIRED_CHAIN_ID) {
-                const balance = await checkTokenBalance();
-
-                if (balance < minimumBalance) {
-                    // The player does not have the minimum balance, prevent the button from doing anything
-                    event.preventDefault();
-                    playButton.textContent = `${minimumBalance} SYPHER tokens required!`;
-                    console.log("Insufficient balance");
-                    return;
-                } else {
-                    // Hide the Play button
-                    playButton.style.display = 'none';
-                    // Show the form
-                    form.style.display = 'block';
-        
-                    console.log("Wallet connected, and player is on the correct chain, game started.");
-                }
-            }
-        } else {
-            // Wallet is not installed, prevent the button from doing anything
-            event.preventDefault();
-            playButton.textContent = "No Wallet Installed!";
-            console.log("Wallet is not installed");
-            return;
-        }
-    });
     // Function to connect to the wallet
     async function connectWallet() {
         if (window.ethereum) {
@@ -142,6 +95,87 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     // #endregion Manual Wallet Connection
+
+    // Add click event listener to the play button
+    playButton.addEventListener('click', async function(event) {
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const accounts = await provider.listAccounts();
+            const network = await provider.getNetwork();
+            const chainId = network.chainId;
+            if (accounts.length === 0 ) {
+                event.preventDefault();
+                playButton.textContent = "No Wallet Connected!";
+                console.log("No wallet connected");
+                return;
+            }
+            if (chainId !== REQUIRED_CHAIN_ID) {
+                event.preventDefault();
+                playButton.textContent = "Please switch to Base Mainnet!";
+                console.log("Wrong chain");
+                return;
+            }
+            if (chainId === REQUIRED_CHAIN_ID) {
+                const balance = await checkTokenBalance();
+    
+                if (balance < minimumBalance) {
+                    event.preventDefault();
+                    playButton.textContent = `${minimumBalance} SYPHER tokens required!`;
+                    console.log("Insufficient balance");
+                    return;
+                }
+                else {
+                    console.log("All checks passed. Starting game...");
+                    playGame();
+                }
+            }
+        } else {
+            event.preventDefault();
+            playButton.textContent = "No Wallet Installed!";
+            console.log("Wallet is not installed");
+            return;
+        }
+    });
+
+    function playGame() {
+        // If all the wallet checks pass, then perform the reCAPTCHA verification
+        window.onSubmit = async function(token) {
+            console.log("reCAPTCHA token generated:", token);
+
+            try {
+                console.log("Sending reCAPTCHA token to server...");
+
+                const response = await fetch('/verify_recaptcha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: token })
+                });
+
+                console.log("Received response from server:", response);
+
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log("reCAPTCHA verification successful, starting game...");
+
+                    // Hide the Play button
+                    playButton.style.display = 'none';
+                    // Show the form
+                    form.style.display = 'block';
+
+                    console.log("Wallet connected, reCaptcha verified, and player is on the correct chain, game started.");
+                } else {
+                    console.log("reCAPTCHA verification failed");
+                }
+            } catch (error) {
+                console.error("Error during reCAPTCHA verification:", error);
+            }
+        }
+
+        grecaptcha.execute();
+    }
 
     // #region Updating Wallet Connect Button
     // Function to update the button text with the wallet address

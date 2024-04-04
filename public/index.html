@@ -49,10 +49,18 @@
                 <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
                 <li><span class="color-box red"></span> Incorrect letter.</li>
             </ul>
-            <h4>For more help, check out the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
+            <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
         </div>
 
-        <button id="playButton" type="button" class="game-button play-button">Play!</button>
+        <button
+            id="playButton"
+            type="button"
+            class="game-button play-button g-recaptcha"
+            data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq"
+            data-theme="dark"
+            data-callback="onSubmit">
+            Play!
+        </button>
         
         <!-- #region Puzzle Section -->
         <form id="wordPuzzleForm" style="display: none;">
@@ -83,7 +91,7 @@
         
         <!-- #region Page Navigation Section -->
         <div class="page-navigation-section">
-            <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a>
+            <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a> • <a href="/legal.html">Legal</a>
         </div>
         <!-- #endregion Page Navigation Section -->
 
@@ -108,6 +116,7 @@
     </div>
 
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
 </body>

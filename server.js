@@ -135,6 +135,42 @@ function checkWord(inputWord) {
 }
 // #endregion Word Game Main Logic
 
+
+const axios = require('axios');
+
+app.post('/verify_recaptcha', express.json(), async (req, res) => {
+    const token = req.body.token;
+
+    console.log("Received reCAPTCHA token from client:", token); // Log the received token
+
+    try {
+        console.log("Sending reCAPTCHA token to Google for verification..."); // Log before sending the token
+
+        const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
+            params: {
+                secret: '6Ldq-60pAAAAAH3juNkbSpNZ34UBNoBksfXmiUgd',
+                response: token
+            }
+        });
+
+        console.log("Received response from Google:", response.data); // Log the received response
+
+        const data = response.data;
+
+        if (data.success) {
+            console.log("reCAPTCHA verification successful"); // Log on successful verification
+            res.json({ success: true });
+        } else {
+            console.log("reCAPTCHA verification failed"); // Log on failed verification
+            res.json({ success: false });
+        }
+    } catch (error) {
+        console.error("Error during reCAPTCHA verification:", error);
+        res.status(500).json({ success: false });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
 });
