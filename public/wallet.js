@@ -468,44 +468,53 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // If all the wallet checks pass, then perform the reCAPTCHA verification
     function reCaptchaVerification() {
-        window.onSubmit = async function(token) {
-            console.log("reCAPTCHA token generated:", token);
-            try {
-                console.log("Sending reCAPTCHA token to server...");
-                const response = await fetch('/verify_recaptcha', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ token: token })
-                });
-
-                console.log("Received response from server:", response);
-                const data = await response.json();
-                if (data.success) {
-                    console.log("reCAPTCHA verification successful, checking for token approval...");
-                    // Check if the player has allowed the game smart contract to spend their tokens
-                    const hasSufficientAllowance = await checkTokenAllowance();
-                    if (!hasSufficientAllowance) {
-                        console.log("Player has not approved token spend yet, attempting to get approval...");
-                        const approvalSuccess = await approveTokenSpend();
-                        if (!approvalSuccess) {
-                            console.log("Token spend approval failed");
-                            return; // Stop the flow if the user doesn't approve the spend
-                        }
-                    }
-
-                    await startGame(); // Proceed to start the game if allowance is sufficient or after successful approval
-                } else {
-                    console.log("reCAPTCHA verification failed");
-                }
-            } catch (error) {
-                console.error("Error during reCAPTCHA verification:", error);
-            }
-        }
-
-        grecaptcha.execute();
-    }
+      window.onSubmit = async function(token) {
+          console.log("reCAPTCHA token generated:", token);
+          try {
+              console.log("Sending reCAPTCHA token to server...");
+              const response = await fetch('/verify_recaptcha', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ token: token })
+              });
+  
+              console.log("Received response from server:", response);
+              const data = await response.json();
+              console.log("Server response data:", data);
+              if (data.success) {
+                  console.log("reCAPTCHA verification successful, checking for token approval...");
+                  const hasSufficientAllowance = await checkTokenAllowance();
+                  console.log("Token allowance check:", hasSufficientAllowance);
+                  if (!hasSufficientAllowance) {
+                      console.log("Player has not approved token spend yet, attempting to get approval...");
+                      const approvalSuccess = await approveTokenSpend();
+                      console.log("Token spend approval status:", approvalSuccess);
+                      if (!approvalSuccess) {
+                          console.log("Token spend approval failed");
+                          return; // Stop the flow if the user doesn't approve the spend
+                      }
+                  }
+                  console.log("Proceeding to start the game...");
+                  await startGame(); // Proceed to start the game if allowance is sufficient or after successful approval
+              } else {
+                  console.log("reCAPTCHA verification failed");
+              }
+          } catch (error) {
+              console.error("Error during reCAPTCHA verification:", error);
+          }
+      }
+  
+      console.log("Executing reCAPTCHA...");
+      grecaptcha.execute();
+  }
+  
+  // Ensure this function is called after the page and grecaptcha library have fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+      reCaptchaVerification();
+  }, false);
+  
 
     // #region Updating Wallet Connect Button
     // Function to update the button text with the wallet address
@@ -691,10 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error("Failed to start the game on the blockchain:", error);
-            playButton.textContent = "Transaction Failed! Click to Retry...";
-            hideLoadingAnimation();
-            // Show the play button because the transaction failed
-            playButton.style.display = 'inline-block';
+            window.location.reload();
         }
     }
     // #endregion Token Allowance Check & Approval >>> !!! These functions need to be moved to the server side !!! <<<
