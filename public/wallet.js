@@ -456,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 else {
                     console.log("All wallet checks passed. Starting reCaptcha verification...");
+                    playButton.disabled = true;
                     reCaptchaVerification();
                 }
             }
