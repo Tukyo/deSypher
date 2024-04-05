@@ -1,18 +1,348 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
     // Base Mainnet
-    const REQUIRED_CHAIN_ID = 8453;
+    const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453
 
     // Replace with actual token contract address <<<<!!!
-    const tokenContractAddress = '0xa66083ABC73BAdf691Fc45178577216410264C0A';
+    const tokenContractAddress = '0xb0292C7BcAD2196BE8e9534625Ca4B89b83c4e3F';
 
+    // #region ABI Constants
     // Replace with actual token contract ABI <<<<!!!
     const tokenContractABI = [
-        {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"_Token","type":"address"},{"internalType":"bool","name":"_status","type":"bool"}],"name":"SetLimitd","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"Tokenbuysasa","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"Tokesbb3286d","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"Tokssds415a9x","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"initToken","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"_tradingSD6","type":"address[]"},{"internalType":"bool","name":"_status","type":"bool"}],"name":"openTt","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}
-    ];
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "allowance",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "approve",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "success",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "balanceOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "decimals",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "name",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "symbol",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalSupply",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "transfer",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "success",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "transferFrom",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "success",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+    const gameContractABI = [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_sypherTokenAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "player",
+              "type": "address"
+            }
+          ],
+          "name": "GameStarted",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "costToPlay",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "player",
+              "type": "address"
+            }
+          ],
+          "name": "playGame",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "sypherToken",
+          "outputs": [
+            {
+              "internalType": "contract ISypherToken",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "withdrawTokens",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+    // #endregion ABI Constants
+
+    // Replace with actual game smart contract address <<<<!!!
+    const gameContractAddress = '0x6D29342676DF775069480c1f199BbCf8Ac91bE9d';
 
     const connectButton = document.getElementById('connect-button');
     const playButton = document.getElementById('playButton');
+    const loadingBar = document.querySelector('.loading-bar');
     const tokenBalanceSection = document.getElementById('token-balance-section');
     const minimumBalance = 0.001; // Cost to play the game
 
@@ -125,8 +455,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 else {
-                    console.log("All checks passed. Starting game...");
-                    playGame();
+                    console.log("All wallet checks passed. Starting reCaptcha verification...");
+                    reCaptchaVerification();
                 }
             }
         } else {
@@ -136,15 +466,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
     });
-
-    function playGame() {
-        // If all the wallet checks pass, then perform the reCAPTCHA verification
+    // If all the wallet checks pass, then perform the reCAPTCHA verification
+    function reCaptchaVerification() {
         window.onSubmit = async function(token) {
             console.log("reCAPTCHA token generated:", token);
-
             try {
                 console.log("Sending reCAPTCHA token to server...");
-
                 const response = await fetch('/verify_recaptcha', {
                     method: 'POST',
                     headers: {
@@ -154,18 +481,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 console.log("Received response from server:", response);
-
                 const data = await response.json();
-
                 if (data.success) {
-                    console.log("reCAPTCHA verification successful, starting game...");
+                    console.log("reCAPTCHA verification successful, checking for token approval...");
+                    // Check if the player has allowed the game smart contract to spend their tokens
+                    const hasSufficientAllowance = await checkTokenAllowance();
+                    if (!hasSufficientAllowance) {
+                        console.log("Player has not approved token spend yet, attempting to get approval...");
+                        const approvalSuccess = await approveTokenSpend();
+                        if (!approvalSuccess) {
+                            console.log("Token spend approval failed");
+                            return; // Stop the flow if the user doesn't approve the spend
+                        }
+                    }
 
-                    // Hide the Play button
-                    playButton.style.display = 'none';
-                    // Show the form
-                    form.style.display = 'block';
-
-                    console.log("Wallet connected, reCaptcha verified, and player is on the correct chain, game started.");
+                    await startGame(); // Proceed to start the game if allowance is sufficient or after successful approval
                 } else {
                     console.log("reCAPTCHA verification failed");
                 }
@@ -248,8 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 UpdateButtonWithIncorrectChainMessage();
                 console.error(`Please connect to the ${REQUIRED_CHAIN_ID} network`);
             }
-            // Call the function to check the wallet balance
-            checkTokenBalance();
+            checkTokenBalance(); // Call the function to check the wallet balance
         } else {
             tokenBalanceSection.style.display = 'none'; // Hide the token balance section if a Wallet is not installed
         }
@@ -287,14 +616,115 @@ document.addEventListener('DOMContentLoaded', function() {
             const decimals = await tokenContract.decimals();
             const adjustedBalance = ethers.utils.formatUnits(balance, decimals);
             console.log(`Signer address retrieved. Current Sypher balance: ${adjustedBalance}`);
-            
-            // Ensure the balance is always displayed with 6 decimal places
-            const formattedBalance = parseFloat(adjustedBalance).toFixed(6);
-            document.getElementById('token-balance').textContent = formattedBalance; // Update the token balance element with the formatted balance
+                     
+            updateWalletBalance(adjustedBalance);
             return adjustedBalance;
+
         } catch (error) {
             console.error("Error fetching token balance: " + error.message);
         }
     }
+    function updateWalletBalance(balance) {
+        console.log("Updating wallet balance display...");
+        const formattedBalance = parseFloat(balance).toFixed(6); // Formatting for display
+        document.getElementById('token-balance').textContent = formattedBalance; // Update UI
+        console.log(`Wallet balance updated: ${formattedBalance}`);
+    }
+
     // #endregion Wallet Balance Check
+
+    // #region Token Allowance Check & Approval >>> !!! These functions need to be moved to the server side !!! <<<
+    async function checkTokenAllowance() {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+        const playerAddress = await signer.getAddress();
+        const allowance = await tokenContract.allowance(playerAddress, gameContractAddress);
+    
+        const costToPlay = ethers.utils.parseUnits("10", 18); // Update with the actual cost
+    
+        return allowance.gte(costToPlay); // Returns true if allowance is greater than or equal to cost
+    }
+    
+    async function approveTokenSpend() {
+        const signer = provider.getSigner();
+        const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+        // Use maximum value for "unlimited" approval
+        const maxUint256 = ethers.constants.MaxUint256;
+        playButton.textContent = "Waiting on Approval...";
+        try {
+            const approvalTx = await tokenContract.approve(gameContractAddress, maxUint256);
+            await approvalTx.wait();
+            console.log("Approval transaction for token spend granted...");
+            return true;
+        } catch (error) {
+            console.error("Approval transaction failed:", error);
+            return false;
+        }
+    }
+
+    async function startGame() {
+        console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
+        playButton.textContent = "Waiting on transaction...";
+        const signer = provider.getSigner();
+        const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+        try {
+            const playGameTx = await gameContract.playGame(await signer.getAddress());
+            showLoadingAnimation();
+            console.log("Waiting for game transaction to be mined...");
+            await playGameTx.wait();
+            console.log("Game started successfully on blockchain");
+
+            await checkTokenBalance(); // Update the token balance after the game transaction
+    
+            // Now that the game transaction is successful, notify the server to start a new game
+            const response = await fetch('/start-game');
+            const data = await response.json();
+    
+            if (data.success) {
+                console.log("Server started a new game");
+                  // Show the form
+                  form.style.display = 'block';
+                  hideLoadingAnimationForGameplay();
+            } else {
+                console.error("Failed to start a new game on the server");
+            }
+        } catch (error) {
+            console.error("Failed to start the game on the blockchain:", error);
+            playButton.textContent = "Transaction Failed! Click to Retry...";
+            hideLoadingAnimation();
+            // Show the play button because the transaction failed
+            playButton.style.display = 'inline-block';
+        }
+    }
+    // #endregion Token Allowance Check & Approval >>> !!! These functions need to be moved to the server side !!! <<<
+
+    window.showLoadingAnimation = function() {
+      if (loadingBar) {
+        console.log("Showing loading bar...");
+        loadingBar.style.display = 'inline-block'; // Show the loadingBar
+          playButton.style.display = 'none'; // Hide the Play button
+      } else {
+          console.error('Loading Bar not found');
+      }
+    };
+
+    window.hideLoadingAnimation = function() {
+        if (loadingBar) {
+            console.log("Hiding loading bar...");
+            loadingBar.style.display = 'none'; // Hide the loadingBar
+            playButton.style.display = 'inline-block'; // Show the Play button again
+        } else {
+            console.error('Loading Bar not found');
+        }
+    };
+
+    window.hideLoadingAnimationForGameplay = function() {
+        if (loadingBar) {
+          console.log("Hiding loading bar because game started...");
+          loadingBar.style.display = 'none'; // Hide the loadingBar
+      } else {
+          console.error('Loading Bar not found');
+      }
+    }
 });

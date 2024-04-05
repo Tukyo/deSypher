@@ -1,9 +1,13 @@
 // This script handles the main portion of server-side functionality for the word game
 // It serves the static files, and handles the game logic
 
+const { ethers } = require('ethers');
 const express = require('express');
+const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
+
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -14,10 +18,6 @@ const fs = require('fs'); // For choosing the random word from the filesystem
 let attempts = 0;
 
 let guesses = [];
-
-// Generate a random word when the server launches
-// TODO: Change this to generate a new word for each game upon wallet transaction
-let correctWord = chooseWord();
 
 // #region Setup & CORS
 // Define your website's origin
@@ -98,6 +98,18 @@ app.get('/guess', (req, res) => {
     });
 });
 
+// Endpoint to start a new game
+app.get('/start-game', (req, res) => {
+    // Reset game state
+    correctWord = chooseWord();
+    attempts = 0;
+    guesses = [];
+
+    console.log('New game started, correct word:', correctWord); // For debugging
+    res.json({ success: true, message: "New game started" });
+});
+
+
 // Function to generate a random word
 function chooseWord() {
     const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
@@ -135,9 +147,7 @@ function checkWord(inputWord) {
 }
 // #endregion Word Game Main Logic
 
-
-const axios = require('axios');
-
+// #region reCAPTCHA Verification
 app.post('/verify_recaptcha', express.json(), async (req, res) => {
     const token = req.body.token;
 
@@ -169,7 +179,7 @@ app.post('/verify_recaptcha', express.json(), async (req, res) => {
         res.status(500).json({ success: false });
     }
 });
-
+// #endregion reCAPTCHA Verification
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

@@ -83,19 +83,31 @@ document.addEventListener('DOMContentLoaded', function () {})
             inputs[index].disabled = true; // Disable the input after the guess
         });
     
-        if (data.isWin) {
-            alert('Congratulations, you won!');
-            button.disabled = true;
-        } else if (data.gameOver) {
-            alert(`Game over! The correct word was ${data.correctWord}.`);
-            button.disabled = true;
+        if (data.isWin || data.gameOver) {
+            button.textContent = data.isWin ? "Congrats! You won! Play again?" : "Game Over... Try Again?";
+            button.disabled = false; // Make sure button is clickable
+    
+            // Change the button's event listener to refresh the page
+            button.onclick = function(event) {
+                event.preventDefault(); // Prevent form submission
+                window.location.reload(); // Refresh the page to start a new game
+            };
         } else {
             console.log(`Try again! Attempts left: ${data.attemptsLeft}`);
-            // Pass the last guess result to createInputRow
+            // Reset the button for regular game flow
+            button.textContent = "Submit";
+            button.disabled = false; // Ensure it's enabled for further guesses
+            button.onclick = null; // Remove onclick to prevent interfering with regular submit
+    
+            // Prepare for the next guess
             const newInputs = createInputRow(data.result); // Pass the result directly
             addInputListeners(newInputs);
+    
+            // Focus the first input in the new row for user convenience
+            if(newInputs.length > 0) newInputs[0].focus();
         }
     }
+    
     
     function createInputRow(lastGuessResult = []) {
         const inputContainer = document.getElementById('inputContainer');
@@ -145,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {})
         };
         return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
     }
-
     function addInputListeners(inputs) {
         inputs.forEach((input, index, array) => {
             // Skip disabled inputs on input
@@ -158,7 +169,6 @@ document.addEventListener('DOMContentLoaded', function () {})
                     array[nextIndex].focus();
                 }
             });
-    
             // Adjust backspace functionality to skip disabled inputs
             input.addEventListener('keydown', function (event) {
                 if (event.key === "Backspace" && input.value === '' && index > 0) {
@@ -175,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {})
             });
         });
     }
-
     function addAudioListener(element) {
         element.addEventListener('mouseenter', () => {
             // Use an audio object from the pool
