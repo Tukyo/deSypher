@@ -190,6 +190,18 @@ body {
 .puzzle-input:hover {
     scale: 2;
 }
+#correct-answer {
+    z-index: 1000;
+    padding: 10px 20px;
+    max-width: 200px;
+    background: black;
+    color: var(--desypher-green-main);
+    font-family: monospace, sans-serif;
+    outline: 2px solid var(--desypher-green-main);
+    border-radius: 10px;
+    display: block;
+    margin: 50px auto;
+}
 /* #endregion Main Content */
 
 /* #region Game Buttons */
@@ -287,107 +299,6 @@ body {
     background: var(--desypher-green-dark);
   }
 /* #endregion Scrollbar */
-
-/* #region Animations */
-@keyframes transitionUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px); /* Start slightly below the final position */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-@keyframes transitionDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px); /* Start slightly above the final position */
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-@keyframes transitionLeft {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-@keyframes transitionRight {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-@keyframes transitionScale {
-    from {
-        opacity: 0;
-        scale: 1.25;
-    }
-    to {
-        opacity: 1;
-        transform: scale(var(--default-scale));
-    }
-}
-@keyframes transitionScaleDelayed {
-    0% {
-        opacity: 0;
-        scale: 0.05;
-    }
-    50% {
-        opacity: 0;
-        scale: 0.05;
-    }
-    75% {
-        opacity: .5;
-        scale: 0.35;
-    }
-    100% {
-        opacity: 1;
-        scale: 0.25;
-    }
-}
-@keyframes fall {
-    from {transform: translateY(-100%);}
-    to {transform: translateY(50vh);}
-}
-@keyframes pulse {
-    0%, 100% {transform: scale(1);}
-    50% {transform: scale(1.1);}
-}
-@keyframes tvScreenOn {
-    0% { opacity: 0; transform: scaleY(0); }
-    50% { opacity: 1; transform: scaleY(1.1); }
-    100% { opacity: 1; transform: scaleY(1); }
-}
-@keyframes tvScreenOff {
-    0% {transform: scaleY(1); }
-    50% {transform: scaleY(1.1); }
-    100% {transform: scaleY(0); }
-}
-@keyframes foldOut {
-    0% {
-        transform: scaleY(0);
-        height: 0;
-        opacity: 0;
-    }
-    100% {
-        transform: scaleY(1);
-        height: auto;
-        opacity: 1;
-    }
-}
-/* #endregion Animations */
 
 /* #region Visual Effects */
 .spritesheet {
@@ -752,6 +663,107 @@ body {
   }
 }
 /* #endregion Loading Bar */
+
+/* #region Animations */
+@keyframes transitionUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* Start slightly below the final position */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes transitionDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px); /* Start slightly above the final position */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes transitionLeft {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes transitionRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes transitionScale {
+    from {
+        opacity: 0;
+        scale: 1.25;
+    }
+    to {
+        opacity: 1;
+        transform: scale(var(--default-scale));
+    }
+}
+@keyframes transitionScaleDelayed {
+    0% {
+        opacity: 0;
+        scale: 0.05;
+    }
+    50% {
+        opacity: 0;
+        scale: 0.05;
+    }
+    75% {
+        opacity: .5;
+        scale: 0.35;
+    }
+    100% {
+        opacity: 1;
+        scale: 0.25;
+    }
+}
+@keyframes fall {
+    from {transform: translateY(-100%);}
+    to {transform: translateY(50vh);}
+}
+@keyframes pulse {
+    0%, 100% {transform: scale(1);}
+    50% {transform: scale(1.1);}
+}
+@keyframes tvScreenOn {
+    0% { opacity: 0; transform: scaleY(0); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+    100% { opacity: 1; transform: scaleY(1); }
+}
+@keyframes tvScreenOff {
+    0% {transform: scaleY(1); }
+    50% {transform: scaleY(1.1); }
+    100% {transform: scaleY(0); }
+}
+@keyframes foldOut {
+    0% {
+        transform: scaleY(0);
+        height: 0;
+        opacity: 0;
+    }
+    100% {
+        transform: scaleY(1);
+        height: auto;
+        opacity: 1;
+    }
+}
+/* #endregion Animations */
 
 /* #region Mobile-specific adjustments */
 @media (max-width: 600px) {

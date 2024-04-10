@@ -21,16 +21,17 @@ let guesses = [];
 
 // #region Setup & CORS
 // Define your website's origin
-const allowedOrigins = ['http://localhost:3000']; // Add your website's domain here
+const allowedOrigins = ['http://localhost:3000', 'http://192.168.4.64:3000', "https://www.desypher.net/"]; // Add your website's domain here
 
 // CORS options
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
+    origin: function(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`Origin: ${origin} was not allowed by CORS!`); // Log the error origin
+        callback(new Error('Not allowed by CORS'));
+      }
     },
     optionsSuccessStatus: 200 // For legacy browser support
 };
@@ -110,7 +111,7 @@ app.get('/start-game', (req, res) => {
 });
 
 
-// Function to generate a random word
+// Function to grab a random word from the word list
 function chooseWord() {
     const words = fs.readFileSync('public/assets/five-letter-words.txt', 'utf8').split('\n');
     const fiveLetterWords = words.filter(word => word.trim().replace('\r', '').length === 5);

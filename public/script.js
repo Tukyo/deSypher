@@ -86,6 +86,20 @@ document.addEventListener('DOMContentLoaded', function () {})
         if (data.isWin || data.gameOver) {
             button.textContent = data.isWin ? "Congrats! You won! Play again?" : "Game Over... Try Again?";
             button.disabled = false; // Make sure button is clickable
+
+            if (!data.isWin && data.gameOver) {
+                // Check if the correctAnswer textbox already exists to prevent duplicates
+                let correctAnswerBox = document.getElementById('correct-answer');
+                if (!correctAnswerBox) {
+                    // Create and append the textbox if it does not exist
+                    correctAnswerBox = document.createElement('div');
+                    correctAnswerBox.id = 'correct-answer';
+                    // Convert the correct word to uppercase before setting it
+                    correctAnswerBox.textContent = `Correct Word: ${data.correctWord.toUpperCase()}`;
+                    // Append it to the container that holds the input rows
+                    document.getElementById('inputContainer').appendChild(correctAnswerBox);
+                }
+            }
     
             // Change the button's event listener to refresh the page
             button.onclick = function(event) {
@@ -106,9 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {})
             // Focus the first input in the new row for user convenience
             if(newInputs.length > 0) newInputs[0].focus();
         }
-    }
-    
-    
+    }    
     function createInputRow(lastGuessResult = []) {
         const inputContainer = document.getElementById('inputContainer');
         const row = document.createElement('div');
@@ -399,4 +411,4 @@ document.addEventListener('DOMContentLoaded', function () {})
             }
         });
     });
-    //#endregion Rules Dropdown   
+    //#endregion Rules Dropdown

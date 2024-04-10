@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (window.ethereum) {
+      var provider = new ethers.providers.Web3Provider(window.ethereum);
+      document.getElementById("playButton").classList.add("g-recaptcha");
+    }
 
     // Base Mainnet
     const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453
@@ -356,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        //const provider = new ethers.providers.Web3Provider(window.ethereum);
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
         const network = await provider.getNetwork();
         const chainId = network.chainId; // Add this line to declare the chainId variable
@@ -375,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Checking for wallet connection...");
             try {
                 await ethereum.request({ method: 'eth_requestAccounts' });
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                //const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const network = await provider.getNetwork();
                 const chainId = network.chainId;
 
@@ -426,10 +429,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // #endregion Manual Wallet Connection
 
+    // #region Play Button Event Listener
     // Add click event listener to the play button
     playButton.addEventListener('click', async function(event) {
         if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            //const provider = new ethers.providers.Web3Provider(window.ethereum);
             const accounts = await provider.listAccounts();
             const network = await provider.getNetwork();
             const chainId = network.chainId;
@@ -467,8 +471,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
     });
+    // #endregion Play Button Event Listener
+
+    // #region reCAPTCHA Verification Checks
     // If all the wallet checks pass, then perform the reCAPTCHA verification
-    function reCaptchaVerification() {
+   async function reCaptchaVerification() {
+      
       window.onSubmit = async function(token) {
           console.log("reCAPTCHA token generated:", token);
           try {
@@ -510,17 +518,59 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("Executing reCAPTCHA...");
       grecaptcha.execute();
   }
-  
   // Ensure this function is called after the page and grecaptcha library have fully loaded
   document.addEventListener('DOMContentLoaded', function() {
-      reCaptchaVerification();
+   // reCaptchaVerification();
   }, false);
-  
+  // #endregion reCAPTCHA Verification Checks
+
+    // #region Game Start Processing
+    async function startGame() {
+      console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
+      playButton.textContent = "Waiting on transaction...";
+      const signer = provider.getSigner();
+      const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+      try {
+          const playGameTx = await gameContract.playGame(await signer.getAddress());
+          showLoadingAnimation();
+          console.log("Waiting for game transaction to be mined...");
+          await playGameTx.wait();
+          console.log("Game started successfully on blockchain");
+
+          await checkTokenBalance(); // Update the token balance after the game transaction
+
+          // Now that the game transaction is successful, notify the server to start a new game
+          const response = await fetch('/start-game');
+          const data = await response.json();
+
+          if (data.success) {
+              console.log("Server started a new game");
+                // Show the form
+                form.style.display = 'block';
+                hideLoadingAnimationForGameplay();
+                // Clear the input fields for the new game
+                resetGameInputs();
+          } else {
+              console.error("Failed to start a new game on the server");
+          }
+      } catch (error) {
+          console.error("Failed to start the game on the blockchain:", error);
+          window.location.reload();
+      }
+    }
+
+    function resetGameInputs() {
+      const inputs = document.querySelectorAll('.puzzle-input');
+      inputs.forEach(input => {
+          input.value = ''; // Clear each input
+      });
+    }
+    // #endregion Game Start Processing
 
     // #region Updating Wallet Connect Button
     // Function to update the button text with the wallet address
     function updateButtonWithAddress(address) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        //const provider = new ethers.providers.Web3Provider(window.ethereum);
         provider.lookupAddress(address).then(ensName => {
             if (ensName) {
                 connectButton.textContent = `${ensName}`; // Display the ENS name if one exists
@@ -572,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if wallet is already connected when the page loads, if it is, do stuff..
     window.addEventListener('load', async () => {
         if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            //const provider = new ethers.providers.Web3Provider(window.ethereum);
             const network = await provider.getNetwork();
             const chainId = network.chainId;
             const accounts = await provider.listAccounts();
@@ -603,7 +653,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            //const provider = new ethers.providers.Web3Provider(window.ethereum);
             
             // Check the network
             const network = await provider.getNetwork();
@@ -640,12 +690,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('token-balance').textContent = formattedBalance; // Update UI
         console.log(`Wallet balance updated: ${formattedBalance}`);
     }
-
     // #endregion Wallet Balance Check
 
     // #region Token Allowance Check & Approval >>> !!! These functions need to be moved to the server side !!! <<<
     async function checkTokenAllowance() {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        //const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
         const playerAddress = await signer.getAddress();
@@ -672,40 +721,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     }
-
-    async function startGame() {
-        console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
-        playButton.textContent = "Waiting on transaction...";
-        const signer = provider.getSigner();
-        const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
-        try {
-            const playGameTx = await gameContract.playGame(await signer.getAddress());
-            showLoadingAnimation();
-            console.log("Waiting for game transaction to be mined...");
-            await playGameTx.wait();
-            console.log("Game started successfully on blockchain");
-
-            await checkTokenBalance(); // Update the token balance after the game transaction
-    
-            // Now that the game transaction is successful, notify the server to start a new game
-            const response = await fetch('/start-game');
-            const data = await response.json();
-    
-            if (data.success) {
-                console.log("Server started a new game");
-                  // Show the form
-                  form.style.display = 'block';
-                  hideLoadingAnimationForGameplay();
-            } else {
-                console.error("Failed to start a new game on the server");
-            }
-        } catch (error) {
-            console.error("Failed to start the game on the blockchain:", error);
-            window.location.reload();
-        }
-    }
     // #endregion Token Allowance Check & Approval >>> !!! These functions need to be moved to the server side !!! <<<
 
+    // #region Loading Animation Functions
     window.showLoadingAnimation = function() {
       if (loadingBar) {
         console.log("Showing loading bar...");
@@ -734,4 +752,5 @@ document.addEventListener('DOMContentLoaded', function() {
           console.error('Loading Bar not found');
       }
     }
+    // #endregion Loading Animation Functions
 });
