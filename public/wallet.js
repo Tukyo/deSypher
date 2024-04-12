@@ -529,7 +529,6 @@ document.addEventListener('DOMContentLoaded', function () {
   loadButton.addEventListener('click', (event) => handleButtonClick(loadButton, event));
   // #endregion Add Event Listeners to Game Buttons
 
-
   // #region NEW GAME / LOAD Game Button Processing
   async function handleButtonClick(button, event) {
     if (window.ethereum) {
@@ -585,7 +584,12 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     } else {
       event.preventDefault();
-      playButton.textContent = "No Wallet Installed!";
+      if (button === playButton) {
+        playButton.textContent = "No Wallet Installed!";
+      }
+      if (button === loadButton) {
+        loadButton.textContent = "No Wallet Installed!";
+      }
       console.log("Wallet is not installed");
       return;
     }
@@ -870,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   // #endregion Loading Animation Functions
 
-  // #region Restore Game Session (Load Game)
+  // #region Restore Game Session - LOAD GAME
   async function revealSessionRecoveryForm() {
     console.log("Revealing session recovery form...");
     // Hide the New Game/Load Game buttons
@@ -911,117 +915,106 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
   });
-  // #endregion Restore Game Session (Load Game)
+  // #endregion Restore Game Session - LOAD GAME
 
-// #region reCAPTCHA Section
-window.onSubmitPlay = async function (token) {
-  console.log("reCAPTCHA token generated:", token);
-  try {
-    console.log("Sending reCAPTCHA token to server...");
-    const response = await fetch('/verify_recaptcha', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token: token })
-    });
-
-    console.log("Received response from server:", response);
-    const data = await response.json();
-    console.log("Server response data:", data);
-    if (data.success) {
-      console.log("reCAPTCHA verification successful, checking for token approval...");
-      const hasSufficientAllowance = await checkTokenAllowance();
-      console.log("Token allowance check:", hasSufficientAllowance);
-      if (!hasSufficientAllowance) {
-        console.log("Player has not approved token spend yet, attempting to get approval...");
-        const approvalSuccess = await approveTokenSpend();
-        console.log("Token spend approval status:", approvalSuccess);
-        if (!approvalSuccess) {
-          console.log("Token spend approval failed");
-          return; // Stop the flow if the user doesn't approve the spend
-        }
-      }
-      console.log("Proceeding to start the game...");
-      await startGame(); // Proceed to start the game if allowance is sufficient or after successful approval
-    } else {
-      console.log("reCAPTCHA verification failed");
-    }
-  } catch (error) {
-    console.error("Error during reCAPTCHA verification:", error);
-  }
-}
-
-window.onSubmitLoad = async function (token) {
-  console.log("reCAPTCHA token generated:", token);
-  try {
-    console.log("Sending reCAPTCHA token to server...");
-    const response = await fetch('/verify_recaptcha', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token: token })
-    });
-
-    console.log("Received response from server:", response);
-    const data = await response.json();
-    console.log("Server response data:", data);
-    if (data.success) {
-      console.log("reCAPTCHA verification successful, revealing recovery form...");
-      revealSessionRecoveryForm();
-    } else {
-      console.log("reCAPTCHA verification failed");
-    }
-  } catch (error) {
-    console.error("Error during reCAPTCHA verification:", error);
-  }
-}
-
-async function reCaptchaInitialization() {
-  if (window.ethereum) {
+  // #region reCAPTCHA Section
+  window.onSubmitPlay = async function (token) {
+    console.log("reCAPTCHA token generated:", token);
     try {
-      const accounts = await provider.listAccounts();
-      if (accounts.length > 0) {
-        // Adding 'g-recaptcha' class to both buttons if an account is connected
-        playButton.classList.add("g-recaptcha");
-        loadButton.classList.add("g-recaptcha");
-        reCaptchaInitialized = true;
-        console.log("Wallet detected and account is connected. Adding reCAPTCHA script to NEW GAME & LOAD GAME buttons...");
+      console.log("Sending reCAPTCHA token to server...");
+      const response = await fetch('/verify_recaptcha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: token })
+      });
 
-        console.log("Starting to render reCAPTCHA for 'playButton'...");
-
-        grecaptcha.render('playButton', {
-          'sitekey' : '6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq', // Replace with your actual site key
-          'callback' : onSubmitPlay
-        });
-        
-        console.log("'playButton' reCAPTCHA rendering completed.");
-        
-        console.log("Starting to render reCAPTCHA for 'load-button'...");
-        
-        grecaptcha.render('load-button', {
-          'sitekey' : '6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq', // Replace with your actual site key
-          'callback' : onSubmitLoad
-        });
-        
-        console.log("'load-button' reCAPTCHA rendering completed.");
+      console.log("Received response from server:", response);
+      const data = await response.json();
+      console.log("Server response data:", data);
+      if (data.success) {
+        console.log("reCAPTCHA verification successful, checking for token approval...");
+        const hasSufficientAllowance = await checkTokenAllowance();
+        console.log("Token allowance check:", hasSufficientAllowance);
+        if (!hasSufficientAllowance) {
+          console.log("Player has not approved token spend yet, attempting to get approval...");
+          const approvalSuccess = await approveTokenSpend();
+          console.log("Token spend approval status:", approvalSuccess);
+          if (!approvalSuccess) {
+            console.log("Token spend approval failed");
+            return; // Stop the flow if the user doesn't approve the spend
+          }
+        }
+        console.log("Proceeding to start the game...");
+        await startGame(); // Proceed to start the game if allowance is sufficient or after successful approval
       } else {
-        console.log("No wallet accounts connected. reCAPTCHA not added.");
+        console.log("reCAPTCHA verification failed");
       }
     } catch (error) {
-      console.log("Error checking accounts:", error);
+      console.error("Error during reCAPTCHA verification:", error);
     }
   }
-}
+  window.onSubmitLoad = async function (token) {
+    console.log("reCAPTCHA token generated:", token);
+    try {
+      console.log("Sending reCAPTCHA token to server...");
+      const response = await fetch('/verify_recaptcha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: token })
+      });
 
-async function reCaptchaVerification() {
-  if (typeof grecaptcha !== 'undefined') {
-    console.log("Executing reCAPTCHA...");
-    grecaptcha.execute();
-  } else {
-    console.log("reCAPTCHA library is not loaded yet.");
+      console.log("Received response from server:", response);
+      const data = await response.json();
+      console.log("Server response data:", data);
+      if (data.success) {
+        console.log("reCAPTCHA verification successful, revealing recovery form...");
+        revealSessionRecoveryForm();
+      } else {
+        console.log("reCAPTCHA verification failed");
+      }
+    } catch (error) {
+      console.error("Error during reCAPTCHA verification:", error);
+    }
   }
-}
-// #endregion reCAPTCHA Section
+  async function reCaptchaInitialization() {
+    if (window.ethereum) {
+      try {
+        const accounts = await provider.listAccounts();
+        if (accounts.length > 0) {
+          // Adding 'g-recaptcha' class to both buttons if an account is connected
+          playButton.classList.add("g-recaptcha");
+          loadButton.classList.add("g-recaptcha");
+          reCaptchaInitialized = true;
+          console.log("Wallet detected and account is connected. Adding reCAPTCHA script to NEW GAME & LOAD GAME buttons...");
+
+          console.log("Starting to render reCAPTCHA for 'playButton'...");
+
+          grecaptcha.render('playButton', {
+            'sitekey': '6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq', // Replace with your actual site key
+            'callback': onSubmitPlay
+          });
+
+          console.log("'playButton' reCAPTCHA rendering completed.");
+
+          console.log("Starting to render reCAPTCHA for 'load-button'...");
+
+          grecaptcha.render('load-button', {
+            'sitekey': '6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq', // Replace with your actual site key
+            'callback': onSubmitLoad
+          });
+
+          console.log("'load-button' reCAPTCHA rendering completed.");
+        } else {
+          console.log("No wallet accounts connected. reCAPTCHA not added.");
+        }
+      } catch (error) {
+        console.log("Error checking accounts:", error);
+      }
+    }
+  }
+  // #endregion reCAPTCHA Section
 });
