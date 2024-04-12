@@ -55,14 +55,14 @@ body {
     right: 15px;
     z-index: 1000; /* High value to ensure it's on top of other elements */
     padding: 10px 20px;
+    border-radius: 10px;
     background: black;
     border-color: var(--desypher-green-main);
     color: white;
-    border-radius: 10px;
     cursor: pointer;
     font-family: monospace, sans-serif;
     animation: transitionRight 1s forwards;
-    animation-delay: 0.5s;
+    animation-delay: 0.25s;
 }
 #connect-button:hover {
     scale: 1.05;
@@ -79,18 +79,18 @@ body {
     scale: 0.25;
     position: fixed;
     top: -23px;
-    right: 120px;
+    right: 130px;
     z-index: 500;
     animation: transitionScaleDelayed .5s forwards;
     animation-delay: .5s;
     /* filter: drop-shadow(0 0 10px var(--coinbase-blue)) drop-shadow(0 0 20px var(--coinbase-blue)); */
 }
-#token-balance-section {
+#wallet-details-section {
     /* Default style when not connected */
     opacity: 0%;
     /* Default style when not connected */
     position: fixed;
-    top: 40px;
+    top: 45px;
     right: 5px;
     z-index: 500;
     background: black;
@@ -101,7 +101,7 @@ body {
     border-bottom: #0f3e07;
     max-width: 115px;
     font-size: small;
-    padding-top: 20px;
+    padding-top: 10px;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 10px;
@@ -109,9 +109,49 @@ body {
     text-align: right;
     scale: 0.85;
     animation: foldOut 1s forwards;
-    animation-delay: 2s;
+    animation-delay: 1s;
     transform-origin: top;
 }
+#token-balance-section {
+    /* Default style when not connected */
+    opacity: 0%;
+    /* Default style when not connected */
+    animation: transitionWipeLeft .5s forwards;
+    animation-delay: 1.5s;
+}
+#rewards-balance-section {
+    /* Default style when not connected */
+    opacity: 0%;
+    /* Default style when not connected */
+    animation: transitionWipeLeft .5s forwards;
+    animation-delay: 2s;
+}
+#claim-rewards-button {
+    /* Default style when not connected */
+    opacity: 0%;
+    /* Default style when not connected */
+    color: white;
+    background: linear-gradient(to left, #041f00 1%, black 99%);
+    border: black;
+    border-right: 2px solid var(--desypher-green-main);
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    padding: 2px 6px;
+    cursor: pointer;
+    z-index: 1;
+    animation: transitionWipeLeft .75s forwards;
+    animation-delay: 2.5s;
+}
+#claim-rewards-button:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%; /* Start the sheen effect from outside the left edge */
+    width: 75%; /* Width of the sheen effect */
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    animation: sheen 1s infinite;
+}
+
 /* #endregion Wallet Connect Section */
 
 /* #region Rules Dropdown Section */
@@ -120,9 +160,9 @@ body {
     position: fixed;
     top: 15px;
     left: 15px;
-    z-index: 1000; /* High value to ensure it's on top of other elements */
+    z-index: 1000;
     padding: 10px 20px;
-    background: #39e016; /* Change as per your design */
+    background: #39e016;
     color: black;
     padding: 10px 20px;
     border: black;
@@ -156,6 +196,58 @@ body {
     display: block;
     animation: tvScreenOn 0.5s ease;
 }
+#mute-button {
+    opacity: 0%;
+    position: fixed;
+    top: 60px;
+    left: 30px;
+    z-index: 1000;
+    color: var(--desypher-green-dark);
+    animation: transitionRight 1s forwards;
+    animation-delay: 1.25s;
+}
+#mute-button:hover {
+    color: var(--desypher-green-main);
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    cursor: pointer;
+}
+#keyboard-button {
+    position: fixed;
+    top: 60px;
+    left: 60px;
+    z-index: 1000;
+    color: var(--desypher-green-dark);
+}
+#keyboard-button:hover {
+    color: var(--desypher-green-main);
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    cursor: pointer;
+}
+#keyboard-helper {
+    display: none;
+    margin-top: 20px;
+    font-family: monospace, sans-serif;
+    text-align: center;
+}
+.keyboard-row {
+    margin: 5px;
+}
+.keyboard-button {
+    display: inline-block;
+    position: sticky;
+    width: 35px; /* Size of each key */
+    height: 35px;
+    line-height: 35px; /* Center the text vertically */
+    border: 2px solid var(--desypher-green-main);
+    padding: 10px 20px;
+    margin-right: 5px;
+    background-color: black;
+    border-radius: 10px; /* Consistent rounded corners */
+    user-select: none; /* Prevent text selection */
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2); /* Subtle shadow for depth */
+    color: white; /* Text color for visibility against background */
+}
+
 /* #endregion Rules Dropdown Section */
 
 /* #region Main Content */
@@ -209,7 +301,6 @@ body {
     background-color: var(--desypher-green-main);
     color: white;
     margin-top: 50px;
-    border: none;
     border-radius: 5px;
     padding: 15px 30px;
     font-size: 16px;
@@ -219,7 +310,6 @@ body {
     transition: background-color 0.3s ease; /* Smooth transition for hover effect */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     outline: none;
-    animation: transitionScale 2.5s;
 }
 .game-button:hover {
     scale: 1.15;
@@ -229,22 +319,56 @@ body {
 }
 .game-button:active {
     background-color: #194e0f; /* Even darker shade when pressed */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Smaller shadow for pressed effect */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 .game-button:focus {
-    border: 2px solid #0f3e07; /* Border for when the button is focused */
+    border: 2px solid #0f3e07;
 }
-.play-button {
+.play-button, #load-button {
     display: inline-block;
     width: 50%;
-    margin: 0 auto; /* Centers the button horizontally in its container */
-    margin-top: 100px;;
-    margin-bottom: 25px;
-    text-align: center; /* Centers the text horizontally */
+    margin: 0 auto;
+    margin-top: 20px;;
+    margin-bottom: 10px;
+    text-align: center;
     padding: 15px 30px;
     font-size: 24px;
     line-height: 1.25;
-    animation: transitionScale 2.5s, pulse 2s infinite ease-in-out 2.5s;
+}
+.play-button {
+    opacity: 0%;
+    border: none;
+    animation: transitionScale 2.5s forwards, pulse 2s infinite ease-in-out 2.5s;
+}
+#load-button {
+    opacity: 0%;
+    scale: 0.80;
+    background-color: black;
+    border-left: var(--desypher-green-main);
+    border-right : var(--desypher-green-main);;
+    border-radius: 5px;
+    border-color: var(--desypher-green-main);
+    max-width: 600px;
+    max-height: 75px;
+    animation: transitionUp 2.5s forwards;
+    animation-delay: .5s;
+}
+#load-button:hover {
+    scale: 0.85;
+    background-color: var(--desypher-green-main);
+}
+#retrieve-transaction {
+    opacity: 0%;
+    width: 750px;
+    align-self: center;
+    background-color: black;
+    color: white;
+    font-family: monospace, sans-serif;
+    font-size: 18px;
+    text-align: center;
+    border: 2px solid var(--desypher-green-main);
+    border-radius: 10px;
+    padding: 10px 20px;
 }
 /* #endregion Game Buttons */
 
@@ -266,14 +390,6 @@ body {
     margin: 0 10px; /* Spacing between icons */
     color: var(--desypher-green-main);
     font-size: 32px; /* Icon size */
-}
-.social-icon:nth-child(1) {
-    animation: transitionScale 8s;
-}
-.social-icon:nth-child(2) {
-    animation: transitionScale 5s;
-}
-.social-icon:nth-child(3) {
     animation: transitionScale 8s;
 }
 .social-icon:hover {
@@ -400,7 +516,7 @@ body {
 }
 
 .color-box.green {
-    background-color: lightgreen;
+    background-color: #39e016;
 }
 
 .color-box.yellow {
@@ -408,7 +524,7 @@ body {
 }
 
 .color-box.red {
-    background-color: lightcoral;
+    background-color: #de1717;
 }
 /* #endregion Color Key Section */
 
@@ -763,6 +879,52 @@ body {
         opacity: 1;
     }
 }
+@keyframes foldIn {
+    0% {
+        transform: scaleY(1);
+        height: auto;
+        opacity: 1;
+    }
+    100% {
+        transform: scaleY(0);
+        height: 0;
+        opacity: 0;
+    }
+}
+@keyframes foldInRemove {
+    0% {
+        transform: scaleY(1);
+        height: auto;
+        opacity: 1;
+    }
+    100% {
+        transform: scaleY(0);
+        height: 0;
+        opacity: 0;
+        display: none;
+    }
+}
+@keyframes transitionWipeLeft {
+    0% {
+      clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+      opacity: 0;
+    }
+    100% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      opacity: 1;
+    }
+  }
+@keyframes sheen {
+    0% {
+        left: -75%; /* Start from the left */
+    }
+    50% {
+        left: 100%; /* Move to the right, covering the entire button */
+    }
+    100% {
+        left: -75%; /* Return to start position */
+    }
+}
 /* #endregion Animations */
 
 /* #region Mobile-specific adjustments */
@@ -807,7 +969,8 @@ body {
     .puzzle-input:hover {
         scale: 1.25;
     }
-    #token-balance-section {
+    #wallet-details-section {
+        top: 40px;
         scale: 0.8;
         right: 13px;
         padding: 10px 10px;
@@ -818,6 +981,9 @@ body {
     }
     .social-media-section {
         margin-bottom: 15px;
+    }
+    #base-logo {
+        right: 110px;
     }
     /* #endregion Home Page Adjustments */
 

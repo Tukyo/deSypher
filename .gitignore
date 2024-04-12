@@ -3,5 +3,8 @@
 /scripts
 /cache
 /artifacts
+/assets/logo(old).png
 hardhat.config.js
+serviceAccountKey.json
+five-letter-words.txt
 .env

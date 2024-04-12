@@ -14,9 +14,9 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body bgcolor= black>
+<body background-color= black>
     
-    <div class= "header">
+    <div class= "header">        
         
         <!-- #region Wallet Connectivity Section -->
         <div class="wallet-connection-section">
@@ -24,19 +24,21 @@
             <div id="base-logo">
                 <img src="https://raw.githubusercontent.com/base-org/brand-kit/7d3531058f5d89aeb627ab2045e1c5df3efb5de8/logo/symbol/Base_Symbol_Blue.svg" alt="Base Logo">
             </div>
-            <div id="token-balance-section">
-                <p>$SYPHER <span id="token-balance">0</span></p>
+            <div id="wallet-details-section">
+                <p id="token-balance-section">$SYPHER <span id="token-balance">0</span></p>
+                <p id="rewards-balance-section"> REWARDS <span id="rewards-balance">0</span></p>
+                <button id="claim-rewards-button">Claim Rewards</button>
             </div>
         </div>
         <!-- #endregion Wallet Connectivity Section -->
 
+        <!-- #region Rules Dropdown -->
         <div class="rules-dropdown">
             <button class="dropdown-button">How to Play</button>
+            <i id="mute-button" class="fa-solid fa-volume-high"></i>
+            <i id="keyboard-button" class="fa-regular fa-keyboard" style="display: none;"></i>
         </div>
-
-        <!-- TODO: Add Keyboard Helper Section-->
-        <!-- <i class="fa-regular fa-keyboard"></i> -->
-
+        <!-- #endregion Rules Dropdown -->
     </div>
     
     <div class="main-content">
@@ -52,30 +54,51 @@
             <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
         </div>
 
+        <!-- #region Keyboard Helper Layout -->
+        <div id="keyboard-helper">
+            <div class="keyboard-row">
+                <span class="keyboard-button">Q</span><span class="keyboard-button">W</span><span class="keyboard-button">E</span><span class="keyboard-button">R</span><span class="keyboard-button">T</span><span class="keyboard-button">Y</span><span class="keyboard-button">U</span><span class="keyboard-button">I</span><span class="keyboard-button">O</span><span class="keyboard-button">P</span>
+            </div>
+            <div class="keyboard-row">
+                <span class="keyboard-button">A</span><span class="keyboard-button">S</span><span class="keyboard-button">D</span><span class="keyboard-button">F</span><span class="keyboard-button">G</span><span class="keyboard-button">H</span><span class="keyboard-button">J</span><span class="keyboard-button">K</span><span class="keyboard-button">L</span>
+            </div>
+            <div class="keyboard-row">
+                <span class="keyboard-button">Z</span><span class="keyboard-button">X</span><span class="keyboard-button">C</span><span class="keyboard-button">V</span><span class="keyboard-button">B</span><span class="keyboard-button">N</span><span class="keyboard-button">M</span>
+            </div>
+        </div>        
+        <!-- #endregion Keyboard Helper Layout -->
+
+        <!-- #region Game Buttons -->
         <button
             id="playButton"
             type="button"
             class="game-button play-button"
             data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq"
             data-theme="dark"
-            data-callback="onSubmit">
-            Play!
+            data-callback="onSubmitPlay">
+            NEW GAME
         </button>
+        <button
+            id="load-button"
+            type="button"
+            class="game-button load-button"
+            data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq"
+            data-callback="onSubmitLoad">
+            LOAD GAME
+        </button>
+        <input type="text" id="retrieve-transaction" placeholder="ENTER TRANSACTION HASH" style="display: none;">
+        <!-- #endregion Game Buttons -->
 
         <div class="loading-bar" style="display: none;"><div></div><div></div><div></div><div></div></div>
         
         <!-- #region Puzzle Section -->
         <form id="wordPuzzleForm" style="display: none;">
             <div id="inputContainer" class="input-fields">
-                <input type="text" maxlength="1" class="puzzle-input">
-                <input type="text" maxlength="1" class="puzzle-input">
-                <input type="text" maxlength="1" class="puzzle-input">
-                <input type="text" maxlength="1" class="puzzle-input">
-                <input type="text" maxlength="1" class="puzzle-input">
+              <input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input">
             </div>
-       
-            <button type="submit" id="submitButton" class="game-button">Submit</button>
             
+            <button type="submit" id="submitButton" class="game-button">Submit</button>
+                  
         </form>
         <!-- #endregion Puzzle Section -->
     
@@ -119,7 +142,7 @@
 
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="script.js"></script>
     <script src="wallet.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
