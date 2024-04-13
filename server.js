@@ -409,6 +409,40 @@ function checkWord(inputWord, correctWord) {
 
   return result;
 }
+app.post('/verify-session', async (req, res) => {
+  const { transactionHash, signature } = req.body;
+
+  if (!transactionHash || !signature) {
+    return res.status(400).send({ error: 'Missing required parameters: transactionHash and signature must be provided.' });
+  }
+
+  var sessionDoc = await database.collection('sessions').doc(transactionHash).get();
+  if (!sessionDoc.exists) {
+    return res.status(404).send({ error: 'Session not found for the provided transaction hash.' });
+  }
+  var session = sessionDoc.data();
+  var storedPlayerAddress = session.playerAddress; // The original address that started the session
+
+  const signerAddress = ethers.utils.verifyMessage("Verify ownership for session " + transactionHash, signature);
+
+  if (signerAddress !== storedPlayerAddress) {
+    console.log(`Failed verification: Signer ${signerAddress} does not match stored address ${storedPlayerAddress}`);
+    return res.status(403).send({ error: 'Verification failed. You do not own this transaction.', details: `The address that signed the transaction (${signerAddress}) does not match the owner's address (${storedPlayerAddress}) associated with this session.` });
+  }
+
+  console.log('Session verified for player:', storedPlayerAddress);
+
+  if (!session.gameOver) {
+    delete session.correctWord;
+  }
+
+  res.send(session);
+});
+
+
+
+
+
 // #endregion Word Game Main Logic
 
 // #region reCAPTCHA Verification

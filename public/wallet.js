@@ -9,12 +9,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const rewardsBalanceSection = document.getElementById('rewards-balance-section');
   const playButton = document.getElementById('playButton');
   const loadButton = document.getElementById('load-button');
+  const cancelButton = document.getElementById('cancel-button');
   const retrieveTransaction = document.getElementById('retrieve-transaction');
   const loadingBar = document.querySelector('.loading-bar');
+  const keyboardButton = document.getElementById('keyboard-button');
+  const keyboardHelper = document.getElementById('keyboard-helper');
   const walletDetailsSection = document.getElementById('wallet-details-section');
   const minimumBalance = 10; // Cost to play the game
 
   let reCaptchaInitialized = false;
+  let keyboardHelperVisible = false;
 
   if (window.ethereum) {
     var provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -567,9 +571,6 @@ document.addEventListener('DOMContentLoaded', function () {
           if (button === playButton) {
             playButton.textContent = `${minimumBalance} SYPHER tokens required!`;
           }
-          if (button === loadButton) {
-            loadButton.textContent = `${minimumBalance} SYPHER tokens required!`;
-          }
           console.log("Insufficient balance");
           return;
         }
@@ -577,9 +578,6 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("All wallet checks passed. Starting reCaptcha verification...");
           playButton.disabled = true;
           loadButton.disabled = true;
-          if (button === loadButton) {
-            revealSessionRecoveryForm();
-          }
         }
       }
     } else {
@@ -622,6 +620,7 @@ document.addEventListener('DOMContentLoaded', function () {
       hideLoadingAnimationForGameplay();
       // Clear the input fields for the new game
       resetGameInputs();
+      showKeyboardHelperButton();
 
     } catch (error) {
       console.error("Failed to start the game on the blockchain:", error);
@@ -846,9 +845,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // #region Loading Animation Functions
   window.showLoadingAnimation = function () {
     if (loadingBar) {
+      if (playButton) {
+        playButton.style.animation = 'foldInRemove .25s forwards';
+      }
+      if (loadButton) {
+        loadButton.style.animation = 'foldInRemove .25s forwards';
+      }
       console.log("Showing loading bar...");
       loadingBar.style.display = 'inline-block'; // Show the loadingBar
-      playButton.style.display = 'none'; // Hide the Play button
+
     } else {
       console.error('Loading Bar not found');
     }
@@ -885,35 +890,53 @@ document.addEventListener('DOMContentLoaded', function () {
     retrieveTransaction.style.display = 'block';
     retrieveTransaction.style.animation = 'foldOut .25s forwards';
     retrieveTransaction.style.animationDelay = '.25s';
-  }
-  retrieveTransaction.addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-      event.preventDefault(); // Prevent the default action to stop submitting the form
-      transactionHash = this.value;
-      console.log("User submitted: " + transactionHash); // Output to the console
-      // You can add additional actions here to handle the input value
-      let word = null;
 
-      fetch('/guess', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ playerAddress, transactionHash, word }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Guess result:', data);
-          if (data.error) {
-            alert(data.error);
-          } else {
-            updateUI(data);
-          }
+    cancelButton.style.animation = 'transitionUp .25s forwards';
+    cancelButton.style.animationDelay = '.5s';
+  }
+  retrieveTransaction.addEventListener('keypress', async function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const transactionHash = this.value;
+      console.log("User submitted: " + transactionHash);
+
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const signature = await signer.signMessage("Verify ownership for session " + transactionHash);
+        console.log("Signature: ", signature);
+
+        fetch('/verify-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transactionHash, signature }),
         })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+          .then(async response => {
+            const data = await response.json(); // Parse JSON even in case of an error
+            if (!response.ok) {
+              console.error('Fetch error:', data.error, data.details || '');
+              throw new Error(`Network response was not ok. Status: ${response.status}. ${data.error}`);
+            }
+            return data;
+          })
+          .then(data => {
+            console.log('Session verification:', data);
+            updateUI(data);
+          })
+          .catch(error => {
+            console.error('Fetch error:', error.message);
+            alert(error.message); // Optionally show error details to the user
+          });
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
+  });
+  // Attach event listener to the Cancel button for page reload
+  cancelButton.addEventListener('click', function () {
+    console.log("Page reload initiated by cancel button.");
+    window.location.reload();
   });
   // #endregion Restore Game Session - LOAD GAME
 
@@ -1017,4 +1040,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
   // #endregion reCAPTCHA Section
+
+  // #region Keyboard Helper Logic
+  function showKeyboardHelperButton() {
+    console.log("Revealing keyboard helper button...");
+    keyboardButton.style.display = 'block'; // Ensure button is visible
+    keyboardButton.classList.add('glow-effect'); // Apply glow/sheen animation
+  }
+  keyboardButton.addEventListener('click', () => {
+    keyboardHelperVisible = !keyboardHelperVisible; // Toggle visibility state
+    keyboardHelper.style.display = keyboardHelperVisible ? 'block' : 'none'; // Apply visibility state to CSS
+    console.log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
+
+    // Remove the glow/sheen animation on first click
+    keyboardButton.style.animation = 'none';
+    console.log("Glow/sheen animation removed after first click.");
+  });
+  // #endregion Keyboard Helper Logic
 });

@@ -35,7 +35,6 @@ body {
 }
 
 /* #region Home Page */
-
 .game-logo {
     max-width: 100%;
     height: auto;
@@ -183,7 +182,7 @@ body {
 .dropdown-content {
     display: none;
     position: sticky;
-    top: 5px;
+
     background-color: #000000a6;
     border-left: 2px solid #00ff005f;
     min-width: 160px;
@@ -212,24 +211,30 @@ body {
     cursor: pointer;
 }
 #keyboard-button {
+    display: block;
     position: fixed;
     top: 60px;
     left: 60px;
     z-index: 1000;
     color: var(--desypher-green-dark);
+    animation: glow-sheen 1.5s infinite;
 }
 #keyboard-button:hover {
     color: var(--desypher-green-main);
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 15px #00ff00c2, 0 0 30px #00ff009e;
     cursor: pointer;
 }
 #keyboard-helper {
     display: none;
+    flex-direction: column;
+    align-items: center;
     margin-top: 20px;
     font-family: monospace, sans-serif;
     text-align: center;
+    scale: 75%;
 }
 .keyboard-row {
+    display: flex;
     margin: 5px;
 }
 .keyboard-button {
@@ -258,6 +263,7 @@ body {
     justify-content: space-around;
     z-index: 10;
     padding-bottom: 100px;
+    max-width: 100%;
 }
 .input-fields {
     margin: 10px 0;
@@ -324,7 +330,7 @@ body {
 .game-button:focus {
     border: 2px solid #0f3e07;
 }
-.play-button, #load-button {
+.play-button, #load-button, #cancel-button {
     display: inline-block;
     width: 50%;
     margin: 0 auto;
@@ -352,6 +358,8 @@ body {
     max-height: 75px;
     animation: transitionUp 2.5s forwards;
     animation-delay: .5s;
+    line-height: 0px;
+    padding: 25px 30px;
 }
 #load-button:hover {
     scale: 0.85;
@@ -370,6 +378,19 @@ body {
     border-radius: 10px;
     padding: 10px 20px;
 }
+#cancel-button {
+    opacity: 0%;
+    max-width: 150px;
+    max-height: 25px;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px 20px;
+    line-height: 0px;
+    background-color: black;
+    border-color: var(--desypher-green-main);
+    border-radius: 5px;
+}
+
 /* #endregion Game Buttons */
 
 /* #region Social Media */
@@ -925,10 +946,27 @@ body {
         left: -75%; /* Return to start position */
     }
 }
+@keyframes glow-sheen {
+    0% {
+      color: var(--desypher-green-dark);
+      text-shadow: 0 0 3px #38e01600;
+      opacity: 0.75;
+    }
+    50% {
+      color: var(--desypher-green-main);
+      text-shadow: 0 0 10px #38e016be 0 0 20px #35ff0d46;
+      opacity: 1;
+    }
+    100% {
+      color: var(--desypher-green-dark);
+      text-shadow: 0 0 3px #38e01600;
+      opacity: 0.75;
+    }
+  }
 /* #endregion Animations */
 
 /* #region Mobile-specific adjustments */
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     
     .page-navigation-section {
         margin-bottom: 25px;
@@ -978,12 +1016,28 @@ body {
     .play-button {
         max-width: 250px;
         font-size: 14px;
+        padding: 15px 20px;
+    }
+    #load-button {
+        max-width: 150px;
+        font-size: 14px;
+        padding: 15px 20px;
     }
     .social-media-section {
         margin-bottom: 15px;
     }
     #base-logo {
         right: 110px;
+    }
+    #mute-button {
+        display: none;
+    }
+    #keyboard-button {
+        left: 40px;
+        top: 55px;
+    }
+    #keyboard-helper {
+        scale: 55%;
     }
     /* #endregion Home Page Adjustments */
 

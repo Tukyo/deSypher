@@ -64,18 +64,6 @@ elements.forEach(element => {
 });
 //#endregion Audio
 
-//#region Keyboard Helper
-let keyboardHelperVisible = false; // Initialize visibility state
-const keyboardButton = document.getElementById('keyboard-button');
-const keyboardHelper = document.getElementById('keyboard-helper');
-
-keyboardButton.addEventListener('click', () => {
-    keyboardHelperVisible = !keyboardHelperVisible; // Toggle visibility state
-    keyboardHelper.style.display = keyboardHelperVisible ? 'block' : 'none'; // Apply visibility state to CSS
-    console.log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
-});
-//#endregion Keyboard Helper
-
 //#region WordGame Main 
 function sendGuess() {
     if (!playerAddress) {
@@ -142,6 +130,8 @@ function updateUI(data) {
         inputs[index].style.backgroundColor = getColorForStatus(item.status); // Use a function to determine color
         inputs[index].disabled = true; // Disable the input after the guess
     });
+
+    updateKeyboardHelper(data.result); // Update the keyboard helper
 
     if (data.isWin || data.gameOver) {
         button.textContent = data.isWin ? "Congrats! You won! Play again?" : "Game Over... Try Again?";
@@ -477,6 +467,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 //#endregion Cheat Codes
 
+// #region Keyboard Helper
+function updateKeyboardHelper(results) {
+    const buttons = document.querySelectorAll('.keyboard-button');
+    results.forEach(result => {
+        buttons.forEach(button => {
+            if (button.textContent.toUpperCase() === result.letter.toUpperCase()) {
+                if (result.status === 'correct') {
+                    button.style.backgroundColor = 'green';  // Correct guesses get a green background
+                } else if (result.status === 'incorrect') {
+                    button.style.backgroundColor = 'red';    // Incorrect guesses get a red background
+                }
+            }
+        });
+    });
+}
+// #endregion Keyboard Helper
+
 //#endregion Effects & Extras
 
 //#region Rules Dropdown
@@ -498,11 +505,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 //#endregion Rules Dropdown
-
-
-
-
-
-
-
-
