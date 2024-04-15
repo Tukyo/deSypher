@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const rewardsBalanceSection = document.getElementById('rewards-balance-section');
   const playButton = document.getElementById('playButton');
   const loadButton = document.getElementById('load-button');
+  const submitLoadButton = document.getElementById('submit-load-button');
   const cancelButton = document.getElementById('cancel-button');
   const retrieveTransaction = document.getElementById('retrieve-transaction');
   const loadingBar = document.querySelector('.loading-bar');
@@ -29,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453
 
   // Replace with actual token contract address <<<<!!!
-  const tokenContractAddress = '0xb0292C7BcAD2196BE8e9534625Ca4B89b83c4e3F';
+  const tokenContractAddress = '0x50590A8612F995b90533C04E60cE07340654E2C3';
 
   // Replace with actual game smart contract address <<<<!!!
-  const gameContractAddress = '0x0Ded0311A80E39d822850A2cA358beDC4053E88E';
+  const gameContractAddress = '0xfb6B13A956249CDe095c1Eb0F84155005dbBc2a7';
 
   // #region ABI Constants
   // Replace with actual token contract ABI <<<<!!!
@@ -65,6 +66,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       ],
       "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipRenounced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
       "type": "event"
     },
     {
@@ -173,6 +206,54 @@ document.addEventListener('DOMContentLoaded', function () {
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "subtractedValue",
+          "type": "uint256"
+        }
+      ],
+      "name": "decreaseAllowance",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "addedValue",
+          "type": "uint256"
+        }
+      ],
+      "name": "increaseAllowance",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "name",
       "outputs": [
@@ -183,6 +264,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -263,6 +364,19 @@ document.addEventListener('DOMContentLoaded', function () {
       ],
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
   ];
   const gameContractABI = [
@@ -281,13 +395,13 @@ document.addEventListener('DOMContentLoaded', function () {
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "player",
-          "type": "address"
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newCost",
+          "type": "uint256"
         }
       ],
-      "name": "GameStarted",
+      "name": "CostToPlayUpdated",
       "type": "event"
     },
     {
@@ -301,17 +415,103 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
           "indexed": false,
+          "internalType": "bool",
+          "name": "won",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "rewardAmount",
           "type": "uint256"
         }
       ],
-      "name": "PlayerWon",
+      "name": "GameCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        }
+      ],
+      "name": "GameStarted",
       "type": "event"
     },
     {
       "inputs": [],
-      "name": "claimRewards",
+      "name": "ClaimRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rewardAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "won",
+          "type": "bool"
+        }
+      ],
+      "name": "CompleteGame",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        }
+      ],
+      "name": "PlayGame",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "newCost",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdateCostToPlay",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawTokens",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -319,6 +519,19 @@ document.addEventListener('DOMContentLoaded', function () {
     {
       "inputs": [],
       "name": "costToPlay",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "liquidityPooling",
       "outputs": [
         {
           "internalType": "uint256",
@@ -346,19 +559,6 @@ document.addEventListener('DOMContentLoaded', function () {
       "inputs": [
         {
           "internalType": "address",
-          "name": "player",
-          "type": "address"
-        }
-      ],
-      "name": "playGame",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "",
           "type": "address"
         }
@@ -375,21 +575,16 @@ document.addEventListener('DOMContentLoaded', function () {
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "player",
-          "type": "address"
-        },
+      "inputs": [],
+      "name": "sypherCache",
+      "outputs": [
         {
           "internalType": "uint256",
-          "name": "rewardAmount",
+          "name": "",
           "type": "uint256"
         }
       ],
-      "name": "recordWin",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -403,24 +598,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdrawTokens",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     }
   ];
@@ -603,7 +780,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       playerAddress = await signer.getAddress();
       console.log("Player address:", playerAddress);
-      const playGameTx = await gameContract.playGame(await signer.getAddress());
+      const playGameTx = await gameContract.PlayGame(await signer.getAddress());
       showLoadingAnimation();
       console.log("Waiting for game transaction to be mined...");
       await playGameTx.wait();
@@ -805,7 +982,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
 
       console.log("Claiming rewards...");
-      const claimTx = await gameContract.claimRewards();
+      const claimTx = await gameContract.ClaimRewards();
       await claimTx.wait();
       console.log("Rewards claimed successfully.");
 
@@ -891,53 +1068,146 @@ document.addEventListener('DOMContentLoaded', function () {
     retrieveTransaction.style.animation = 'foldOut .25s forwards';
     retrieveTransaction.style.animationDelay = '.25s';
 
-    cancelButton.style.animation = 'transitionUp .25s forwards';
+    cancelButton.style.display = 'block';
+    cancelButton.style.animation = 'transitionLeft .25s forwards';
     cancelButton.style.animationDelay = '.5s';
+    submitLoadButton.style.display = 'block';
+    submitLoadButton.style.animation = 'transitionRight .25s forwards';
+    submitLoadButton.style.animationDelay = '.75s';
   }
   retrieveTransaction.addEventListener('keypress', async function (event) {
     if (event.key === 'Enter') {
       event.preventDefault();
-      const transactionHash = this.value;
-      console.log("User submitted: " + transactionHash);
-
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const signature = await signer.signMessage("Verify ownership for session " + transactionHash);
-        console.log("Signature: ", signature);
-
-        fetch('/verify-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ transactionHash, signature }),
-        })
-          .then(async response => {
-            const data = await response.json(); // Parse JSON even in case of an error
-            if (!response.ok) {
-              console.error('Fetch error:', data.error, data.details || '');
-              throw new Error(`Network response was not ok. Status: ${response.status}. ${data.error}`);
-            }
-            return data;
-          })
-          .then(data => {
-            console.log('Session verification:', data);
-            updateUI(data);
-          })
-          .catch(error => {
-            console.error('Fetch error:', error.message);
-            alert(error.message); // Optionally show error details to the user
-          });
-
-      } catch (error) {
-        console.error('Error:', error);
-      }
+      transactionVerification();
     }
   });
+
   // Attach event listener to the Cancel button for page reload
   cancelButton.addEventListener('click', function () {
     console.log("Page reload initiated by cancel button.");
     window.location.reload();
   });
+
+  submitLoadButton.addEventListener('click', function () {
+    transactionVerification();
+  });
+
+  async function transactionVerification() {
+    const transactionHash = retrieveTransaction.value;
+    console.log("User submitted: " + transactionHash);
+
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const signature = await signer.signMessage("Verify ownership for session " + transactionHash);
+      console.log("Signature: ", signature);
+
+      fetch('/verify-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transactionHash, signature }),
+      })
+        .then(async response => {
+          const data = await response.json(); // Parse JSON even in case of an error
+          if (!response.ok) {
+            console.error('Fetch error:', data.error, data.details || '');
+            throw new Error(`Network response was not ok. Status: ${response.status}. ${data.error}`);
+          }
+          return data;
+        })
+        .then(data => {
+          console.log('Session verification:', data);
+          restoreUI(data);
+        })
+        .catch(error => {
+          console.error('Fetch error:', error.message);
+          alert(error.message); // Optionally show error details to the user
+        });
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  function setDisplayNone(element) {
+    element.style.display = 'none';
+  }
+  function restoreUI(data) {
+    console.log("Restoring UI with session data:", data);
+
+    // Remove the buttons and the transaction hash input field
+    cancelButton.style.opacity = '1';
+    cancelButton.style.display = 'block';
+    cancelButton.style.animation = 'tvScreenOff .1s forwards';
+    cancelButton.style.animationDelay = '.025s';
+    cancelButton.addEventListener('animationend', () => setDisplayNone(cancelButton));
+
+    submitLoadButton.style.opacity = '1';
+    submitLoadButton.style.display = 'block';
+    submitLoadButton.style.animation = 'tvScreenOff .1s forwards';
+    submitLoadButton.style.animationDelay = '.05s';
+    submitLoadButton.addEventListener('animationend', () => setDisplayNone(submitLoadButton));
+
+    retrieveTransaction.style.opacity = '1';
+    retrieveTransaction.style.display = 'block';
+    retrieveTransaction.style.animation = 'tvScreenOff .1s forwards';
+    retrieveTransaction.style.animationDelay = '.1s';
+    retrieveTransaction.addEventListener('animationend', () => setDisplayNone(retrieveTransaction));
+
+    if (data && data.guesses) {
+      data.guesses.forEach((guess, index) => {
+        console.log(`Guess ${index + 1}: ${guess.word}`);
+      });
+      restoreInputRows(data.guesses);
+    } else {
+      console.error("No guesses found in the session data or session data is missing.");
+    }
+  }
+  function restoreInputRows(guesses) {
+    // Assuming there's a form element identified by an ID
+    form.style.display = 'block'; // Reveal the form
+
+    // Clear previous input rows if any
+    inputContainer.innerHTML = ''; // Clear existing input rows
+
+    // Create input rows for each guess
+    guesses.forEach(guess => {
+      createInputRow(guess.result);
+    });
+
+    showKeyboardHelperButton();
+  }
+
+  function createInputRow(guessResult = []) {
+    const row = document.createElement('div');
+    row.className = 'input-fields';
+
+    guessResult.forEach((result, i) => {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.maxLength = '1';
+      input.className = 'puzzle-input';
+
+      input.value = result.letter; // Set the letter regardless of status
+      input.style.backgroundColor = getColorForStatus(result.status); // Set background color based on the status
+
+      if (result.status === 'correct') {
+        input.disabled = true; // Disable input if the letter is correctly placed
+      }
+
+      // addAudioListener(input); // Uncomment if you have this function defined
+      row.appendChild(input);
+    });
+
+    inputContainer.appendChild(row);
+  }
+  function getColorForStatus(status) {
+    const colorPalette = {
+      correct: '#2dc60e',
+      misplaced: '#f6f626cb',
+      incorrect: '#f02020ad',
+    };
+    return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
+  }
   // #endregion Restore Game Session - LOAD GAME
 
   // #region reCAPTCHA Section
@@ -1049,7 +1319,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   keyboardButton.addEventListener('click', () => {
     keyboardHelperVisible = !keyboardHelperVisible; // Toggle visibility state
-    keyboardHelper.style.display = keyboardHelperVisible ? 'block' : 'none'; // Apply visibility state to CSS
+    keyboardHelper.style.display = keyboardHelperVisible ? 'flex' : 'none'; // Apply visibility state to CSS
     console.log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
 
     // Remove the glow/sheen animation on first click

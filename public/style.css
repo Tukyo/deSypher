@@ -330,7 +330,7 @@ body {
 .game-button:focus {
     border: 2px solid #0f3e07;
 }
-.play-button, #load-button, #cancel-button {
+.play-button, #load-button {
     display: inline-block;
     width: 50%;
     margin: 0 auto;
@@ -368,6 +368,7 @@ body {
 #retrieve-transaction {
     opacity: 0%;
     width: 750px;
+    margin-top: 20px;
     align-self: center;
     background-color: black;
     color: white;
@@ -378,8 +379,15 @@ body {
     border-radius: 10px;
     padding: 10px 20px;
 }
-#cancel-button {
+.retrieve-transaction-button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+#cancel-button, #submit-load-button{
+    display: none;
     opacity: 0%;
+    margin-top: 20px;;
     max-width: 150px;
     max-height: 25px;
     font-size: 14px;
