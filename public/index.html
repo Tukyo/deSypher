@@ -90,7 +90,10 @@
         
         <input type="text" id="retrieve-transaction" placeholder="ENTER TRANSACTION HASH" style="display: none;">
 
-        <button id="cancel-button" class="game-button cancel-button">CANCEL</button>
+        <div class="retrieve-transaction-button-container">
+            <button id="submit-load-button" class="game-button submit-load-button">SUBMIT</button>
+            <button id="cancel-button" class="game-button cancel-button">CANCEL</button>
+        </div>
         <!-- #endregion Game Buttons -->
 
         <div class="loading-bar" style="display: none;"><div></div><div></div><div></div><div></div></div>
@@ -146,7 +149,7 @@
 
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="wallet.js"></script>
     <script src="script.js"></script>
+    <script src="wallet.js"></script>
 </body>
 </html>
