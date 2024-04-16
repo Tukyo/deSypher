@@ -9,3 +9,4 @@ hardhat.config.js
 serviceAccountKey.json
 five-letter-words.txt
 .env
+*.log

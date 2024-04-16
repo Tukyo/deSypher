@@ -1,6 +1,6 @@
 :root {
     --coinbase-blue: #0052ff;
-    --desypher-green-main: #5fd846;
+    --desypher-green-main: #2dc60e;
     --desypher-green-dark: #166009;
 }
 .link {
@@ -687,7 +687,9 @@ body {
     padding: 5px;
     box-sizing: border-box; /* Include padding in the element's total width and height */
 }
-
+.distribution-values:hover {
+    cursor: pointer;
+}
 /* #endregion Tokenomics Page */
 
 /* #region Disclaimer Page */

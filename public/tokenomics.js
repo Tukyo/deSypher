@@ -8,12 +8,12 @@ const ctx = canvas.getContext('2d');
 canvas.width = document.querySelector('.distribution-section').clientWidth - 24; // Adjusted for padding
 
 const distributionData = {
-    "Circulating Supply": 850000,
-    "Initial Rewards Pool": 50000,
-    "Sypher Cache": 10000,
+    "Circulating Supply": 750000,
+    "Initial Rewards Pool": 175000,
+    "Sypher Cache": 5000,
     "Profectio Airdrop": 1000,
-    "Bug Bounty": 40000,
-    "Leftover": 49000 
+    "Bug Bounty": 44000,
+    "Development": 25000 
 };
 const distributionColors = {
     "Circulating Supply": "#2dc60e",
@@ -21,7 +21,7 @@ const distributionColors = {
     "Sypher Cache": "#2dc60e",
     "Profectio Airdrop": "#ffff00",
     "Bug Bounty": "#2dc60e",
-    "Leftover": "#ffff00"
+    "Development": "#ffff00"
 };
 
 const totalTokens = Object.values(distributionData).reduce((acc, val) => acc + val, 0);
@@ -62,6 +62,8 @@ canvas.addEventListener('mousemove', function (event) {
     const mouseY = event.clientY - rect.top;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas to redraw
+
+    let isOverBar = true;
 
     // Redraw bars
     barRegions.forEach(region => {
@@ -108,7 +110,63 @@ canvas.addEventListener('mousemove', function (event) {
             return; // This prevents the tooltip from being drawn multiple times
         }
     });
+    if (!isOverBar)
+    {
+        redrawChart(currentHoverCategory);
+    }
 });
+
+// #region Mouse Over Numbers Logic
+const spanToCategoryMap = {
+    'circulating-supply-value': 'Circulating Supply',
+    'initial-reward-pool-value': 'Initial Rewards Pool',
+    'initial-sypher-cache-value': 'Sypher Cache',
+    'bug-bounty-value': 'Bug Bounty',
+    'airdrop-value': 'Profectio Airdrop',
+    'development-value': 'Development'
+};
+
+let currentHoverCategory = null;
+
+// Redraw the chart with a highlight on the specified category
+function redrawChart(highlightCategory = null) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas to redraw
+    barRegions.forEach(region => {
+        ctx.fillStyle = distributionColors[region.label.split(':')[0]];
+        if (highlightCategory && region.label.startsWith(highlightCategory)) {
+            ctx.save();
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 10;
+            ctx.fillRect(region.x - 5, region.y - 5, region.width + 10, region.height + 10);
+            ctx.restore();
+        } else {
+            ctx.fillRect(region.x, region.y, region.width, region.height);
+        }
+    });
+}
+// Add event listeners to each span
+Object.entries(spanToCategoryMap).forEach(([spanId, category]) => {
+    const spanElement = document.getElementById(spanId);
+    
+    // Handle mouse enter
+    spanElement.addEventListener('mouseenter', () => {
+        currentHoverCategory = category;
+        redrawChart(currentHoverCategory);
+    });
+
+    // Handle mouse leave
+    spanElement.addEventListener('mouseleave', () => {
+        currentHoverCategory = null;
+        redrawChart();
+    });
+
+    // Handle click
+    spanElement.addEventListener('click', () => {
+        console.log(`Category: ${category} clicked!`);
+    });
+});
+// #endregion Mouse Over Numbers Logic
+
 // #endregion Distribution Chart
 
 // #region Logic for Chart Calculations
