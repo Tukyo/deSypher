@@ -2,140 +2,114 @@
 // It generates the animated text, the doughnut chart, and the exponential curve chart.
 // It also handles the copy-to-clipboard functionality for the contract address.
 
-const matrixChars = 'ヨBシ0GげほヸタゾWめYZャbefgぜijnヴopあrstォxyバ01456ゑ89';
-const maxLength = 42; // Maximum number of characters to animate
-const animationDuration = 800; // Duration in milliseconds
+// #region Distribution Chart
+const canvas = document.getElementById('distributionChart');
+const ctx = canvas.getContext('2d');
+canvas.width = document.querySelector('.distribution-section').clientWidth - 24; // Adjusted for padding
 
 const distributionData = {
-    "Team Allocation": 250000000,
-    "Circulating Supply": 500000000,
-    "Treasury": 150000000,
-    "Marketing": 100000000
+    "Circulating Supply": 850000,
+    "Initial Rewards Pool": 50000,
+    "Sypher Cache": 10000,
+    "Profectio Airdrop": 1000,
+    "Bug Bounty": 40000,
+    "Leftover": 49000 
 };
 const distributionColors = {
-    "Team Allocation": "#FFD700",
-    "Circulating Supply": "#FF6347",
-    "Treasury": "#4B0082",
-    "Marketing": "#00FF00"
+    "Circulating Supply": "#2dc60e",
+    "Initial Rewards Pool": "#ffff00",
+    "Sypher Cache": "#2dc60e",
+    "Profectio Airdrop": "#ffff00",
+    "Bug Bounty": "#2dc60e",
+    "Leftover": "#ffff00"
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+const totalTokens = Object.values(distributionData).reduce((acc, val) => acc + val, 0);
+const sqrtValues = Object.values(distributionData).map(value => Math.sqrt(value)); // Square root transformation
+const maxSqrtHeight = Math.max(...sqrtValues);
+const padding = 10;
+const numBars = Object.keys(distributionData).length;
+const availableWidth = canvas.width - 2 * padding;
+const gap = 20;
+const barWidth = (availableWidth - gap * (numBars - 1)) / numBars;
+const maxBarHeight = canvas.height - 1 * padding;
 
-    // #region Animated Text on page load
-    const targetElementId = 'address-text'; // Target the span around the address
-    let originalText = document.getElementById(targetElementId).textContent;
-    const totalLength = Math.min(originalText.length, maxLength); // Use the smaller of the original length or maxLength
-    originalText = originalText.substring(0, totalLength); // Trim the original text to the maximum length
-    let currentLength = 0;
-    document.getElementById(targetElementId).textContent = ''; // Start with an empty string
+let barRegions = [];
 
-    // Function to generate a random character
-    function getRandomCharacter() {
-        return matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
-    }
+let x = padding;
+Object.entries(distributionData).forEach(([key, value], index) => {
+    const sqrtValue = Math.sqrt(value); // Applying square root to each value
+    const barHeight = (sqrtValue / maxSqrtHeight) * maxBarHeight; // Scaling based on the square root of the value
+    ctx.fillStyle = distributionColors[key];
+    ctx.fillRect(x, canvas.height - padding - barHeight, barWidth, barHeight);
 
-    // Function to animate text from the first character
-    function animateTextOut() {
-        if (currentLength < totalLength) {
-            let animatedText = new Array(currentLength + 1).join('0').split('0').map(_ => getRandomCharacter()).join('');
-            document.getElementById(targetElementId).textContent = animatedText;
-            currentLength++;
-            setTimeout(animateTextOut, animationDuration / totalLength); // Adjust timing to animate each character
-        } else {
-            // Once the animation is complete, ensure the original (or trimmed) text is set
-            document.getElementById(targetElementId).textContent = originalText;
-        }
-    }
+    // Store bar region for hover detection
+    barRegions.push({
+        x: x,
+        y: canvas.height - padding - barHeight,
+        width: barWidth,
+        height: barHeight,
+        label: `${key}: ${((value / totalTokens) * 100).toFixed(2)}%`
+    });
 
-    animateTextOut();
-    // #endregion Animated Text on page load
-
-    // #region Doughnut Chart Configuration
-    const ctx = document.getElementById('distributionChart').getContext('2d');
-
-    const data = {
-        labels: Object.keys(distributionData),
-        datasets: [{
-            label: 'Token Distribution',
-            data: Object.values(distributionData),
-            hoverOffset: 25,
-            borderWidth: 0,
-            borderRadius: 5,
-            spacing: 1
-        }]
-    };
-
-    const config = {
-        type: 'doughnut',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    top: 15,
-                    right: 15,
-                    bottom: 15,
-                    left: 15
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: false
-                }
-            }
-        },
-    };
-    // #endregion Doughnut Chart Configuration
-
-    // #region Distribution Chart Configuration
-    const distributionChart = new Chart(ctx, config);
-
-    const emissionCtx = document.getElementById('emissionChart').getContext('2d');
-
-    // Generate data for the exponential curve
-    const labels = Array.from({length: 10}, (_, i) => i + 1); // Assuming 10 time periods
-    const initialEmission = 250000; // Initial number of tokens to be emitted
-    const decayRate = 0.5; // Decay rate per period
-
-    const emissionData = labels.map(label => initialEmission * Math.pow(decayRate, label - 1));
-
-    const emissionConfig = {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Token Emission',
-                data: emissionData,
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            layout: {
-                padding: {
-                    top: 15,
-                    right: 15,
-                    bottom: 15,
-                    left: 15
-                }
-            },
-        }
-    };
-
-    const emissionChart = new Chart(emissionCtx, emissionConfig);
-    // #endregion Distribution Chart Configuration
-
+    x += barWidth + gap;
 });
+
+
+canvas.addEventListener('mousemove', function (event) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas to redraw
+
+    // Redraw bars
+    barRegions.forEach(region => {
+        ctx.fillStyle = distributionColors[region.label.split(':')[0]];
+        if (mouseX > region.x && mouseX < region.x + region.width && mouseY > region.y && mouseY < region.y + region.height) {
+            ctx.save();
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 10;
+            ctx.fillRect(region.x - 5, region.y - 5, region.width + 10, region.height + 10);
+            ctx.restore();
+        } else {
+            ctx.fillRect(region.x, region.y, region.width, region.height);
+        }
+    });
+
+    // Display tooltip if mouse is over a bar
+    barRegions.forEach(region => {
+        if (mouseX > region.x && mouseX < region.x + region.width && mouseY > region.y && mouseY < region.y + region.height) {
+            const textWidth = ctx.measureText(region.label).width;
+            const tooltipX = mouseX + 15 + textWidth > canvas.width ? mouseX - textWidth - 15 : mouseX + 15;
+            const tooltipY = mouseY + 20 + 24 > canvas.height ? mouseY - 30 : mouseY + 20;
+
+
+            ctx.fillStyle = 'black';
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 2;
+            ctx.font = '14px monospace';
+            ctx.beginPath();
+            ctx.moveTo(tooltipX + 5, tooltipY - 20);
+            ctx.lineTo(tooltipX + textWidth + 5, tooltipY - 20);
+            ctx.quadraticCurveTo(tooltipX + textWidth + 15, tooltipY - 20, tooltipX + textWidth + 15, tooltipY - 10);
+            ctx.lineTo(tooltipX + textWidth + 15, tooltipY + 4);
+            ctx.quadraticCurveTo(tooltipX + textWidth + 15, tooltipY + 14, tooltipX + textWidth + 5, tooltipY + 14);
+            ctx.lineTo(tooltipX + 5, tooltipY + 14);
+            ctx.quadraticCurveTo(tooltipX - 5, tooltipY + 14, tooltipX - 5, tooltipY + 4);
+            ctx.lineTo(tooltipX - 5, tooltipY - 10);
+            ctx.quadraticCurveTo(tooltipX - 5, tooltipY - 20, tooltipX + 5, tooltipY - 20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = 'white';
+            ctx.fillText(region.label, tooltipX + (textWidth + 10) / 2 - ctx.measureText(region.label).width / 2, tooltipY);
+
+            return; // This prevents the tooltip from being drawn multiple times
+        }
+    });
+});
+// #endregion Distribution Chart
 
 // #region Logic for Chart Calculations
 function calculateDistributionPercentage(data) {
@@ -166,23 +140,92 @@ function updatePieChart(percentages) {
 updatePieChart(distributionPercentages);
 // #endregion Logic for Chart Calculations
 
+// #region Contract Address Matrix load-in effect
+const matrixChars = 'ヨBシ0GげほヸタゾWめYZャbefgぜijnヴopあrstォxyバ01456ゑ89';
+const maxLength = 42; // Maximum number of characters to animate
+const animationDuration = 800; // Duration in milliseconds
+
+document.addEventListener('DOMContentLoaded', function () {
+    const targetElementId = 'address-text'; // Target the span around the address
+    let originalText = document.getElementById(targetElementId).textContent;
+    const totalLength = Math.min(originalText.length, maxLength); // Use the smaller of the original length or maxLength
+    originalText = originalText.substring(0, totalLength); // Trim the original text to the maximum length
+    let currentLength = 0;
+    document.getElementById(targetElementId).textContent = ''; // Start with an empty string
+
+    // Function to generate a random character
+    function getRandomCharacter() {
+        return matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+    }
+
+    // Function to animate text from the first character
+    function animateTextOut() {
+        if (currentLength < totalLength) {
+            let animatedText = new Array(currentLength + 1).join('0').split('0').map(_ => getRandomCharacter()).join('');
+            document.getElementById(targetElementId).textContent = animatedText;
+            currentLength++;
+            setTimeout(animateTextOut, animationDuration / totalLength); // Adjust timing to animate each character
+        } else {
+            // Once the animation is complete, ensure the original (or trimmed) text is set
+            document.getElementById(targetElementId).textContent = originalText;
+        }
+    }
+
+    animateTextOut();
+});
+//#endregion Contract Address Matrix load-in effect
+
 // #region Contract Address Copy Functionality
 // Add event listener to the copy icon
-document.getElementById('copy-icon').addEventListener('click', function() {
+document.getElementById('copy-icon').addEventListener('click', function () {
     const contractAddress = document.getElementById('address-text').textContent.trim(); // Adjust to target the span
     const confirmTime = 2000; // Time until the copy icon changes back from a checkmark to a copy icon
 
-    navigator.clipboard.writeText(contractAddress).then(function() {
+    navigator.clipboard.writeText(contractAddress).then(function () {
         console.log('Copying to clipboard was successful!');
         // Change the icon to a check mark
         document.getElementById('copy-icon').className = 'fa-solid fa-check';
 
         // Change the icon back to copy after confirmTime milliseconds
-        setTimeout(function() {
+        setTimeout(function () {
             document.getElementById('copy-icon').className = 'fa-regular fa-copy';
         }, confirmTime);
-    }, function(err) {
+    }, function (err) {
         console.error('Could not copy text: ', err);
     });
 });
 // #endregion Contract Address Copy Functionality
+
+// #region SYPHER Cache Logic
+document.addEventListener('DOMContentLoaded', async () => {
+    // This ensures the script runs after the page has loaded.
+
+    const contractAddress = '0x71b1a380571e683D5B07AE20598406513B6d3BDf';
+    const abi = [
+        // Minimal ABI to get only the necessary data
+        "function sypherCache() view returns (uint256)"
+    ];
+
+    // Check if Ethereum's provider is injected (MetaMask)
+    if (typeof window.ethereum !== 'undefined') {
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contract = new ethers.Contract(contractAddress, abi, provider);
+
+            const sypherCache = await contract.sypherCache();
+            const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
+
+            // Update the HTML content
+            document.getElementById('current-sypher-cache').innerHTML = `<span style="font-weight: bold; font-size: 22px;">CURRENT SYPHER CACHE: ${formattedSypherCache}</span>`;
+
+            console.log("Sypher Cache loaded: " + formattedSypherCache);
+        } catch (error) {
+            console.error("Error loading the Sypher Cache: ", error);
+            // Optionally update the HTML to show an error message or default value
+        }
+    } else {
+        console.log("Ethereum provider not found. Make sure you have MetaMask installed.");
+        // Optionally update the HTML to prompt the user to install MetaMask
+    }
+});
+// #endregion SYPHER Cache Logic

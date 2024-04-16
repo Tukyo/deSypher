@@ -21,7 +21,7 @@ const database = admin.firestore();
 const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL); // RPC_URL is your Ethereum node or gateway URL
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider); // PRIVATE_KEY of the account that deploys the contract or is authorized to call recordWin
 
-const sypherGameAddress = '0xfb6B13A956249CDe095c1Eb0F84155005dbBc2a7'; // Replace with the game's contract address
+const sypherGameAddress = '0x71b1a380571e683D5B07AE20598406513B6d3BDf'; // Replace with the game's contract address
 const sypherGameABI = [
   {
     "inputs": [
@@ -83,6 +83,32 @@ const sypherGameABI = [
       }
     ],
     "name": "GameStarted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isPaused",
+        "type": "bool"
+      }
+    ],
+    "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newCacheAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SypherCacheUpdated",
     "type": "event"
   },
   {
@@ -199,6 +225,13 @@ const sypherGameABI = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -241,6 +274,26 @@ const sypherGameABI = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newCacheAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateSypherCache",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ];

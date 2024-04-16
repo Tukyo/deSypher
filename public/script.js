@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // maybe remove?
     if (window.ethereum) {
         var provider = new ethers.providers.Web3Provider(window.ethereum);
     }

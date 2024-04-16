@@ -3,3 +3,4 @@ node_modules/
 serviceAccountKey.json
 five-letter-words.txt
 firebase-debug.log
+ui-debug.log

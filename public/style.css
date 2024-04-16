@@ -1,6 +1,6 @@
 :root {
     --coinbase-blue: #0052ff;
-    --desypher-green-main: #2dc60e;
+    --desypher-green-main: #5fd846;
     --desypher-green-dark: #166009;
 }
 .link {
@@ -678,11 +678,11 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
 }
-#distributionChart, #emissionChart {
-    display: block;
+#distributionChart {
+    display: flex;
     margin: 0 auto;
     width: 100%;
-    max-width: 300px;
+    max-width: 800px;
     max-height: 350px;
     padding: 5px;
     box-sizing: border-box; /* Include padding in the element's total width and height */

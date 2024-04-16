@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,36 +12,52 @@
     <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon-32x32.png">
     <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
     <!-- #endregion Favicon -->
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body background-color= black>
+<body background-color=black>
     <div class="tokenomics-main-section">
         <h1>Tokenomics</h1>
-        <p><span class="tokenomics-sub-header">Contract Address:</span> <span class="tokenomics-content" id="address-text">0xaCb1B77a14058e2a88A12cCE6b4800864f98b521</span> <i id="copy-icon" class="fa-regular fa-copy"></i></p>
-        <p><span class="tokenomics-sub-header">Total Supply:</span> <span class="tokenomics-content">1,000,000,000</span></p>
-        <p><span class="tokenomics-sub-header">Blockchain:</span> <span class="tokenomics-content">Base Mainnet</span></p>
+        <p><span class="tokenomics-sub-header">Contract Address:</span> <span class="tokenomics-content"
+                id="address-text">0xaCb1B77a14058e2a88A12cCE6b4800864f98b521</span> <i id="copy-icon"
+                class="fa-regular fa-copy"></i></p>
+        <p><span class="tokenomics-sub-header">Total Supply:</span> <span class="tokenomics-content">10,000,000</span>
+        </p>
+        <p><span class="tokenomics-sub-header">Blockchain:</span> <span class="tokenomics-content">Base Mainnet</span>
+        </p>
         <p><span class="tokenomics-sub-header">Liquidity:</span> <span class="tokenomics-content">Uniswap</span></p>
         <p><span class="tokenomics-sub-header">Ticker:</span> <span class="tokenomics-content">SYPHER</span></p>
     </div>
     <div class="distribution-section">
         <h1>Distribution</h1>
-        <p>The initial circulating supply of tokens is 750,000,000. These tokens have been distributed as seen in the pie chart above. The remaining 250,000,000 tokens will be used as emissions for player rewards, airdrops, and future development purposes.</p>
-        <canvas id="emissionChart" style="float: left; width: 50%;"></canvas>
-        <canvas id="distributionChart" style="float: right; width: 50%;"></canvas>
-        <!-- <p id= "distribution-description-2">The distribution schedule and allocations of SYPHER tokens have been scrutinized to allow for players to win tokens without draining the pool. The goal is to not create strong selling pressure by emitting tokens to holders or for marketing, but to reward skilled players.</p> -->
-    </div>    
+        <p><span style="font-weight: bold; color: #5fd846; font-size: 24px;">850,000</span> tokens have been added to
+            the circulating supply. This is expected to change dynamically as players earn rewards from the rewards pool
+            and these tokens are swapped on the open market.</p>
+        <p><span style="font-weight: bold; color: #5fd846; font-size: 24px;">50,000</span> tokens have been deposited
+            into the deSypher Game Contract to pay out rewards for winners. This will also gradually change as players
+            win or lose the game.</p>
+        <p><span style="font-weight: bold; color: #5fd846; font-size: 24px;">1,000</span> tokens have been mapped within
+            the Game Contract as the initial "SYPHER Cache". This is a dynamically changing pool of tokens that will be
+            rewarded to the next player that wins on their first attempt. </p>
+        <p id="current-sypher-cache"><span style="font-weight: bold; font-size: 22px;">CURRENT SYPHER CACHE: </span></p>
+        <p><span style="font-weight: bold; color: #5fd846; font-size: 24px;">40,000</span> tokens have been reserved for
+            the bug bounty program. If you find a bug, please email the details to tko@tukyowave.com</p>
+        <p><span style="font-weight: bold; color: #5fd846; font-size: 24px;">1,000</span> tokens have been distributed
+            as an airdrop to all holders of Profectio NFTs. Thank you for your support!</p>
+        <canvas id="distributionChart"></canvas>
+    </div>
 </body>
 
-<div class= "footer">     
+<div class="footer">
     <!-- #region Page Navigation Section -->
     <div class="page-navigation-section">
         <a href="/index.html">Home</a> • <a href="/about.html">About</a> • <a href="/legal.html">Legal</a>
     </div>
     <!-- #endregion Page Navigation Section -->
 </div>
+<script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
 <script src="tokenomics.js"></script>
 </body>
+
 </html>

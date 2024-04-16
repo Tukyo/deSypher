@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const tokenContractAddress = '0x50590A8612F995b90533C04E60cE07340654E2C3';
 
   // Replace with actual game smart contract address <<<<!!!
-  const gameContractAddress = '0xfb6B13A956249CDe095c1Eb0F84155005dbBc2a7';
+  const gameContractAddress = '0x71b1a380571e683D5B07AE20598406513B6d3BDf';
 
   // #region ABI Constants
   // Replace with actual token contract ABI <<<<!!!
@@ -443,6 +443,32 @@ document.addEventListener('DOMContentLoaded', function () {
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "isPaused",
+          "type": "bool"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newCacheAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "SypherCacheUpdated",
+      "type": "event"
+    },
+    {
       "inputs": [],
       "name": "ClaimRewards",
       "outputs": [],
@@ -556,6 +582,13 @@ document.addEventListener('DOMContentLoaded', function () {
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "pause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -598,6 +631,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unpause",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "newCacheAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateSypherCache",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ];
