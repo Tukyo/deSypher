@@ -533,5 +533,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         sypherCacheContainer.style.display = 'none';
     }
 });
-
 // #endregion SYPHER Cache Logic
