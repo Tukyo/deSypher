@@ -530,10 +530,12 @@ body {
     border-width: 2px;
     border-style: solid;
     padding: 2.5px 20px;
+    max-width: 300px;
     text-align: center;
-    top: 15px; 
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    margin: auto;
     font-family: monospace, sans-serif;
     animation: fadeIn 1.25s forwards;
     animation-delay: 1.25s;
@@ -1090,6 +1092,16 @@ body {
     }
     #keyboard-helper {
         scale: 55%;
+    }
+    .sypher-cache-section {
+        max-width: 175px;
+    }
+    #sypher-cache-header {
+        font-size: 14px;
+    }
+    #sypher-cache-value {
+        font-size: 14px;
+        color: var(--desypher-green-main);
     }
     /* #endregion Home Page Adjustments */
 

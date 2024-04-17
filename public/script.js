@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Fetch the sypher cache value from GameManager
             const sypherCache = await gameManagerContract.getSypherCache();
             const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
-            sypherCacheElement.innerHTML = `<span style="font-weight: bold; font-size: 22px;">${formattedSypherCache}</span>`;
+            sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedSypherCache}</span>`;
             console.log("Sypher Cache loaded: " + formattedSypherCache);
         } catch (error) {
             console.error("Error loading the Sypher Cache: ", error);
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Event listener for SypherCacheUpdated from deSypher contract
         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
             const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
-            sypherCacheElement.innerHTML = `<span style="font-weight: bold; font-size: 22px;">${formattedNewCache}</span>`;
+            sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedNewCache}</span>`;
             console.log("Sypher Cache updated live: " + formattedNewCache);
         });
     } else {
