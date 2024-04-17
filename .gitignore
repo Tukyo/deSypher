@@ -10,3 +10,4 @@ serviceAccountKey.json
 five-letter-words.txt
 .env
 *.log
+firebase-debug.log

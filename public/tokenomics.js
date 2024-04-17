@@ -13,7 +13,7 @@ const distributionData = {
     "Sypher Cache": 5000,
     "Profectio Airdrop": 1000,
     "Bug Bounty": 44000,
-    "Development": 25000 
+    "Development": 25000
 };
 const distributionColors = {
     "Circulating Supply": "#2dc60e",
@@ -110,8 +110,7 @@ canvas.addEventListener('mousemove', function (event) {
             return; // This prevents the tooltip from being drawn multiple times
         }
     });
-    if (!isOverBar)
-    {
+    if (!isOverBar) {
         redrawChart(currentHoverCategory);
     }
 });
@@ -147,7 +146,7 @@ function redrawChart(highlightCategory = null) {
 // Add event listeners to each span
 Object.entries(spanToCategoryMap).forEach(([spanId, category]) => {
     const spanElement = document.getElementById(spanId);
-    
+
     // Handle mouse enter
     spanElement.addEventListener('mouseenter', () => {
         currentHoverCategory = category;
@@ -256,34 +255,36 @@ document.getElementById('copy-icon').addEventListener('click', function () {
 
 // #region SYPHER Cache Logic
 document.addEventListener('DOMContentLoaded', async () => {
-    // This ensures the script runs after the page has loaded.
+    const sypherCacheElement = document.getElementById('current-sypher-cache');
 
-    const contractAddress = '0x71b1a380571e683D5B07AE20598406513B6d3BDf';
-    const abi = [
-        // Minimal ABI to get only the necessary data
-        "function sypherCache() view returns (uint256)"
-    ];
-
-    // Check if Ethereum's provider is injected (MetaMask)
     if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        // Ensure you are using the GameManager address and ABI here since it manages the Sypher Cache
+        const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+
+        // Fetch initial value
         try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const contract = new ethers.Contract(contractAddress, abi, provider);
-
-            const sypherCache = await contract.sypherCache();
+            const sypherCache = await gameManagerContract.getSypherCache();
             const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
-
-            // Update the HTML content
-            document.getElementById('current-sypher-cache').innerHTML = `<span style="font-weight: bold; font-size: 22px;">CURRENT SYPHER CACHE: ${formattedSypherCache}</span>`;
-
+            sypherCacheElement.innerHTML = `Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">${formattedSypherCache}</span>`;
             console.log("Sypher Cache loaded: " + formattedSypherCache);
         } catch (error) {
             console.error("Error loading the Sypher Cache: ", error);
-            // Optionally update the HTML to show an error message or default value
+            sypherCacheElement.innerHTML = 'Current Sypher Cache: Error loading data...';
         }
+
+        // Assuming the event handling should also use the deSypher contract
+        const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+        // Set up event listener for live updates from deSypher contract
+        deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
+            const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
+            sypherCacheElement.innerHTML = `Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">${formattedNewCache}</span>`;
+            console.log("Sypher Cache updated live: " + formattedNewCache);
+        });
     } else {
         console.log("Ethereum provider not found. Make sure you have MetaMask installed.");
-        // Optionally update the HTML to prompt the user to install MetaMask
+        sypherCacheElement.innerHTML = 'Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">Please install a wallet...</span>';
     }
 });
+
 // #endregion SYPHER Cache Logic

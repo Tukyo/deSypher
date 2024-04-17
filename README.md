@@ -8,7 +8,3 @@
   More details coming soon.
   <br />
 </p>
-
-<p align="center">
-  <img src="https://github.com/Tukyo/deSypher/blob/main/public/assets/preview_image.png?raw=true" alt="Logo" width="1380">
-</p>

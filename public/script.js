@@ -1,12 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-
-    // maybe remove?
-    if (window.ethereum) {
-        var provider = new ethers.providers.Web3Provider(window.ethereum);
-    }
-
-})
-
 let gameOver = false; // Checks if game is over
 
 const form = document.getElementById('wordPuzzleForm');
@@ -135,7 +126,7 @@ function updateUI(data) {
     updateKeyboardHelper(data.result); // Update the keyboard helper
 
     if (data.isWin || data.gameOver) {
-        button.textContent = data.isWin ? "Congrats! You won! Play again?" : "Game Over... Try Again?";
+        button.textContent = data.isWin ? "Code deSyphered! Play again?" : "Game Over... Try Again?";
         button.disabled = false; // Make sure button is clickable
 
         if (!data.isWin && data.gameOver) {
@@ -506,3 +497,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 //#endregion Rules Dropdown
+
+// #region SYPHER Cache Logic
+// TODO Use an endpoint to initialize the SYPHER CACHE even if someone doesn't have a wallet or is not connected
+document.addEventListener('DOMContentLoaded', async () => {
+    const sypherCacheElement = document.getElementById('sypher-cache-value');
+    const sypherCacheContainer = document.querySelector('.sypher-cache');
+
+    if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // Assuming you have the correct addresses and ABIs
+        const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+        const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+
+        try {
+            // Fetch the sypher cache value from GameManager
+            const sypherCache = await gameManagerContract.getSypherCache();
+            const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
+            sypherCacheElement.innerHTML = `<span style="font-weight: bold; font-size: 22px;">${formattedSypherCache}</span>`;
+            console.log("Sypher Cache loaded: " + formattedSypherCache);
+        } catch (error) {
+            console.error("Error loading the Sypher Cache: ", error);
+            sypherCacheContainer.style.display = 'none';
+        }
+
+        // Event listener for SypherCacheUpdated from deSypher contract
+        deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
+            const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
+            sypherCacheElement.innerHTML = `<span style="font-weight: bold; font-size: 22px;">${formattedNewCache}</span>`;
+            console.log("Sypher Cache updated live: " + formattedNewCache);
+        });
+    } else {
+        console.log("Ethereum provider not found. Make sure you have MetaMask installed.");
+        sypherCacheContainer.style.display = 'none';
+    }
+});
+
+// #endregion SYPHER Cache Logic

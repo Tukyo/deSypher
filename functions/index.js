@@ -21,7 +21,7 @@ const database = admin.firestore();
 const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL); // RPC_URL is your Ethereum node or gateway URL
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider); // PRIVATE_KEY of the account that deploys the contract or is authorized to call recordWin
 
-const sypherGameAddress = '0x71b1a380571e683D5B07AE20598406513B6d3BDf'; // Replace with the game's contract address
+const sypherGameAddress = '0x3503454496f140440c64d29477B7C1CA61531169'; // Replace with the game's contract address
 const sypherGameABI = [
   {
     "inputs": [
@@ -29,10 +29,34 @@ const sypherGameABI = [
         "internalType": "address",
         "name": "_sypherTokenAddress",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_gameManagerAddress",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdminTokenWithdraw",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -90,12 +114,63 @@ const sypherGameABI = [
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "newLiquidityAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityPoolingUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityPoolingWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "bool",
         "name": "isPaused",
         "type": "bool"
       }
     ],
     "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "RewardsClaimed",
     "type": "event"
   },
   {
@@ -180,6 +255,24 @@ const sypherGameABI = [
         "type": "uint256"
       }
     ],
+    "name": "WithdrawLiquidityPooling",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
     "name": "WithdrawTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -200,12 +293,12 @@ const sypherGameABI = [
   },
   {
     "inputs": [],
-    "name": "liquidityPooling",
+    "name": "gameManager",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract IGameManager",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -229,38 +322,6 @@ const sypherGameABI = [
     "name": "pause",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "playerRewards",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "sypherCache",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -418,10 +479,10 @@ app.post('/guess', async (req, res) => {
         rewardAmount = sypherCache;
         break;
       case 2:
-        rewardAmount = ethers.parseUnits("500", 18);
+        rewardAmount = ethers.parseUnits("50", 18);
         break;
       case 3:
-        rewardAmount = ethers.parseUnits("50", 18);
+        rewardAmount = ethers.parseUnits("15", 18);
         break;
       case 4:
         rewardAmount = ethers.parseUnits("10", 18);
@@ -431,10 +492,13 @@ app.post('/guess', async (req, res) => {
   }
 
   if (isWin || session.guesses.length >= maxAttempts) {
-    // Game completes here, win or lose
+    // Submit the transaction to the blockchain and proceed without waiting
     const tx = await sypherGameContract.CompleteGame(playerAddress, rewardAmount, isWin);
-    await tx.wait();  // Wait for the transaction to be mined
-    console.log(`Game completed: ${isWin ? "win" : "loss"}, ${ethers.formatUnits(rewardAmount, 18)} SYPHER tokens awarded`);
+
+    // Log the transaction hash and handle it asynchronously
+    console.log(`Transaction submitted: ${tx.hash}`);
+
+    handleTransactionConfirmation(tx.hash);
   }
 
   session.gameOver = isWin || session.guesses.length >= maxAttempts;
@@ -452,6 +516,15 @@ app.post('/guess', async (req, res) => {
   res.send(session);
 });
 
+async function handleTransactionConfirmation(txHash) {
+  try {
+    const receipt = await provider.waitForTransaction(txHash);
+    console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
+    // TODO Update the UI with the transaction status
+  } catch (error) {
+    console.error('Error during transaction confirmation:', error);
+  }
+}
 
 // Endpoint to start a new game
 app.post('/start-game', (req, res) => {
