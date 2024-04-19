@@ -3,6 +3,7 @@ let gameOver = false; // Checks if game is over
 const form = document.getElementById('wordPuzzleForm');
 const inputContainer = document.getElementById('inputContainer');
 const feedback = document.getElementById('feedback');
+const submitButton = document.getElementById('submitButton');
 
 const REQUIRED_CHAIN_ID = 8453; // Base L2
 
@@ -77,13 +78,14 @@ function sendGuess() {
         alert('The word must be exactly 5 letters long.');
         return; // Exit the function early if the word is not 5 letters
     }
-
     if (word.toLowerCase() === 'music') {
         console.log('Cheat code activated: Revealing music player.');
         revealMusicPlayer();
         return; // Do not proceed with the fetch request
     }
-
+    // Disable the submit button while processing the guess
+    submitButton.disabled = true;
+    console.log('Guess submitted:', word);
 
     fetch('/guess', {
         method: 'POST',
@@ -99,10 +101,15 @@ function sendGuess() {
                 alert(data.error);
             } else {
                 updateUI(data);
+                submitButton.disabled = false;
             }
         })
         .catch((error) => {
             console.error('Error:', error);
+            submitButton.disabled = false;
+        })
+        .finally(() => {
+            submitButton.disabled = false; // Always re-enable the submit button
         });
 }
 
@@ -115,7 +122,6 @@ function updateUI(data) {
     const rows = document.querySelectorAll('.input-fields');
     const lastRow = rows[rows.length - 1];
     const inputs = lastRow.querySelectorAll('.puzzle-input');
-    const button = document.getElementById('submitButton');
 
     // Color the inputs based on the guess result
     data.result.forEach((item, index) => {
@@ -126,8 +132,8 @@ function updateUI(data) {
     updateKeyboardHelper(data.result); // Update the keyboard helper
 
     if (data.isWin || data.gameOver) {
-        button.textContent = data.isWin ? "Code deSyphered! Play again?" : "Game Over... Try Again?";
-        button.disabled = false; // Make sure button is clickable
+        submitButton.textContent = data.isWin ? "Code deSyphered! Play again?" : "Game Over... Try Again?";
+        submitButton.disabled = false; // Make sure button is clickable
 
         if (!data.isWin && data.gameOver) {
             // Check if the correctAnswer textbox already exists to prevent duplicates
@@ -144,16 +150,16 @@ function updateUI(data) {
         }
 
         // Change the button's event listener to refresh the page
-        button.onclick = function (event) {
+        submitButton.onclick = function (event) {
             event.preventDefault(); // Prevent form submission
             window.location.reload(); // Refresh the page to start a new game
         };
     } else {
         console.log(`Try again! Attempts left: ${data.attemptsLeft}`);
         // Reset the button for regular game flow
-        button.textContent = "Submit";
-        button.disabled = false; // Ensure it's enabled for further guesses
-        button.onclick = null; // Remove onclick to prevent interfering with regular submit
+        submitButton.textContent = "Submit";
+        submitButton.disabled = false; // Ensure it's enabled for further guesses
+        submitButton.onclick = null; // Remove onclick to prevent interfering with regular submit
 
         // Prepare for the next guess
         const newInputs = createInputRow(data.result); // Pass the result directly

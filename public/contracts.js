@@ -203,6 +203,7 @@ var gameManagerABI = [
 ];
 // Game Manager Address
 var gameManagerAddress = '0xb3B954fB676538DfED94b8C71C0Dc9695450a9A8'; // GAME MANAGER CONTRACT
+
 // Game Contract ABI
 var gameContractABI = [
     {
@@ -541,7 +542,7 @@ var gameContractABI = [
     }
   ];
 // Game Contract Address
-var gameContractAddress = '0x3503454496f140440c64d29477B7C1CA61531169'; // GAME CONTRACT
+var gameContractAddress = '0x5bAa2A577D9da1f334cDA9E9CaDf9C039b7aA82A'; // GAME CONTRACT
 
 // Token Contract ABI
 var tokenContractABI = [

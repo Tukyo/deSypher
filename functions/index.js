@@ -21,7 +21,7 @@ const database = admin.firestore();
 const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL); // RPC_URL is your Ethereum node or gateway URL
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider); // PRIVATE_KEY of the account that deploys the contract or is authorized to call recordWin
 
-const sypherGameAddress = '0x3503454496f140440c64d29477B7C1CA61531169'; // Replace with the game's contract address
+const sypherGameAddress = '0x5bAa2A577D9da1f334cDA9E9CaDf9C039b7aA82A'; // Replace with the game's contract address
 const sypherGameABI = [
   {
     "inputs": [
@@ -362,12 +362,9 @@ const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI,
 
 const app = express();
 app.use(express.json());
-const port = 3000;
 
 const maxAttempts = 4;
 const fs = require('fs'); // For choosing the random word from the filesystem
-
-// let currentGamePlayerAddress = '';
 
 // #region Setup & CORS
 // Define your website's origin
@@ -429,7 +426,6 @@ app.post('/guess', async (req, res) => {
       attemptsLeft: maxAttempts,
       correctWord: correctWord,
       playerAddress: playerAddress,
-      // createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
     await database.collection('sessions').doc(sessionID).set(session);
@@ -450,14 +446,10 @@ app.post('/guess', async (req, res) => {
   // Check if the word is in the word list
   const words = fs.readFileSync('./five-letter-words.txt', 'utf8').split('\n');
   const fiveLetterWords = words.map(word => word.replace('\r', '')).filter(word => word.length === 5);
-  // console.log('Word list:', fiveLetterWords); // Print out the word list
-  // console.log('Correct word:', correctWord.toLowerCase()); // Print out the correct word
   console.log('Guessed word:', guessedWord.toLowerCase()); // Print out the guessed word
   if (!fiveLetterWords.includes(guessedWord.toLowerCase())) {
-
     return res.send({ error: 'This word is not valid!' });
   }
-
 
   attempts++;
 

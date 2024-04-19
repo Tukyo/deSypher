@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log("Wallet installed. Provider initialized.");
     setupTokenEventListener();
+    rewardsBalanceEventListeners(); 
   }
 
   // Base Mainnet
@@ -449,8 +450,6 @@ document.addEventListener('DOMContentLoaded', function () {
       await claimTx.wait();
       console.log("Rewards claimed successfully.");
 
-      // Optionally, update the UI to reflect the claimed rewards
-      // For example, hide the claim button or update the displayed token balance
     } catch (error) {
       console.error("Error claiming rewards:", error);
     }
@@ -462,7 +461,6 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const signer = provider.getSigner();
         const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, signer);
-        // Use the correct function to get rewards balance
         const rewardsBalance = await gameManagerContract.getReward(account);
         console.log("Rewards balance:", rewardsBalance.toString());
         const formattedBalance = ethers.utils.formatUnits(rewardsBalance, 18);
@@ -471,6 +469,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Check if rewards balance is greater than 0
         if (parseFloat(formattedBalance) > 0) {
           console.log("Player has rewards to claim, revealing claim rewards button...");
+          document.getElementById('claim-rewards-button').style.display = ''; // Show the claim rewards button
         } else {
           console.log("Player has no rewards to claim, hiding claim rewards button...");
           claimRewardsButton.style.display = 'none'; // Hide the claim rewards button if no rewards
@@ -480,6 +479,21 @@ document.addEventListener('DOMContentLoaded', function () {
         claimRewardsButton.style.display = 'none'; // Also hide the button in case of an error
       }
     }
+  }
+  async function rewardsBalanceEventListeners() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+    
+    gameContract.on("GameCompleted", (player, won, rewardAmount, event) => {
+      console.log("Game completed event detected", event);
+      updateRewardsBalance();  // Update balance whenever a game is completed
+    });
+  
+    gameContract.on("RewardsClaimed", (player, amount, event) => {
+      console.log("Rewards claimed event detected", event);
+      updateRewardsBalance();  // Update balance after rewards are claimed
+      checkTokenBalance(); // Update the token balance after rewards are claimed
+    });
   }
   // #endregion Rewards Section
 

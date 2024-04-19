@@ -11,3 +11,4 @@ five-letter-words.txt
 .env
 *.log
 firebase-debug.log
+.firebase/hosting.cHVibGlj.cache
