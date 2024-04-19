@@ -73,4 +73,10 @@
         <!-- #endregion Page Navigation Section -->
     </div>
 <script src="about.js"></script>
+<script>
+    // Log a page view every time the page loads
+    firebase.analytics().logEvent('page_view', {
+      page_path: window.location.pathname
+    });
+  </script>
 </html>
