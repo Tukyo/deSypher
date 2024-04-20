@@ -3,6 +3,7 @@
     --desypher-green-main: #2dc60e;
     --desypher-green-dark: #166009;
 }
+
 .link {
     color: var(--desypher-green-main);
     text-decoration: none;
@@ -10,13 +11,20 @@
 }
 
 .header {
-    position: relative;
     width: 100%;
+    height: 100px; /* Adjust based on your logo's size */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 10px;
-    flex-direction: column; /* Stack the children vertically */
+    align-items: center; /* Centers the logo vertically */
+    padding: 0 20px; /* Adds some padding on the left and right */
+    box-sizing: border-box;
+    position: fixed; /* Keeps the header at the top when scrolling */
+    top: 20px;
+    left: 20px;
+    z-index: 1000; /* Ensures the header is above other content */
+}
+.header-logo {
+    height: 80px; /* Adjust based on your logo's size */
+    width: auto; /* Maintains the aspect ratio */
 }
 
 body {
@@ -27,7 +35,7 @@ body {
     min-height: 100vh;
     font-family: monospace, sans-serif;
     color: white;
-    background-image: url('assets/background.jpg');
+    background-image: url('assets/background.webp');
     background-size: contain;
     background-position: center;
     background-repeat: repeat;
@@ -35,15 +43,15 @@ body {
 }
 
 /* #region Home Page */
+
 .game-logo {
     max-width: 100%;
     height: auto;
-    margin-bottom: 2px;
-    margin-top: 50px;
+    margin-bottom: 50px;
+    margin-top: 10px;
     animation: transitionDown 5s;
     animation-timing-function: ease-in;
     align-self: center;
-    padding-top: 50px;
 }
 
 /* #region Wallet Connect Section */
@@ -52,7 +60,7 @@ body {
     position: fixed;
     top: 15px;
     right: 15px;
-    z-index: 1000; /* High value to ensure it's on top of other elements */
+    z-index: 1000;
     padding: 10px 20px;
     border-radius: 10px;
     background: black;
@@ -63,6 +71,7 @@ body {
     animation: transitionRight 1s forwards;
     animation-delay: 0.25s;
 }
+
 #connect-button:hover {
     scale: 1.05;
     background: var(--desypher-green-main);
@@ -70,10 +79,9 @@ body {
     color: white;
     border-color: var(--desypher-green-main);
 }
+
 #base-logo {
-    /* Default style when not connected */
     display: none;
-    /* Default style when not connected */
     opacity: 0%;
     scale: 0.25;
     position: fixed;
@@ -82,12 +90,10 @@ body {
     z-index: 500;
     animation: transitionScaleDelayed .5s forwards;
     animation-delay: .5s;
-    /* filter: drop-shadow(0 0 10px var(--coinbase-blue)) drop-shadow(0 0 20px var(--coinbase-blue)); */
 }
+
 #wallet-details-section {
-    /* Default style when not connected */
     opacity: 0%;
-    /* Default style when not connected */
     position: fixed;
     top: 45px;
     right: 5px;
@@ -111,6 +117,7 @@ body {
     animation-delay: 1s;
     transform-origin: top;
 }
+
 #token-balance-section {
     /* Default style when not connected */
     opacity: 0%;
@@ -118,6 +125,7 @@ body {
     animation: transitionWipeLeft .5s forwards;
     animation-delay: 1.5s;
 }
+
 #rewards-balance-section {
     /* Default style when not connected */
     opacity: 0%;
@@ -125,6 +133,7 @@ body {
     animation: transitionWipeLeft .5s forwards;
     animation-delay: 2s;
 }
+
 #claim-rewards-button {
     /* Default style when not connected */
     opacity: 0%;
@@ -140,12 +149,15 @@ body {
     animation: transitionWipeLeft .75s forwards;
     animation-delay: 2.5s;
 }
+
 #claim-rewards-button:hover::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -75%; /* Start the sheen effect from outside the left edge */
-    width: 75%; /* Width of the sheen effect */
+    left: -75%;
+    /* Start the sheen effect from outside the left edge */
+    width: 75%;
+    /* Width of the sheen effect */
     height: 100%;
     background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
     animation: sheen 1s infinite;
@@ -173,12 +185,14 @@ body {
     animation: transitionLeft 1s forwards;
     animation-delay: 1s;
 }
+
 .dropdown-button:hover {
     scale: 1.05;
     background: var(--desypher-green-main);
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
 }
+
 .dropdown-content {
     display: none;
     position: sticky;
@@ -191,10 +205,12 @@ body {
     padding: 12px 16px;
     z-index: 1;
 }
-.dropdown-content.show { 
+
+.dropdown-content.show {
     display: block;
     animation: tvScreenOn 0.5s ease;
 }
+
 #mute-button {
     opacity: 0%;
     position: fixed;
@@ -205,11 +221,13 @@ body {
     animation: transitionRight 1s forwards;
     animation-delay: 1.25s;
 }
+
 #mute-button:hover {
     color: var(--desypher-green-main);
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     cursor: pointer;
 }
+
 #keyboard-button {
     display: block;
     position: fixed;
@@ -219,11 +237,13 @@ body {
     color: var(--desypher-green-dark);
     animation: glow-sheen 1.5s infinite;
 }
+
 #keyboard-button:hover {
     color: var(--desypher-green-main);
     text-shadow: 0 0 15px #00ff00c2, 0 0 30px #00ff009e;
     cursor: pointer;
 }
+
 #keyboard-helper {
     display: none;
     flex-direction: column;
@@ -233,24 +253,32 @@ body {
     text-align: center;
     scale: 75%;
 }
+
 .keyboard-row {
     display: flex;
     margin: 5px;
 }
+
 .keyboard-button {
     display: inline-block;
     position: sticky;
-    width: 35px; /* Size of each key */
+    width: 35px;
+    /* Size of each key */
     height: 35px;
-    line-height: 35px; /* Center the text vertically */
+    line-height: 35px;
+    /* Center the text vertically */
     border: 2px solid var(--desypher-green-main);
     padding: 10px 20px;
     margin-right: 5px;
     background-color: black;
-    border-radius: 10px; /* Consistent rounded corners */
-    user-select: none; /* Prevent text selection */
-    box-shadow: 0 2px 0 rgba(0,0,0,0.2); /* Subtle shadow for depth */
-    color: white; /* Text color for visibility against background */
+    border-radius: 10px;
+    /* Consistent rounded corners */
+    user-select: none;
+    /* Prevent text selection */
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    color: white;
+    /* Text color for visibility against background */
 }
 
 /* #endregion Rules Dropdown Section */
@@ -265,9 +293,7 @@ body {
     padding-bottom: 100px;
     max-width: 100%;
 }
-.input-fields {
-    margin: 10px 0;
-}
+
 .puzzle-input {
     scale: 1.5;
     background-color: black;
@@ -276,18 +302,18 @@ body {
     border-radius: 5px;
     width: 40px;
     height: 40px;
-    margin: 0 25px;
-    margin-top: 50px;
-    margin-bottom: 10px;
+    margin: 50px 25px 10px 25px;
     text-align: center;
     font-size: 24px;
     text-transform: uppercase;
-    box-shadow:  0 0 10px #00ff00c2, 0 0 10px #00ff009e;
+    box-shadow: 0 0 10px #00ff00c2, 0 0 10px #00ff009e;
     animation: transitionScale 3s;
 }
+
 .puzzle-input:hover {
     scale: 2;
 }
+
 #correct-answer {
     z-index: 1000;
     padding: 10px 20px;
@@ -300,6 +326,7 @@ body {
     display: block;
     margin: 50px auto;
 }
+
 /* #endregion Main Content */
 
 /* #region Game Buttons */
@@ -313,45 +340,57 @@ body {
     font-family: 'monospace', sans-serif;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: background-color 0.3s ease;
+    /* Smooth transition for hover effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
     outline: none;
 }
+
 .game-button:hover {
     scale: 1.15;
     background: var(--desypher-green-main);
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     color: white;
 }
+
 .game-button:active {
-    background-color: #194e0f; /* Even darker shade when pressed */
+    background-color: #194e0f;
+    /* Even darker shade when pressed */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 .game-button:focus {
     border: 2px solid #0f3e07;
 }
-.play-button, #load-button {
+
+.play-button,
+#load-button {
     display: inline-block;
     width: 50%;
     margin: 0 auto;
-    margin-top: 20px;;
+    margin-top: 20px;
+    ;
     margin-bottom: 10px;
     text-align: center;
     padding: 15px 30px;
     font-size: 24px;
     line-height: 1.25;
 }
+
 .play-button {
     opacity: 0%;
     border: none;
     animation: transitionScale 2.5s forwards, pulse 2s infinite ease-in-out 2.5s;
 }
+
 #load-button {
     opacity: 0%;
     scale: 0.80;
     background-color: black;
     border-left: var(--desypher-green-main);
-    border-right : var(--desypher-green-main);;
+    border-right: var(--desypher-green-main);
+    ;
     border-radius: 5px;
     border-color: var(--desypher-green-main);
     max-width: 600px;
@@ -361,10 +400,12 @@ body {
     line-height: 0px;
     padding: 25px 30px;
 }
+
 #load-button:hover {
     scale: 0.85;
     background-color: var(--desypher-green-main);
 }
+
 #retrieve-transaction {
     opacity: 0%;
     width: 750px;
@@ -379,15 +420,19 @@ body {
     border-radius: 10px;
     padding: 10px 20px;
 }
+
 .retrieve-transaction-button-container {
     display: flex;
     justify-content: center;
     gap: 10px;
 }
-#cancel-button, #submit-load-button{
+
+#cancel-button,
+#submit-load-button {
     display: none;
     opacity: 0%;
-    margin-top: 20px;;
+    margin-top: 20px;
+    ;
     max-width: 150px;
     max-height: 25px;
     font-size: 14px;
@@ -412,50 +457,60 @@ body {
     position: absolute;
     bottom: 30px;
     left: 50%;
-    transform: translateX(-50%); /* This centers the section */
-    z-index: 100; /* Ensures it's on top of other elements */
+    transform: translateX(-50%);
+    /* This centers the section */
+    z-index: 100;
+    /* Ensures it's on top of other elements */
 }
+
 .social-icon {
-    margin: 0 10px; /* Spacing between icons */
+    margin: 0 10px;
+    /* Spacing between icons */
     color: var(--desypher-green-main);
-    font-size: 32px; /* Icon size */
+    font-size: 32px;
+    /* Icon size */
     animation: transitionScale 8s;
 }
+
 .social-icon:hover {
-    color: #dddddd; /* Icon hover color */
-    text-shadow:  0 0 10px #00ff00c2, 0 0 10px #00ff009e;
+    color: #dddddd;
+    /* Icon hover color */
+    text-shadow: 0 0 10px #00ff00c2, 0 0 10px #00ff009e;
 }
+
 /* #endregion Social Media */
 
 /* #region Scrollbar */
 ::-webkit-scrollbar {
     background: black;
     width: 12px;
-  }
-  
-  /* Handle */
+}
+
 ::-webkit-scrollbar-thumb {
     background: #0f3e07;
     border-radius: 6px;
-  }
-  
-  /* Handle on hover */
+}
+
 ::-webkit-scrollbar-thumb:hover {
     background: var(--desypher-green-dark);
-  }
+}
+
 /* #endregion Scrollbar */
 
 /* #region Visual Effects */
 .spritesheet {
     position: fixed;
     top: 0;
-    background-image: url('assets/spritesheet.png');
+    background-image: url('assets/spritesheet.webp');
     background-repeat: no-repeat;
-    width: 128px; /* Your frame width */
-    height: 1024px; /* Your frame height */
+    width: 128px;
+    /* Width of each frame in the spritesheet */
+    height: 1024px;
+    /* Height of each frame in the spritesheet */
     animation: fall 5s linear forwards;
     scale: .25;
 }
+
 /* #endregion Visual Effects */
 
 /* #region Music Player */
@@ -472,12 +527,14 @@ body {
     align-items: center;
     justify-content: space-between;
 }
+
 .music-controls {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
 }
+
 .music-controls button {
     background-color: var(--desypher-green-dark);
     color: white;
@@ -485,10 +542,12 @@ body {
     border-radius: 2.5px;
     margin: 0 2px;
 }
+
 .music-controls button:hover {
     scale: 1.25;
     box-shadow: 0 0 5px #00ff008f, 0 0 10px #00ff0057;
 }
+
 .music-progress-container {
     width: 100%;
     height: 100%;
@@ -497,27 +556,34 @@ body {
     background-color: var(--desypher-green-dark);
     border-radius: 2.5px;
 }
+
 .music-progress-bar {
     height: 15px;
     background-color: var(--desypher-green-main);
-    width: 0%; /* Initial width of 0% */
+    width: 0%;
+    /* Initial width of 0% */
     border-radius: 2.5px;
 }
+
 .music-progress-bar:hover {
     cursor: pointer;
     scale: 1.15;
 }
+
 #song-info {
-    max-width: 280px; /* Adjust based on the .music-player width and desired padding */
+    max-width: 280px;
+    /* Adjust based on the .music-player width and desired padding */
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 #song-info:hover {
     cursor: pointer;
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     overflow: visible;
 }
+
 /* #endregion Music Player */
 
 /* #region Sypher Cache */
@@ -540,15 +606,19 @@ body {
     animation: fadeIn 1.25s forwards;
     animation-delay: 1.25s;
 }
+
 .sypher-cache-section p {
     margin: 0;
 }
+
 #sypher-cache-header {
     font-size: 22px;
 }
+
 #sypher-cache-value {
     color: var(--desypher-green-main);
 }
+
 /* #endregion Sypher Cache */
 
 /* #endregion Home Page */
@@ -566,7 +636,8 @@ body {
 }
 
 .color-box {
-    flex-shrink: 0; /* Prevent the color box from shrinking */
+    flex-shrink: 0;
+    /* Prevent the color box from shrinking */
     width: 1em;
     height: 1em;
     margin-right: 5px;
@@ -586,19 +657,22 @@ body {
 .color-box.red {
     background-color: #de1717;
 }
+
 /* #endregion Color Key Section */
 
 /* #region About Page */
 .about-page-body {
     display: flex;
+    padding: 20px;
 }
-.what-is-desypher-section, .getting-started-section, .funding-wallet-section {
+.what-is-desypher-section, .getting-started-section, .funding-wallet-section, .roadmap-section, .disclaimer-section {
     opacity: 0%;
     position: relative;
     top: 5px;
     background-color: #000000a6;
     border-left: 2px solid #00ff005f;
-    max-width: 600px;
+    max-width: 700px;
+    width: 100%;
     text-align: left;
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     padding: 12px 16px;
@@ -617,11 +691,11 @@ body {
     animation: tvScreenOn 0.5s forwards;
     animation-delay: 0.75s;
 }
-.wallet-buttons, .dex-buttons{
+.wallet-buttons, .dex-buttons {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px; /* This will add space between the buttons */
+    gap: 10px;
 }
 .wallet-button, .dex-button {
     opacity: 0%;
@@ -629,7 +703,7 @@ body {
     max-width: 200px;
     max-height: 75px;
     border-radius: 15px;
-    text-decoration: none; /* This will remove the underline from the links */
+    text-decoration: none;
     cursor: pointer;
     padding: 5px 10px;
 }
@@ -666,34 +740,85 @@ body {
 .uniswap-button:hover {
     box-shadow: 0 0 10px #F50DB4, 0 0 20px #B90A9C;
 }
-.disclaimer-section {
+.roadmap-section {
     opacity: 0%;
     position: relative;
     top: 5px;
     background-color: #000000a6;
     border-left: 2px solid #00ff005f;
-    max-width: 600px;
     text-align: left;
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     padding: 12px 16px;
     z-index: 1;
     margin-bottom: 20px;
-}
-.disclaimer-section {
     animation: transitionUp 0.5s forwards;
     animation-delay: 1.5s;
+}
+.roadmap-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+}
+.roadmap-line {
+    position: absolute;
+    width: 4px;
+    height: 75%;
+    background-color: var(--desypher-green-main);
+    z-index: 0;
+}
+.roadmap-item-container {
+    background-color: black;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: var(--desypher-green-main);
+    padding: 5px 5px;
+    margin: 10px 0px;
+    text-align: center;
+    z-index: 1;
+    width: 50%;
+}
+.roadmap-item-container:hover {
+    width: 75%;
+    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    cursor: pointer;
+}
+.roadmap-link {
+    text-decoration: none;
+    color: var(--desypher-green-main);
+}
+
+.disclaimer-section {
+    opacity: 0%;
+    position: relative;
+    top: 5px;
+    background-color: #000000a6;
+    border-left: 2px solid #00ff005f;
+    text-align: left;
+    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    padding: 12px 16px;
+    z-index: 1;
+    margin-bottom: 20px;
+    animation: transitionUp 0.5s forwards;
+    animation-delay: 1.75s;
 }
 /* #endregion About Page */
 
 /* #region Tokenomics Page */
-
-.tokenomics-main-section, .distribution-section{
+.tokenomics-page-body {
+    display: flex;
+    padding: 20px;
+}
+.tokenomics-main-section, .distribution-section {
     opacity: 0%;
     position: relative;
     top: 5px;
     background-color: #000000a6;
     border-left: 2px solid #00ff005f;
     max-width: 600px;
+    width: 100%;
     max-height: 800px;
     text-align: left;
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
@@ -733,7 +858,7 @@ body {
     max-width: 800px;
     max-height: 350px;
     padding: 5px;
-    box-sizing: border-box; /* Include padding in the element's total width and height */
+    box-sizing: border-box;
 }
 .distribution-values:hover {
     cursor: pointer;
@@ -750,15 +875,20 @@ body {
     color: var(--desypher-green-dark);
     animation: transitionScale 3.5s;
 }
+
 .page-navigation-section a {
     text-decoration: none;
-    color: inherit; /* This should be specific color or var if you want to override default link color */
+    color: inherit;
+    /* This should be specific color or var if you want to override default link color */
 }
+
 .page-navigation-section a:hover {
     cursor: pointer;
-    color: var(--desypher-green-main); /* Ensure this variable is defined in your CSS */
+    color: var(--desypher-green-main);
+    /* Ensure this variable is defined in your CSS */
     text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
 }
+
 /* #endregion Page Navigation */
 
 .footer {
@@ -768,22 +898,27 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; /* Stack the children vertically */
+    flex-direction: column;
 }
 
 /* #region Loading Bar */
-.loading-bar, .loading-bar div {
+.loading-bar,
+.loading-bar div {
     box-sizing: border-box;
 }
+
 .loading-bar {
     display: none;
     position: relative;
     width: 80px;
     height: 80px;
-    margin: 0 auto; /* Centers the button horizontally in its container */
-    margin-top: 100px;;
+    margin: 0 auto;
+    /* Centers the button horizontally in its container */
+    margin-top: 100px;
+    ;
     margin-bottom: 25px;
 }
+
 .loading-bar div {
     position: absolute;
     top: 33.33333px;
@@ -793,169 +928,236 @@ body {
     background: currentColor;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
+
 .loading-bar div:nth-child(1) {
     color: var(--desypher-green-main);
     left: 8px;
     animation: loading-bar1 0.6s infinite;
 }
+
 .loading-bar div:nth-child(2) {
     color: var(--desypher-green-main);
     left: 8px;
     animation: loading-bar2 0.6s infinite;
 }
+
 .loading-bar div:nth-child(3) {
     color: var(--desypher-green-main);
     left: 32px;
     animation: loading-bar2 0.6s infinite;
 }
+
 .loading-bar div:nth-child(4) {
     color: var(--desypher-green-main);
     left: 56px;
     animation: loading-bar3 0.6s infinite;
 }
+
 @keyframes loading-bar1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
+
 @keyframes loading-bar3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
 }
+
 @keyframes loading-bar2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
-  }
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(24px, 0);
+    }
 }
+
 /* #endregion Loading Bar */
 
 /* #region Animations */
 @keyframes transitionUp {
     from {
         opacity: 0;
-        transform: translateY(20px); /* Start slightly below the final position */
+        transform: translateY(20px);
+        /* Start slightly below the final position */
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
+
 @keyframes transitionDown {
     from {
         opacity: 0;
-        transform: translateY(-20px); /* Start slightly above the final position */
+        transform: translateY(-20px);
+        /* Start slightly above the final position */
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
+
 @keyframes transitionLeft {
     from {
         opacity: 0;
         transform: translateX(20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
     }
 }
+
 @keyframes transitionRight {
     from {
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
     }
 }
+
 @keyframes transitionScale {
     from {
         opacity: 0;
         scale: 1.25;
     }
+
     to {
         opacity: 1;
         transform: scale(var(--default-scale));
     }
 }
+
 @keyframes transitionScaleDelayed {
     0% {
         opacity: 0;
         scale: 0.05;
     }
+
     50% {
         opacity: 0;
         scale: 0.05;
     }
+
     75% {
         opacity: .5;
         scale: 0.35;
     }
+
     100% {
         opacity: 1;
         scale: 0.25;
     }
 }
+
 @keyframes fall {
-    from {transform: translateY(-100%);}
-    to {transform: translateY(50vh);}
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(50vh);
+    }
 }
+
 @keyframes pulse {
-    0%, 100% {transform: scale(1);}
-    50% {transform: scale(1.1);}
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
+
 @keyframes tvScreenOn {
-    0% { opacity: 0; transform: scaleY(0); }
-    50% { opacity: 1; transform: scaleY(1.1); }
-    100% { opacity: 1; transform: scaleY(1); }
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleY(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
 }
+
 @keyframes tvScreenOff {
-    0% {transform: scaleY(1); }
-    50% {transform: scaleY(1.1); }
-    100% {transform: scaleY(0); }
+    0% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(1.1);
+    }
+
+    100% {
+        transform: scaleY(0);
+    }
 }
+
 @keyframes foldOut {
     0% {
         transform: scaleY(0);
         height: 0;
         opacity: 0;
     }
+
     100% {
         transform: scaleY(1);
         height: auto;
         opacity: 1;
     }
 }
+
 @keyframes foldIn {
     0% {
         transform: scaleY(1);
         height: auto;
         opacity: 1;
     }
+
     100% {
         transform: scaleY(0);
         height: 0;
         opacity: 0;
     }
 }
+
 @keyframes foldInRemove {
     0% {
         transform: scaleY(1);
         height: auto;
         opacity: 1;
     }
+
     100% {
         transform: scaleY(0);
         height: 0;
@@ -963,156 +1165,193 @@ body {
         display: none;
     }
 }
+
 @keyframes transitionWipeLeft {
     0% {
-      clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
-      opacity: 0;
+        clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+        opacity: 0;
     }
+
     100% {
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-      opacity: 1;
-    }
-  }
-@keyframes sheen {
-    0% {
-        left: -75%; /* Start from the left */
-    }
-    50% {
-        left: 100%; /* Move to the right, covering the entire button */
-    }
-    100% {
-        left: -75%; /* Return to start position */
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        opacity: 1;
     }
 }
+
+@keyframes sheen {
+    0% {
+        left: -75%;
+        /* Start from the left */
+    }
+
+    50% {
+        left: 100%;
+        /* Move to the right, covering the entire button */
+    }
+
+    100% {
+        left: -75%;
+        /* Return to start position */
+    }
+}
+
 @keyframes glow-sheen {
     0% {
-      color: var(--desypher-green-dark);
-      text-shadow: 0 0 3px #38e01600;
-      opacity: 0.75;
+        color: var(--desypher-green-dark);
+        text-shadow: 0 0 3px #38e01600;
+        opacity: 0.75;
     }
+
     50% {
-      color: var(--desypher-green-main);
-      text-shadow: 0 0 10px #38e016be 0 0 20px #35ff0d46;
-      opacity: 1;
+        color: var(--desypher-green-main);
+        text-shadow: 0 0 10px #38e016be 0 0 20px #35ff0d46;
+        opacity: 1;
     }
+
     100% {
-      color: var(--desypher-green-dark);
-      text-shadow: 0 0 3px #38e01600;
-      opacity: 0.75;
+        color: var(--desypher-green-dark);
+        text-shadow: 0 0 3px #38e01600;
+        opacity: 0.75;
     }
-  }
-  @keyframes fadeIn {
+}
+
+@keyframes fadeIn {
     0% {
-      opacity: 0;
-      filter: none;
+        opacity: 0;
+        filter: none;
     }
+
     50% {
-      opacity: 0.5;
-      filter: grayscale(100%) contrast(150%);
-      filter: blur(2px) brightness(75%);
-      box-shadow: 0 0 10px var(--desypher-green-main), 0 0 20px #00ff0053;
+        opacity: 0.5;
+        filter: grayscale(100%) contrast(150%);
+        filter: blur(2px) brightness(75%);
+        box-shadow: 0 0 10px var(--desypher-green-main), 0 0 20px #00ff0053;
     }
+
     100% {
-      opacity: 1;      
+        opacity: 1;
     }
-  }
-  
+}
+
 /* #endregion Animations */
 
 /* #region Mobile-specific adjustments */
 @media (max-width: 700px) {
-    
+
     .page-navigation-section {
         margin-bottom: 25px;
     }
 
     /* #region Home Page Adjustments */
     .game-logo {
-        max-width: 80%; /* Smaller logo on smaller screens */
-        margin-bottom: 5px; /* Less margin on smaller screens */
+        max-width: 80%;
+        margin-bottom: 5px;
         margin-top: 25px;
     }
+
     .main-content {
-        padding-top: 5px; /* Less padding at the top for smaller screens */
+        padding-top: 5px;
     }
+
     #connect-button {
         scale: .85;
-        padding: 8px 16px; /* Smaller padding on smaller screens */
-        font-size: 14px; /* Smaller font size on smaller screens */
+        padding: 8px 16px;
+        font-size: 14px;
         right: 15px;
         top: 15px;
     }
+
     .dropdown-button {
         scale: .85;
-        width: auto; /* Allow button to adjust based on content size */
-        min-width: 120px; /* Prevent button from becoming too narrow */
+        width: auto;
+        /* Allow button to adjust based on content size */
+        min-width: 120px;
+        /* Prevent button from becoming too narrow */
         padding: 8px 16px;
         font-size: 14px;
         left: 15px;
         top: 15px;
         right: auto;
     }
+
     .puzzle-input {
         scale: 1;
         margin: 0 5px;
         margin-top: 10px;
         margin-bottom: 10px;
     }
+
     .puzzle-input:hover {
         scale: 1.25;
     }
+
     #wallet-details-section {
         top: 40px;
         scale: 0.8;
         right: 13px;
         padding: 10px 10px;
     }
+
     .play-button {
         max-width: 250px;
         font-size: 14px;
         padding: 15px 20px;
     }
+
     #load-button {
         max-width: 150px;
         font-size: 14px;
         padding: 15px 20px;
     }
+
     .social-media-section {
         margin-bottom: 15px;
     }
+
     #base-logo {
         right: 110px;
     }
+
     #mute-button {
         display: none;
     }
+
     #keyboard-button {
         left: 40px;
         top: 55px;
     }
+
     #keyboard-helper {
         scale: 55%;
     }
+
     .sypher-cache-section {
         max-width: 175px;
     }
+
     #sypher-cache-header {
         font-size: 14px;
     }
+
     #sypher-cache-value {
         font-size: 14px;
         color: var(--desypher-green-main);
     }
+
     /* #endregion Home Page Adjustments */
 
     /* #region About Page Adjustments */
-
-    .what-is-desypher-section, .getting-started-section, .funding-wallet-section {
+    .what-is-desypher-section,
+    .getting-started-section,
+    .funding-wallet-section,
+    .roadmap-section {
         max-width: 100%;
     }
+
     .wallet-button {
         max-width: fit-content;
     }
+
     .dex-button {
         max-width: 250px;
     }
@@ -1120,15 +1359,18 @@ body {
     /* #endregion About Page Adjustments */
 
     /* #region Tokenomics Page Adjustments */
-
-    #address-text, #copy-icon {
+    #address-text,
+    #copy-icon {
         font-size: 12px;
     }
-    #distributionChart, #emissionChart {
+
+    #distributionChart,
+    #emissionChart {
         max-width: 100%;
     }
 
     /* #endregion Tokenomics Page Adjustments */
 
 }
+
 /* #endregion Mobile-specific adjustments */

@@ -2,7 +2,7 @@
 // It generates the animated text, the doughnut chart, and the exponential curve chart.
 // It also handles the copy-to-clipboard functionality for the contract address.
 
-// #region Distribution Chart
+// #region Distribution Section
 const canvas = document.getElementById('distributionChart');
 const ctx = canvas.getContext('2d');
 canvas.width = document.querySelector('.distribution-section').clientWidth - 24; // Adjusted for padding
@@ -146,16 +146,21 @@ function redrawChart(highlightCategory = null) {
 // Add event listeners to each span
 Object.entries(spanToCategoryMap).forEach(([spanId, category]) => {
     const spanElement = document.getElementById(spanId);
+    const originalValue = distributionData[category];
 
     // Handle mouse enter
     spanElement.addEventListener('mouseenter', () => {
         currentHoverCategory = category;
+        const percentage = (originalValue / totalTokens * 100).toFixed(2);
+        spanElement.textContent = `${percentage}%`;
         redrawChart(currentHoverCategory);
+        Debug.Log("Mouse entered: " + category + " showing " + percentage + "%");
     });
 
     // Handle mouse leave
     spanElement.addEventListener('mouseleave', () => {
         currentHoverCategory = null;
+        spanElement.textContent = originalValue.toLocaleString();
         redrawChart();
     });
 
@@ -166,7 +171,7 @@ Object.entries(spanToCategoryMap).forEach(([spanId, category]) => {
 });
 // #endregion Mouse Over Numbers Logic
 
-// #endregion Distribution Chart
+// #endregion Distribution Section
 
 // #region Logic for Chart Calculations
 function calculateDistributionPercentage(data) {

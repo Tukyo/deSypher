@@ -192,10 +192,10 @@ function createInputRow(lastGuessResult = []) {
         }
 
         addAudioListener(input);
-
         row.appendChild(input);
     }
     inputContainer.appendChild(row);
+    updateLogoSize(); // Update the logo size based on the number of rows
 
     const newInputs = row.querySelectorAll('.puzzle-input');
     // Focus on the first enabled input. If all are enabled, this will be the first input.
@@ -290,6 +290,19 @@ addInputListeners(initialInputs);
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 });
+function updateLogoSize() {
+    const logo = document.querySelector('.game-logo');
+    const inputRows = document.querySelectorAll('.input-fields');
+    const scaleFactor = 1 - (0.1 * (inputRows.length - 1));
+    logo.style.transform = `scale(${Math.max(scaleFactor, 0.5)})`; // Ensuring minimum scale is 0.5
+
+    // Check if the game has started by checking the number of input rows
+    if (inputRows.length > 0) {
+        logo.style.marginBottom = "0px"; // Set margin-bottom to 0px when game starts
+    } else {
+        logo.style.marginBottom = "50px"; // Reset to default when no game is active
+    }
+}
 //#endregion WordGame Main
 
 //#region Effects & Extras
@@ -327,7 +340,7 @@ setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
 //#endregion Cyber Rain
 
 //#region Cheat Codes
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
     let konamiCode = [
         'ArrowUp', 'ArrowUp', 'ArrowDown',
         'ArrowDown', 'ArrowLeft', 'ArrowRight',
@@ -337,7 +350,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let timer;
     const CODE_TIMEOUT = 2000; // Time allowed between key presses in milliseconds
     const songs = [
-        'vaang-h4ck3rm0d3act1v4t3d.ogg', 'tukyo-deSypher.ogg', 'vaang-caliente.ogg'
+        'vaang-h4ck3rm0d3act1v4t3d.ogg', 'tukyo-deSypher.ogg', 'vaang-caliente.ogg', '333amethyst-mantis(P.2).ogg'
     ];
 
     document.addEventListener('keydown', (e) => {
@@ -530,6 +543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Event listener for SypherCacheUpdated from deSypher contract
         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
+            // TODO: Shuffle letters or add a visual effect when the cache is updated
             const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
             sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedNewCache}</span>`;
             console.log("Sypher Cache updated live: " + formattedNewCache);

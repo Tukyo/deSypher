@@ -11,35 +11,46 @@
     <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon-32x32.png">
     <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
     <!-- #endregion Favicon -->
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body class = "about-page-body" background-color= black>
-    <div class = "header">
-        
+
+<div class="header">
+    <img src="assets/logo-square.png" alt="deSypher Logo" class="header-logo">
+</div>
+
+<body class="about-page-body" background-color=black>
+    <div class="header">
+
     </div>
-   
+
     <!-- #region What is deSypher Section -->
-    <div class = "what-is-desypher-section">
+    <div class="what-is-desypher-section">
         <h1>What is deSypher?</h1>
-        <p>deSypher is an Onchain word puzzle game where you have to guess the correct five letter word within the alloted guesses.
-            <ul class="color-key">
-                <li><span class="color-box green"></span> Correct letter, correct position.</li>
-                <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
-                <li><span class="color-box red"></span> Incorrect letter.</li>
-            </ul>
-        <p>To start playing, you will need a wallet. After you have a wallet, you will need to acquire $SYPHER tokens to play.</p>
+        <p>deSypher is an Onchain word puzzle game where you have to guess the correct five letter word within the
+            alloted guesses.
+        <ul class="color-key">
+            <li><span class="color-box green"></span> Correct letter, correct position.</li>
+            <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
+            <li><span class="color-box red"></span> Incorrect letter.</li>
+        </ul>
+        <p>To start playing, you will need a wallet. After you have a wallet, you will need to acquire $SYPHER tokens to
+            play.</p>
     </div>
     <!-- #endregion What is deSypher Section -->
 
     <!-- #region Getting Started Section -->
     <div class="getting-started-section">
         <h1>Getting Started</h1>
-        <p>If you don't have a wallet, use one of the buttons below to begin the onboarding process. Please note: you may run into issues with multiple wallets installed.</p>
+        <p>If you don't have a wallet, use one of the buttons below to begin the onboarding process. Please note: you
+            may run into issues with multiple wallets installed.</p>
         <div class="wallet-buttons">
-            <img src="https://raw.githubusercontent.com/MetaMask/brand-resources/e9cddbf787c62bb387f9b586e7433ab6be440206/SVG/SVG_MetaMask_Horizontal_Color.svg" class="wallet-button metamask-button" onclick="installMetamask()"></a>
-            <img src="https://raw.githubusercontent.com/gist/taycaldwell/2291907115c0bb5589bc346661435007/raw/280eafdc84cb80ed0c60e36b4d0c563f6dca6b3e/cbw.svg" class="wallet-button coinbase-button" onclick="installCoinbaseWallet()"></a>
-            <img src="https://raw.githubusercontent.com/RabbyHub/logo/297c81228f53e1db863ee44e49faf68d96719951/logo-white.svg" class="wallet-button rabby-button" onclick="installRabby()"></a>
+            <img src="https://raw.githubusercontent.com/MetaMask/brand-resources/e9cddbf787c62bb387f9b586e7433ab6be440206/SVG/SVG_MetaMask_Horizontal_Color.svg"
+                class="wallet-button metamask-button" onclick="installMetamask()"></a>
+            <img src="https://raw.githubusercontent.com/gist/taycaldwell/2291907115c0bb5589bc346661435007/raw/280eafdc84cb80ed0c60e36b4d0c563f6dca6b3e/cbw.svg"
+                class="wallet-button coinbase-button" onclick="installCoinbaseWallet()"></a>
+            <img src="https://raw.githubusercontent.com/RabbyHub/logo/297c81228f53e1db863ee44e49faf68d96719951/logo-white.svg"
+                class="wallet-button rabby-button" onclick="installRabby()"></a>
         </div>
     </div>
     <!-- #endregion Getting Started Section -->
@@ -47,36 +58,90 @@
     <!-- #region Funding Wallet Section -->
     <div class="funding-wallet-section">
         <h1>Funding Your Wallet</h1>
-        <p>After you have installed a wallet, you will need to acquire $SYPHER tokens to play. You can do this by swapping for the token on Uniswap.</p>
+        <p>After you have installed a wallet, you will need to acquire $SYPHER tokens to play. You can do this by
+            swapping for the token on Uniswap.</p>
         <div class="dex-buttons">
-            <img src="https://raw.githubusercontent.com/Uniswap/brand-assets/df53e86d0cea2e4cf3761d849e57de44bf85ac52/Uniswap%20Brand%20Assets/Uniswap_icon_white.svg" class="dex-button uniswap-button" onclick="openUniswap()"></a>
+            <img src="https://raw.githubusercontent.com/Uniswap/brand-assets/df53e86d0cea2e4cf3761d849e57de44bf85ac52/Uniswap%20Brand%20Assets/Uniswap_icon_white.svg"
+                class="dex-button uniswap-button" onclick="openUniswap()"></a>
         </div>
     </div>
     <!-- #endregion Funding Wallet Section -->
 
+    <!-- #region Roadmap Section -->
+    <div class="roadmap-section">
+        <h1>Roadmap</h1>  
+        <div class="roadmap-container">
+            <div class="roadmap-line"></div>
+            <div class="roadmap-item-container">
+                <div class="roadmap-item">
+                    <h3>$SYPHER Launch</h3>
+                    <p class="roadmap-item-description"></p>
+                </div>
+            </div>
+            <div class="roadmap-item-container">
+                <div class="roadmap-item">
+                    <h3>deSypher Launch</h3>
+                    <p class="roadmap-item-description"></p>
+                </div>
+            </div>
+            <div class="roadmap-item-container">
+                <div class="roadmap-item">
+                    <h3>Optimizations</h3>
+                    <p class="roadmap-item-description"></p>
+                </div>
+            </div>
+            <div class="roadmap-item-container">
+                <div class="roadmap-item">
+                    <h3>Game Modes</h3>
+                    <p class="roadmap-item-description"></p>
+                </div>
+            </div>
+            <div class="roadmap-item-container">
+                <div class="roadmap-item">
+                    <h3>Token Updates</h3>
+                    <p class="roadmap-item-description"></p>
+                </div>
+            </div>
+            <div class="roadmap-item-container">
+                <div class="roadmap-item">
+                    <h3>Marketing</h3>
+                    <p class="roadmap-item-description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion Roadmap Section-->
+
     <!-- #region Disclaimer Section -->
     <div class="disclaimer-section">
         <h1>Disclaimer</h1>
-        <p>deSypher is a game of skill. Success depends on your ability to decipher clues and use your knowledge of words to guess the correct answer within a limited number of attempts. While we provide odds of success for informational purposes, your progress and success are primarily determined by skill and strategy.</p>
-        <p>By playing the game, you acknowledge that you are paying to access and play a game of skill. Your payment grants you the opportunity to engage in a word puzzle challenge that tests your vocabulary, logic, and deductive reasoning.</p>
-        <p>It is important to understand that deSypher is not a gambling platform. The outcome of the game is not left to chance but is instead influenced by your skillful play. The payment you make to play the game is not a wager but a fee for access to a skill-based challenge.</p>
-        <p>On your first guess your odds are a 1:3000 chance of guessing the correct word. These odds are based on the total number of possible 5-letter words in the puzzle database.</p>
-        <p>Any tokens, points, or rewards earned in deSypher are for in-game use only. They have no cash value and cannot be exchanged for real money or prizes. Your success in the game reflects your skill and is not a matter of luck or gambling.</p>
+        <p>deSypher is a game of skill. Success depends on your ability to decipher clues and use your knowledge of
+            words to guess the correct answer within a limited number of attempts. While we provide odds of success for
+            informational purposes, your progress and success are primarily determined by skill and strategy.</p>
+        <p>On your first guess the odds are a 1:3000 chance of guessing the correct word. These odds are based on the
+            total number of possible 5-letter words in the puzzle database.</p>
+        <p>By playing the game, you acknowledge that you are paying to access and play a game of skill. Your payment
+            grants you the opportunity to engage in a word puzzle challenge that tests your vocabulary, logic, and
+            deductive reasoning.</p>
+        <p>It is important to understand that deSypher is not a gambling platform. The outcome of the game is not left
+            to chance but is instead influenced by your skillful play. The payment you make to play the game is not a
+            wager but a fee for access to a skill-based challenge.</p>
     </div>
     <!-- #endregion Disclaimer Section -->
 </body>
-    <div class= "footer">     
-        <!-- #region Page Navigation Section -->
-        <div class="page-navigation-section">
-            <a href="/index.html">Home</a> • <a href="/tokenomics.html">Tokenomics</a> • <a href="/leaderboards.html">Leaderboards</a>
-        </div>
-        <!-- #endregion Page Navigation Section -->
+<div class="footer">
+    <!-- #region Page Navigation Section -->
+    <div class="page-navigation-section">
+        <a href="/index.html">Home</a> • <a href="/tokenomics.html">Tokenomics</a> • <a
+            href="/leaderboards.html">Leaderboards</a>
     </div>
+    <!-- #endregion Page Navigation Section -->
+</div>
 <script src="about.js"></script>
 <script>
     // Log a page view every time the page loads
     firebase.analytics().logEvent('page_view', {
-      page_path: window.location.pathname
+        page_path: window.location.pathname
     });
-  </script>
+</script>
 </html>
