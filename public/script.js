@@ -120,42 +120,8 @@ document.getElementById('wordPuzzleForm').addEventListener('submit', function (e
     event.preventDefault();
     sendGuess();
 });
-const losingMessages = [
-    { message: "You lose. Try again?", weight: 5 }, // 30.62%
-    { message: "Nice try. Maybe next time!", weight: 1.5 }, // 9.18%
-    { message: "Access denied. Try again?", weight: 1.25 }, // 7.65%
-    { message: "You're not very good at this!", weight: 1.25 }, // 7.65%
-    { message: "Maybe this just isn't your game...", weight: 0.95 }, // 5.82%
-    { message: "Just one more game!", weight: 0.95 }, // 5.82%
-    { message: "Close. I'm sure you'll win the next one!", weight: 0.85 }, // 5.20%
-    { message: "They were right about you...", weight: 0.65 }, // 3.98%
-    { message: "You should stop...", weight: 0.75 }, // 4.59%
-    { message: "Keep trying, script kiddie!", weight: 0.45 }, // 2.76%
-    { message: "Loser! Try again?", weight: 0.5 }, // 3.06%
-    { message: "Sucks 2 suck! Try again?", weight: 0.5 }, // 3.06%
-    { message: "Your $SYPHER = gone!", weight: 0.5 }, // 3.06%
-    { message: "F in chat...", weight: 0.35 }, // 2.14%
-    { message: "Error 404. Skills not found...", weight: 0.25 }, // 1.53%
-    { message: "Skill issue...", weight: 0.15 }, // 0.92%
-    { message: "Thank you but NOPE!", weight: 0.175 }, // 1.07%
-    { message: "Go back 2 skool!", weight: 0.105 }, // 0.64%
-    { message: "Try entering the Konami code!", weight: 0.1 }, // 0.61%
-    { message: "You suck. Try again!", weight: 0.1 }, // 0.61%
-    { message: "残念！再挑戦?", weight: 0.1 }, // 0.61%
-    { message: "tehe! Try again??", weight: 0.001 }, // 0.01%    
-];
-function getRandomLosingMessage(messages) {
-    let totalWeight = messages.reduce((sum, item) => sum + item.weight, 0);
-    let randomNum = Math.random() * totalWeight;
-    let weightSum = 0;
 
-    for (let i = 0; i < messages.length; i++) {
-        weightSum += messages[i].weight;
-        if (randomNum <= weightSum) {
-            return messages[i].message;
-        }
-    }
-}
+// #region UI Update Logic
 function updateUI(data) {
     const rows = document.querySelectorAll('.input-fields');
     const lastRow = rows[rows.length - 1];
@@ -267,6 +233,48 @@ function getColorForStatus(status) {
     };
     return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
 }
+// #endregion UI Update Logic
+
+// #region Losing Messages
+const losingMessages = [
+    { message: "You lose. Try again?", weight: 5 }, // 30.62%
+    { message: "Nice try. Maybe next time!", weight: 1.5 }, // 9.18%
+    { message: "Access denied. Try again?", weight: 1.25 }, // 7.65%
+    { message: "You're not very good at this!", weight: 1.25 }, // 7.65%
+    { message: "Maybe this just isn't your game...", weight: 0.95 }, // 5.82%
+    { message: "Just one more game!", weight: 0.95 }, // 5.82%
+    { message: "Close. I'm sure you'll win the next one!", weight: 0.85 }, // 5.20%
+    { message: "They were right about you...", weight: 0.65 }, // 3.98%
+    { message: "You should stop...", weight: 0.75 }, // 4.59%
+    { message: "Keep trying, script kiddie!", weight: 0.45 }, // 2.76%
+    { message: "Loser! Try again?", weight: 0.5 }, // 3.06%
+    { message: "Sucks 2 suck! Try again?", weight: 0.5 }, // 3.06%
+    { message: "Your $SYPHER = gone!", weight: 0.5 }, // 3.06%
+    { message: "F in chat...", weight: 0.35 }, // 2.14%
+    { message: "Error 404. Skills not found...", weight: 0.25 }, // 1.53%
+    { message: "Skill issue...", weight: 0.15 }, // 0.92%
+    { message: "Thank you but NOPE!", weight: 0.175 }, // 1.07%
+    { message: "Go back 2 skool!", weight: 0.105 }, // 0.64%
+    { message: "Try entering the Konami code!", weight: 0.1 }, // 0.61%
+    { message: "You suck. Try again!", weight: 0.1 }, // 0.61%
+    { message: "残念！再挑戦?", weight: 0.1 }, // 0.61%
+    { message: "tehe! Try again??", weight: 0.001 }, // 0.01%    
+];
+function getRandomLosingMessage(messages) {
+    let totalWeight = messages.reduce((sum, item) => sum + item.weight, 0);
+    let randomNum = Math.random() * totalWeight;
+    let weightSum = 0;
+
+    for (let i = 0; i < messages.length; i++) {
+        weightSum += messages[i].weight;
+        if (randomNum <= weightSum) {
+            return messages[i].message;
+        }
+    }
+}
+// #endregion Losing Messages
+
+// #region Audio Listeners for Input Rows
 function addInputListeners(inputs) {
     inputs.forEach((input, index, array) => {
         // Skip disabled inputs on input
@@ -332,6 +340,7 @@ function addAudioListener(element) {
         clickAudioIndex = (clickAudioIndex + 1) % poolSize;
     });
 }
+// #endregion Audio Listeners for Input Rows
 
 // Add listeners to the initial row of inputs
 const initialInputs = document.querySelectorAll('.puzzle-input');
@@ -340,6 +349,8 @@ addInputListeners(initialInputs);
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 });
+
+// #region Dynamic Graphical Adjustments Based on Number of Input Rows
 // Functions to resize the elements within the page based on the number of input rows
 function updateLogoSize() {
     const logo = document.querySelector('.game-logo');
@@ -373,6 +384,8 @@ function updateMainContentPadding() {
 
     console.log(`Updated .main-content padding: top=${newPaddingTop}px, bottom=${newPaddingBottom}px`);
 }
+// #endregion Dynamic Graphical Adjustments Based on Number of Input Rows
+
 //#endregion WordGame Main
 
 //#region Effects & Extras
@@ -625,7 +638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 // #endregion SYPHER Cache Logic
 
-
+// #region Load Game Logic
 document.addEventListener('gameRestart', (e) => {
     console.log("Received game restart event:", e.detail.reason);
     if (e.detail.sessionData) {
@@ -639,17 +652,20 @@ function loadGame(sessionData) {
     document.getElementById('inputContainer').innerHTML = '';
     form.style.display = 'block';
 
-    // UI reset for the game elements
-    resetUIElements();
-
     if (sessionData && sessionData.guesses) {
         sessionData.guesses.forEach((guess, index) => {
             console.log(`Guess ${index + 1}: ${guess.word}`);
         });
         restoreGameSession(sessionData.guesses);
+        console.log("Game session restored successfully.");
     } else {
         console.error("No guesses found in the session data or session data is missing.");
+        document.dispatchEvent(new CustomEvent('appError', { detail: 'No guesses found in the session data or session data is missing.' }));
+        return;
     }
+
+    // UI reset for the game elements
+    resetUIElements();
 
     updateUI(sessionData);
 };
@@ -672,6 +688,11 @@ function resetUIElements() {
     retrieveTransaction.style.animation = 'tvScreenOff .1s forwards';
     retrieveTransaction.style.animationDelay = '.1s';
     retrieveTransaction.addEventListener('animationend', () => setDisplayNone(retrieveTransaction));
+
+    console.log("Session recovery form elements removed...");
+}
+function setDisplayNone(element) {
+    element.style.display = 'none';
 }
 function restoreGameSession(guesses) {
     form.style.display = 'block'; // Reveal the form
@@ -680,6 +701,7 @@ function restoreGameSession(guesses) {
     // Create input rows for each guess
     guesses.forEach(guess => {
         restoreInputRows(guess.result);
+        console.log("Restored input row for guess:", guess.word.toUpperCase());
     });
 }
 function restoreInputRows(guessResult = []) {
@@ -706,6 +728,4 @@ function restoreInputRows(guessResult = []) {
 
     inputContainer.appendChild(row);
 }
-function setDisplayNone(element) {
-    element.style.display = 'none';
-}
+// #endregion Load Game Logic

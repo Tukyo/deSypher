@@ -150,23 +150,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (accounts.length === 0) {
         event.preventDefault();
-        if (button === playButton) {
-          playButton.textContent = "No Wallet Connected!";
-        }
-        if (button === loadButton) {
-          loadButton.textContent = "No Wallet Connected!";
-        }
+        document.dispatchEvent(new CustomEvent('appError', { detail: "No Wallet Connected!" }));
         console.log("No wallet connected");
         return;
       }
       if (chainId !== REQUIRED_CHAIN_ID) {
         event.preventDefault();
-        if (button === playButton) {
-          playButton.textContent = "Please switch to Base Mainnet!";
-        }
-        if (button === loadButton) {
-          loadButton.textContent = "Please switch to Base Mainnet!";
-        }
+        document.dispatchEvent(new CustomEvent('appError', { detail: `Please connect to Base Mainnet!` }));
         console.log("Wrong chain");
         return;
       }
@@ -176,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (balance < minimumBalance) {
           event.preventDefault();
           if (button === playButton) {
-            playButton.textContent = `${minimumBalance} SYPHER tokens required!`;
+            document.dispatchEvent(new CustomEvent('appError', { detail: `${minimumBalance} SYPHER tokens required!` }));
           }
           console.log("Insufficient balance");
           return;
@@ -189,12 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     } else {
       event.preventDefault();
-      if (button === playButton) {
-        playButton.textContent = "No Wallet Installed!";
-      }
-      if (button === loadButton) {
-        loadButton.textContent = "No Wallet Installed!";
-      }
+      document.dispatchEvent(new CustomEvent('appError', { detail: "No Wallet Installed!" }));
       console.log("Wallet is not installed");
       return;
     }
@@ -470,8 +455,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Check if rewards balance is greater than 0
         if (parseFloat(formattedBalance) > 0) {
-          console.log("Player has rewards to claim, revealing claim rewards button...");
           if (!rewardsButtonVisible) {
+            console.log("Player has rewards to claim, revealing claim rewards button...");
             document.getElementById('claim-rewards-button').style.display = ''; // Show the claim rewards button
             rewardsButtonVisible = true;
           }
@@ -579,12 +564,21 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   async function transactionVerification() {
-    const transactionHash = retrieveTransaction.value;
+    transactionHash = retrieveTransaction.value;
     console.log("User submitted: " + transactionHash);
+
+    // Regular expression to validate the transaction hash format
+    const validHashRegex = /^0x[a-fA-F0-9]{64}$/;
+    if (!validHashRegex.test(transactionHash)) {
+      console.error("Invalid transaction hash format:", transactionHash);
+      document.getElementById('error-message').textContent = "Invalid transaction hash format. Please check and try again.";
+      return; // Stop further execution if the hash is invalid
+    }
 
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
+      playerAddress = await signer.getAddress();
       const signature = await signer.signMessage("Verify ownership for session " + transactionHash);
       console.log("Signature: ", signature);
 
@@ -596,8 +590,14 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(async response => {
           const data = await response.json(); // Parse JSON even in case of an error
           if (!response.ok) {
+            // Log the error and dispatch a detailed error message
             console.error('Fetch error:', data.error, data.details || '');
-            throw new Error(`Network response was not ok. Status: ${response.status}. ${data.error}`);
+            let detailedError = `${data.error || "Unknown error"}`;
+            if (data.details) {
+              detailedError += ` - Details: ${data.details}`;
+            }
+            document.dispatchEvent(new CustomEvent('appError', { detail: detailedError }));
+            return; // Return to prevent further execution in the promise chain
           }
           return data;
         })

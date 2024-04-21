@@ -96,14 +96,22 @@
             data-callback="onSubmitLoad">
             LOAD GAME
         </button>
-        
+        <!-- #endregion Game Buttons -->
+
+        <!-- #region Transaction Recovery-->
         <input type="text" id="retrieve-transaction" placeholder="ENTER TRANSACTION HASH" style="display: none;">
 
         <div class="retrieve-transaction-button-container">
             <button id="submit-load-button" class="game-button submit-load-button">SUBMIT</button>
             <button id="cancel-button" class="game-button cancel-button">CANCEL</button>
         </div>
-        <!-- #endregion Game Buttons -->
+        <!-- #endregion Transaction Recovery-->
+
+        <!-- #region Error Message Box-->
+        <div class="error-message-box">
+            <p id="error-message">poopity poop in my poop done pooped my pooper</p>
+        </div>
+        <!-- #endregion Error Message Box-->
 
         <div class="loading-bar"><div></div><div></div><div></div><div></div></div>
         
@@ -158,6 +166,7 @@
 
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="error.js"></script>
     <script src="contracts.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
