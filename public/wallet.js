@@ -21,11 +21,13 @@ document.addEventListener('DOMContentLoaded', function () {
   let reCaptchaInitialized = false;
   let keyboardHelperVisible = false;
 
+  let rewardsButtonVisible = false;
+
   if (window.ethereum) {
     var provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log("Wallet installed. Provider initialized.");
     setupTokenEventListener();
-    rewardsBalanceEventListeners(); 
+    rewardsBalanceEventListeners();
   }
 
   // Base Mainnet
@@ -469,10 +471,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // Check if rewards balance is greater than 0
         if (parseFloat(formattedBalance) > 0) {
           console.log("Player has rewards to claim, revealing claim rewards button...");
-          document.getElementById('claim-rewards-button').style.display = ''; // Show the claim rewards button
+          if (!rewardsButtonVisible) {
+            document.getElementById('claim-rewards-button').style.display = ''; // Show the claim rewards button
+            rewardsButtonVisible = true;
+          }
         } else {
-          console.log("Player has no rewards to claim, hiding claim rewards button...");
-          claimRewardsButton.style.display = 'none'; // Hide the claim rewards button if no rewards
+          if (rewardsButtonVisible) {
+            console.log("Player has no rewards to claim, hiding claim rewards button...");
+            claimRewardsButton.style.display = 'none'; // Hide the claim rewards button if no rewards
+            rewardsButtonVisible = false;
+          }
         }
       } catch (error) {
         console.error('Error fetching rewards balance:', error);
@@ -483,12 +491,12 @@ document.addEventListener('DOMContentLoaded', function () {
   async function rewardsBalanceEventListeners() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
-    
+
     gameContract.on("GameCompleted", (player, won, rewardAmount, event) => {
       console.log("Game completed event detected", event);
       updateRewardsBalance();  // Update balance whenever a game is completed
     });
-  
+
     gameContract.on("RewardsClaimed", (player, amount, event) => {
       console.log("Rewards claimed event detected", event);
       updateRewardsBalance();  // Update balance after rewards are claimed
@@ -595,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
           console.log('Session verification:', data);
-          restoreUI(data);
+          triggerGameRestart(data);
         })
         .catch(error => {
           console.error('Fetch error:', error.message);
@@ -606,85 +614,16 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('Error:', error);
     }
   }
-  function setDisplayNone(element) {
-    element.style.display = 'none';
-  }
-  function restoreUI(data) {
-    console.log("Restoring UI with session data:", data);
-
-    // Remove the buttons and the transaction hash input field
-    cancelButton.style.opacity = '1';
-    cancelButton.style.display = 'block';
-    cancelButton.style.animation = 'tvScreenOff .1s forwards';
-    cancelButton.style.animationDelay = '.025s';
-    cancelButton.addEventListener('animationend', () => setDisplayNone(cancelButton));
-
-    submitLoadButton.style.opacity = '1';
-    submitLoadButton.style.display = 'block';
-    submitLoadButton.style.animation = 'tvScreenOff .1s forwards';
-    submitLoadButton.style.animationDelay = '.05s';
-    submitLoadButton.addEventListener('animationend', () => setDisplayNone(submitLoadButton));
-
-    retrieveTransaction.style.opacity = '1';
-    retrieveTransaction.style.display = 'block';
-    retrieveTransaction.style.animation = 'tvScreenOff .1s forwards';
-    retrieveTransaction.style.animationDelay = '.1s';
-    retrieveTransaction.addEventListener('animationend', () => setDisplayNone(retrieveTransaction));
-
-    if (data && data.guesses) {
-      data.guesses.forEach((guess, index) => {
-        console.log(`Guess ${index + 1}: ${guess.word}`);
-      });
-      restoreInputRows(data.guesses);
-    } else {
-      console.error("No guesses found in the session data or session data is missing.");
-    }
-  }
-  function restoreInputRows(guesses) {
-    // Assuming there's a form element identified by an ID
-    form.style.display = 'block'; // Reveal the form
-
-    // Clear previous input rows if any
-    inputContainer.innerHTML = ''; // Clear existing input rows
-
-    // Create input rows for each guess
-    guesses.forEach(guess => {
-      createInputRow(guess.result);
-    });
-
-    showKeyboardHelperButton();
-  }
-
-  function createInputRow(guessResult = []) {
-    const row = document.createElement('div');
-    row.className = 'input-fields';
-
-    guessResult.forEach((result, i) => {
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.maxLength = '1';
-      input.className = 'puzzle-input';
-
-      input.value = result.letter; // Set the letter regardless of status
-      input.style.backgroundColor = getColorForStatus(result.status); // Set background color based on the status
-
-      if (result.status === 'correct') {
-        input.disabled = true; // Disable input if the letter is correctly placed
+  function triggerGameRestart(data) {
+    const gameRestartEvent = new CustomEvent('gameRestart', {
+      detail: {
+        reason: 'Session restored or new game started',
+        sessionData: data  // Passing the actual game session data
       }
-
-      // addAudioListener(input); // Uncomment if you have this function defined
-      row.appendChild(input);
     });
-
-    inputContainer.appendChild(row);
-  }
-  function getColorForStatus(status) {
-    const colorPalette = {
-      correct: '#2dc60e',
-      misplaced: '#f6f626cb',
-      incorrect: '#f02020ad',
-    };
-    return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
+    document.dispatchEvent(gameRestartEvent);
+    console.log("Dispatched game restart event with data.");
+    showKeyboardHelperButton();
   }
   // #endregion Restore Game Session - LOAD GAME
 

@@ -1,6 +1,13 @@
 // This script handles the logic for the tokenomics page.
 // It generates the animated text, the doughnut chart, and the exponential curve chart.
 // It also handles the copy-to-clipboard functionality for the contract address.
+// Update the contract address on the tokenomics page using the centralized variable from contracts.js
+document.addEventListener('DOMContentLoaded', function () {
+    // Ensuring this script runs after all DOM content is fully loaded, including scripts.
+    const addressElement = document.getElementById('address-text');
+    addressElement.textContent = tokenContractAddress;
+    console.log("Updated contract address to: " + tokenContractAddress);
+});
 
 // #region Distribution Section
 const canvas = document.getElementById('distributionChart');
