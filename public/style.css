@@ -15,6 +15,7 @@
     top: 0px;
     width: 100%;
     height: 80px;
+    z-index: 5000;
 }
 body {
     display: flex;
@@ -214,7 +215,6 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
     font-family: monospace, sans-serif;
     text-align: center;
     scale: 75%;
@@ -397,17 +397,19 @@ body {
 
 /* #region Error Messages */
 .error-message-box {
+    opacity: 0%;
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
+    font-size: 18px;
     text-transform: uppercase;
     background-color: black;
-    border: 2px solid var(--desypher-green-main);
-    border-radius: 10px;
-    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    box-shadow: 0 0 10px red, 0 0 20px red;
     padding-left: 20px;
     padding-right: 20px;
-    top: 100px;
+    top: 50%;
+    width: 100%;
+    z-index: 5000;
 }
 /* #endregion Error Messages */
 
@@ -466,24 +468,17 @@ body {
 /* #endregion Visual Effects */
 
 /* #region Music Player */
-.music-player {
-    position: sticky;
-    bottom: 10px;
-    z-index: 1000;
-    max-width: 100%;
-    max-height: 15px;
-    padding-top: 10px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
 .music-controls {
     display: flex;
+    position: fixed;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    max-width: 700px;
+    width: 100%;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 .music-controls button {
     background-color: var(--desypher-green-dark);
@@ -508,7 +503,6 @@ body {
     height: 15px;
     background-color: var(--desypher-green-main);
     width: 0%;
-    /* Initial width of 0% */
     border-radius: 2.5px;
 }
 .music-progress-bar:hover {
@@ -517,10 +511,9 @@ body {
 }
 #song-info {
     max-width: 280px;
-    /* Adjust based on the .music-player width and desired padding */
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    text-overflow: clip;
 }
 #song-info:hover {
     cursor: pointer;
@@ -845,10 +838,9 @@ body {
     left: 0;
     right: 0;
     z-index: 100;
-    color: var(--desypher-green-dark);
+    color: var(--desypher-green-main);
     animation: transitionScale 3.5s;
 }
-
 .page-navigation-section a {
     text-decoration: none;
     color: inherit;
@@ -1171,6 +1163,23 @@ body {
         opacity: 1;
     }
 }
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+        filter: grayscale(100%) contrast(150%);
+        filter: blur(2px) brightness(75%);
+        box-shadow: 0 0 10px var(--desypher-green-main), 0 0 20px #00ff0053;
+    }
+    100% {
+        opacity: 0;
+        filter: none;
+        display: none;
+    }
+
+}
 /* #endregion Animations */
 
 /* #region Responsive Design */
@@ -1257,9 +1266,6 @@ body {
     /* #region Tokenomics Page Adjustments */
     #address-text, #copy-icon {
         font-size: 12px;
-    }
-    #distributionChart, #emissionChart {
-        max-width: 100%;
     }
     /* #endregion Tokenomics Page Adjustments */
 }

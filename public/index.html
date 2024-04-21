@@ -51,7 +51,7 @@
     </div>
 
     <div class="main-content">
-        <img src="assets/logo_full.webp" alt="Game Logo" class="game-logo">
+        <img src="assets/logo_full.webp" alt="Game Logo" class="game-logo" id="game-logo">
 
         <div class="dropdown-content">
             <h3>The goal of the game is to guess the correct word.</h3>
@@ -108,8 +108,8 @@
         <!-- #endregion Transaction Recovery-->
 
         <!-- #region Error Message Box-->
-        <div class="error-message-box">
-            <p id="error-message">poopity poop in my poop done pooped my pooper</p>
+        <div class="error-message-box" style="display: none;">
+            <p id="error-message"></p>
         </div>
         <!-- #endregion Error Message Box-->
 
@@ -170,28 +170,6 @@
     <script src="contracts.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-      
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-          apiKey: "AIzaSyBA4xvv5d-iTzdCB6nrCflgi8ITKkK2xzM",
-          authDomain: "desypher-6245f.firebaseapp.com",
-          projectId: "desypher-6245f",
-          storageBucket: "desypher-6245f.appspot.com",
-          messagingSenderId: "610547791990",
-          appId: "1:610547791990:web:f6589b7e073f0d02338757",
-          measurementId: "G-VSQK0FQSSB"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-      </script>
+    <script type="module" src="analytics.js"></script>
 </body>
 </html>

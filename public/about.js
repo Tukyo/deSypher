@@ -66,10 +66,10 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
                 textContent = "We have plans to introduce new game modes to keep the game fresh and exciting. More information will be revealed in the coming weeks.";
                 break;
             case "Token Updates":
-                textContent = "There are multiple use-case improvements planned for $SYPHER. The first being a novel staking mechanism that will provide yield for stakers, and stability for the game rewards mechanisms.";
+                textContent = "There are multiple use-case improvements planned for $SYPHER. The first improvement will be an innovative mechanism introduced that allows players to earn rewards based on game outcomes, contributing to the overall stability of the game's reward system.";
                 break;
-            case "Marketing":
-                textContent = "We have marketing plans for the community to participate in, and unique approaches to put gameplay in front of new audiences. We are excited to share more about this in the future.";
+            case "More Games??":
+                textContent = "At Tukyo Games we priotize player experience foremost, and see crypto as a tool to make that possible. Currently in development, we are already working on Super G.I.M.P. Girl and have plans to release more games in the future.";
                 break;
         }
 

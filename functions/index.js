@@ -365,6 +365,7 @@ app.use(express.json());
 
 const maxAttempts = 4;
 const fs = require('fs'); // For choosing the random word from the filesystem
+const { log } = require('console');
 
 // #region Setup & CORS
 // Define your website's origin
@@ -397,7 +398,7 @@ app.get('/', (req, res) => {
 
 // #region Word Game Main Logic
 // Getter function that handles the guess check, and the attempts of guesses
-app.post('/guess', async (req, res) => {
+app.post('/game', async (req, res) => {
   const { playerAddress, transactionHash, word } = req.body;
   var sessionID = transactionHash;
 
@@ -406,7 +407,7 @@ app.post('/guess', async (req, res) => {
   }
 
   var sessionDoc = await database.collection('sessions').doc(sessionID).get();
-  var session = sessionDoc.data();
+  var session = sessionDoc.data() ?? {};
   var correctWord = null;
 
   // Check if the session exists
@@ -432,16 +433,19 @@ app.post('/guess', async (req, res) => {
     console.log('New game started, correct word:', correctWord);
   }
 
+  // If the correct word is not set, set it to the session's correct word
   correctWord ??= session.correctWord;
 
   const guessedWord = word;
-  var attempts = maxAttempts - session.attemptsLeft;
-  var guesses = session.guesses;
+
   if (!guessedWord) {
     console.log('No word provided');
     delete session.correctWord;
     return res.send(session);
   }
+
+  var attempts = maxAttempts - session.attemptsLeft;
+  var guesses = session.guesses;
 
   // Check if the word is in the word list
   const words = fs.readFileSync('./five-letter-words.txt', 'utf8').split('\n');
@@ -517,24 +521,6 @@ async function handleTransactionConfirmation(txHash) {
     console.error('Error during transaction confirmation:', error);
   }
 }
-
-// Endpoint to start a new game
-app.post('/start-game', (req, res) => {
-
-  const { playerAddress } = req.body;
-  console.log(`Starting new game for player: ${playerAddress}`);
-
-  currentGamePlayerAddress = playerAddress;
-
-  // Reset game state
-  correctWord = chooseWord();
-  attempts = 0;
-  guesses = [];
-
-  console.log('New game started, correct word:', correctWord); // For debugging
-  res.json({ success: true, message: "New game started" });
-});
-
 
 // Function to grab a random word from the word list
 function chooseWord() {

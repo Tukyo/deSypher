@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const addressElement = document.getElementById('address-text');
     addressElement.textContent = tokenContractAddress;
     console.log("Updated contract address to: " + tokenContractAddress);
+
+    setDistributionValues();
 });
 
 // #region Distribution Section
@@ -17,10 +19,10 @@ canvas.width = document.querySelector('.distribution-section').clientWidth - 24;
 const distributionData = {
     "Circulating Supply": 750000,
     "Initial Rewards Pool": 175000,
-    "Sypher Cache": 5000,
-    "Profectio Airdrop": 1000,
-    "Bug Bounty": 44000,
-    "Development": 25000
+    "Sypher Cache": 1000,
+    "Profectio Airdrop": 2000,
+    "Bug Bounty": 45000,
+    "Development": 27000
 };
 const distributionColors = {
     "Circulating Supply": "#2dc60e",
@@ -30,6 +32,16 @@ const distributionColors = {
     "Bug Bounty": "#2dc60e",
     "Development": "#ffff00"
 };
+function setDistributionValues() {
+    document.querySelector('#circulating-supply-value').textContent = distributionData["Circulating Supply"].toLocaleString();
+    document.querySelector('#initial-reward-pool-value').textContent = distributionData["Initial Rewards Pool"].toLocaleString();
+    document.querySelector('#initial-sypher-cache-value').textContent = distributionData["Sypher Cache"].toLocaleString();
+    document.querySelector('#bug-bounty-value').textContent = distributionData["Bug Bounty"].toLocaleString();
+    document.querySelector('#airdrop-value').textContent = distributionData["Profectio Airdrop"].toLocaleString();
+    document.querySelector('#development-value').textContent = distributionData["Development"].toLocaleString();
+    
+    console.log("Updated text content with formatted numbers.");
+}
 
 const totalTokens = Object.values(distributionData).reduce((acc, val) => acc + val, 0);
 const sqrtValues = Object.values(distributionData).map(value => Math.sqrt(value)); // Square root transformation

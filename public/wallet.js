@@ -3,6 +3,7 @@ var transactionHash = null;
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  const gameLogo = document.getElementById('game-logo');
   const connectButton = document.getElementById('connect-button');
   const claimRewardsButton = document.getElementById('claim-rewards-button');
   const tokenBalanceSection = document.getElementById('token-balance-section');
@@ -203,6 +204,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
       transactionHash = playGameTx.hash;
       console.log("Transaction hash:", transactionHash);
+
+      let word = null;
+
+      fetch('/game', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playerAddress, transactionHash, word }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log('Started game with data:', data);
+        });
+
 
       await checkTokenBalance(); // Update the token balance after the game transaction
 
@@ -571,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const validHashRegex = /^0x[a-fA-F0-9]{64}$/;
     if (!validHashRegex.test(transactionHash)) {
       console.error("Invalid transaction hash format:", transactionHash);
-      document.getElementById('error-message').textContent = "Invalid transaction hash format. Please check and try again.";
+      document.dispatchEvent(new CustomEvent('appError', { detail: "Invalid transaction hash format. Please check and try again." }));
       return; // Stop further execution if the hash is invalid
     }
 
@@ -737,11 +753,15 @@ document.addEventListener('DOMContentLoaded', function () {
   keyboardButton.addEventListener('click', () => {
     keyboardHelperVisible = !keyboardHelperVisible; // Toggle visibility state
     keyboardHelper.style.display = keyboardHelperVisible ? 'flex' : 'none'; // Apply visibility state to CSS
-    console.log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
+    keyboardHelper.style.animation = keyboardHelperVisible ? 'tvScreenOn .25s forwards' : 'tvScreenOff .25s forwards'; // Apply animation based on visibility
+    gameLogo.style.display = keyboardHelperVisible ? 'none' : 'block'; // Toggle game logo visibility opposite to keyboard helper
+    gameLogo.style.animation = keyboardHelperVisible ? 'tvScreenOff .25s forwards' : 'tvScreenOn .25s forwards'; // Apply animation based on visibility
+    Debug.Log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
+    Debug.Log("Game logo visibility set to: " + (keyboardHelperVisible ? "Hidden" : "Visible"));
 
     // Remove the glow/sheen animation on first click
     keyboardButton.style.animation = 'none';
-    console.log("Glow/sheen animation removed after first click.");
+    Debug.Log("Glow/sheen animation removed after first click.");
   });
   // #endregion Keyboard Helper Logic
 });
