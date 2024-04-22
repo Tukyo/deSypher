@@ -1186,9 +1186,22 @@ body {
 
 @media (max-width: 700px) {
     /* #region Home Page Adjustments */
+    .main-content {
+        margin-top: 50px;
+    }
+    .error-message-box {
+        height: 30px;
+    }
     .game-logo {
         max-width: 90%;
         margin-top: 25px;
+        padding-bottom: 20px;
+    }
+    .game-button {
+        margin-top: 20px;
+    }
+    .input-fields {
+        padding-top: 10px;
     }
     #connect-button {
         scale: .85;
@@ -1221,6 +1234,8 @@ body {
         scale: 0.8;
         right: 13px;
         padding: 10px 10px;
+        max-width: 120px;
+        width: 100%;
     }
     .play-button {
         max-width: 250px;
@@ -1245,9 +1260,9 @@ body {
         display: none;
     }
     #keyboard-button {
-        left: 40px;
-        top: 55px;
-    }
+        left: 25px;
+        top: 70px;
+      }
     #keyboard-helper {
         scale: 55%;
     }
@@ -1261,6 +1276,11 @@ body {
         font-size: 14px;
         color: var(--desypher-green-main);
     }
+    #retrieve-transaction {
+        width: 250px;
+        margin-top: none;
+        padding: 5px 20px;
+    }
     /* #endregion Home Page Adjustments */
 
     /* #region Tokenomics Page Adjustments */
@@ -1268,6 +1288,47 @@ body {
         font-size: 12px;
     }
     /* #endregion Tokenomics Page Adjustments */
+}
+@media (max-width: 450px) {
+    .dropdown-button {
+        top: 30px;
+        left: 5px;
+    }
+    .sypher-cache-section {
+        top: 0px;
+        width: 100%;
+        max-width: 100vh;
+        border-radius: 0px;
+        border-left: none;
+        border-right: none;
+        border-top: black;
+    }
+    #connect-button {
+        top: 30px;
+        right: 5px;
+    }
+    #wallet-details-section {
+        top: 55px;
+        right: 3px;
+    }
+    .page-navigation-section {
+        font-size: 11px;
+    }
+    .social-media-section {
+        bottom: 15px;
+    }
+    .social-icon {
+        font-size: 26px;
+    }
+    #keyboard-helper {
+        scale: 40%;
+    }
+    .distribution-section {
+        max-height: fit-content;
+    }
+    /* .wallet-buttons {
+
+    } */
 }
 /* #endregion Responsive Design */
 

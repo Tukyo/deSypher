@@ -79,6 +79,56 @@ document.getElementById('wordPuzzleForm').addEventListener('submit', function (e
 });
 //#endregion WordGame Main
 
+// #region Input Field Controls
+function addInputListeners(inputs) {
+    inputs.forEach((input, index, array) => {
+        // Skip disabled inputs on input
+        input.addEventListener('input', function () {
+            const clickSound = clickAudioPool[clickAudioIndex];
+            clickSound.currentTime = 0; // Rewind to start
+            clickSound.play().catch(error => console.log("Error playing sound:", error));
+            clickAudioIndex = (clickAudioIndex + 1) % poolSize;
+
+            let nextIndex = index + 1;
+            while (nextIndex < array.length && array[nextIndex].disabled) {
+                nextIndex++; // Skip over disabled inputs
+            }
+            if (input.value.length === 1 && nextIndex < array.length) {
+                array[nextIndex].focus();
+            }
+        });
+        // Adjust backspace functionality to skip disabled inputs
+        input.addEventListener('keydown', function (event) {
+            if (event.key === "Backspace" && input.value === '' && index > 0) {
+                event.preventDefault();
+                let prevIndex = index - 1;
+                while (prevIndex >= 0 && array[prevIndex].disabled) {
+                    prevIndex--; // Skip over disabled inputs
+                }
+                if (prevIndex >= 0) {
+                    array[prevIndex].value = '';
+                    array[prevIndex].focus();
+
+                    // Play click sound on backspace
+                    const clickSound = clickAudioPool[clickAudioIndex];
+                    clickSound.currentTime = 0; // Rewind to start
+                    clickSound.play().catch(error => console.log("Error playing sound:", error));
+                    clickAudioIndex = (clickAudioIndex + 1) % poolSize;
+                }
+            }
+        });
+        // Listen for focus to handle tab navigation
+        input.addEventListener('focus', () => {
+            // Play click sound on focus
+            const clickSound = clickAudioPool[clickAudioIndex];
+            clickSound.currentTime = 0; // Rewind to start
+            clickSound.play().catch(error => console.log("Error playing sound:", error));
+            clickAudioIndex = (clickAudioIndex + 1) % poolSize;
+        });
+    });
+}
+// #endregion Input Field Controls
+
 // #region UI Update Logic
 function updateUI(data) {
     const rows = document.querySelectorAll('.input-fields');
@@ -234,53 +284,6 @@ function getRandomLosingMessage(messages) {
 // #endregion Losing Messages
 
 // #region Audio Listeners for Input Rows
-function addInputListeners(inputs) {
-    inputs.forEach((input, index, array) => {
-        // Skip disabled inputs on input
-        input.addEventListener('input', function () {
-            const clickSound = clickAudioPool[clickAudioIndex];
-            clickSound.currentTime = 0; // Rewind to start
-            clickSound.play().catch(error => console.log("Error playing sound:", error));
-            clickAudioIndex = (clickAudioIndex + 1) % poolSize;
-
-            let nextIndex = index + 1;
-            while (nextIndex < array.length && array[nextIndex].disabled) {
-                nextIndex++; // Skip over disabled inputs
-            }
-            if (input.value.length === 1 && nextIndex < array.length) {
-                array[nextIndex].focus();
-            }
-        });
-        // Adjust backspace functionality to skip disabled inputs
-        input.addEventListener('keydown', function (event) {
-            if (event.key === "Backspace" && input.value === '' && index > 0) {
-                event.preventDefault();
-                let prevIndex = index - 1;
-                while (prevIndex >= 0 && array[prevIndex].disabled) {
-                    prevIndex--; // Skip over disabled inputs
-                }
-                if (prevIndex >= 0) {
-                    array[prevIndex].value = '';
-                    array[prevIndex].focus();
-
-                    // Play click sound on backspace
-                    const clickSound = clickAudioPool[clickAudioIndex];
-                    clickSound.currentTime = 0; // Rewind to start
-                    clickSound.play().catch(error => console.log("Error playing sound:", error));
-                    clickAudioIndex = (clickAudioIndex + 1) % poolSize;
-                }
-            }
-        });
-        // Listen for focus to handle tab navigation
-        input.addEventListener('focus', () => {
-            // Play click sound on focus
-            const clickSound = clickAudioPool[clickAudioIndex];
-            clickSound.currentTime = 0; // Rewind to start
-            clickSound.play().catch(error => console.log("Error playing sound:", error));
-            clickAudioIndex = (clickAudioIndex + 1) % poolSize;
-        });
-    });
-}
 function addAudioListener(element) {
     element.addEventListener('mouseenter', () => {
         // Hover sound

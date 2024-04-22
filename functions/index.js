@@ -360,10 +360,31 @@ const sypherGameABI = [
 ];
 const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI, signer);
 
+const gameManagerAddress = '0xb3B954fB676538DfED94b8C71C0Dc9695450a9A8';
+const gameManagerABI = [
+  {
+    "inputs": [],
+    "name": "getSypherCache",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
+const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+
 const app = express();
 app.use(express.json());
 
 const maxAttempts = 4;
+
+const maxReward = 5;
+const minReward = 2;
 
 // #region Setup & CORS
 // Define your website's origin
@@ -482,21 +503,29 @@ app.post('/game', async (req, res) => {
   let rewardAmount = ethers.parseUnits("0", 18);  // Default to no reward
 
   if (isWin) {
+    const costToPlay = await sypherGameContract.costToPlay();
     switch (attempts) {
       case 1:
-        rewardAmount = sypherCache;
+        {
+          const sypherCache = await gameManagerContract.getSypherCache();
+          if (sypherCache > 0) {
+            rewardAmount = sypherCache;
+          } else {
+            rewardAmount = ethers.parseUnits("1", 18);
+          }
+        }
         break;
       case 2:
-        rewardAmount = ethers.parseUnits("50", 18);
+        rewardAmount = costToPlay * BigInt(maxReward);
         break;
       case 3:
-        rewardAmount = ethers.parseUnits("15", 18);
+        rewardAmount = costToPlay * BigInt(minReward);
         break;
       case 4:
-        rewardAmount = ethers.parseUnits("10", 18);
+        rewardAmount = costToPlay;
         break;
     }
-    console.log(`Player won on attempt ${attempts}! Reward is ${ethers.formatUnits(rewardAmount, 18)} SYPHER!`);
+    // console.log(`Player won on attempt ${attempts}! Reward is ${ethers.formatUnits(rewardAmount, 18)} SYPHER!`);
   }
 
   if (isWin || session.guesses.length >= maxAttempts) {

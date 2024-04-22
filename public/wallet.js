@@ -511,9 +511,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (loadingBar) {
       if (playButton) {
         playButton.style.animation = 'foldInRemove .25s forwards';
+        playButton.style.display = 'none';
       }
       if (loadButton) {
         loadButton.style.animation = 'foldInRemove .25s forwards';
+        loadButton.style.display = 'none';
       }
       console.log("Showing loading bar...");
       loadingBar.style.display = 'inline-block'; // Show the loadingBar
@@ -548,7 +550,9 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Revealing session recovery form...");
     // Hide the New Game/Load Game buttons
     playButton.style.animation = 'foldInRemove .25s forwards';
+    playButton.style.display = 'none';
     loadButton.style.animation = 'foldInRemove .25s forwards';
+    loadButton.style.display = 'none';
 
     // Show the input field for the transaction hash
     retrieveTransaction.style.display = 'block';
