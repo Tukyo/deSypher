@@ -255,6 +255,7 @@ body {
     z-index: 10;
     padding-bottom: 200px;
     padding-top: 200px;
+    margin: 100px;
     max-width: 100%;
 }
 .puzzle-input {
@@ -1187,7 +1188,7 @@ body {
 @media (max-width: 700px) {
     /* #region Home Page Adjustments */
     .main-content {
-        margin-top: 50px;
+        margin: 50px;
     }
     .game-logo {
         max-width: 90%;
