@@ -21,7 +21,7 @@ const distributionData = {
     "Initial Rewards Pool": 175000,
     "Sypher Cache": 1000,
     "Profectio Airdrop": 5000,
-    "Bug Bounty": 45000,
+    "Bug Bounty": 44000,
     "Development": 25000
 };
 const distributionColors = {
