@@ -26,6 +26,7 @@ function showErrorMessage(error) {
     // Set a new timeout
     timeoutHandle = setTimeout(() => {
         errorBox.style.animation = 'fadeOut 0.25s forwards';
+        errorBox.style.display = 'none';
         console.log('Error message hidden');
     }, 2500);
 }

@@ -1189,9 +1189,6 @@ body {
     .main-content {
         margin-top: 50px;
     }
-    .error-message-box {
-        height: 30px;
-    }
     .game-logo {
         max-width: 90%;
         margin-top: 25px;
@@ -1202,6 +1199,16 @@ body {
     }
     .input-fields {
         padding-top: 10px;
+    }
+    #inputContainer {
+        background: black;
+        border: solid 2px var(--desypher-green-dark);
+        box-shadow: 0 0 10px var(--desypher-green-dark);
+        border-radius: 10px;
+        width: fit-content;
+        margin: 0 auto;
+        margin-bottom: 25px;
+        padding: 20px 10px;
     }
     #connect-button {
         scale: .85;
@@ -1289,7 +1296,7 @@ body {
     }
     /* #endregion Tokenomics Page Adjustments */
 }
-@media (max-width: 450px) {
+@media (max-width: 485px) {
     .dropdown-button {
         top: 30px;
         left: 5px;
