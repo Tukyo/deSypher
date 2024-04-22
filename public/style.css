@@ -36,6 +36,7 @@ body {
     height: auto;
     margin-bottom: 50px;
     margin-top: 10px;
+    
     animation: transitionDown 5s;
     animation-timing-function: ease-in;
     align-self: center;

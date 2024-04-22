@@ -4,6 +4,7 @@
 /cache
 /artifacts
 /assets/logo(old).png
+/public/airdrop.js
 airdrop-list.json
 hardhat.config.js
 serviceAccountKey.json

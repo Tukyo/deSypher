@@ -20,9 +20,9 @@ const distributionData = {
     "Circulating Supply": 750000,
     "Initial Rewards Pool": 175000,
     "Sypher Cache": 1000,
-    "Profectio Airdrop": 2000,
+    "Profectio Airdrop": 5000,
     "Bug Bounty": 45000,
-    "Development": 27000
+    "Development": 25000
 };
 const distributionColors = {
     "Circulating Supply": "#2dc60e",
