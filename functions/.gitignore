@@ -4,3 +4,5 @@ serviceAccountKey.json
 five-letter-words.txt
 firebase-debug.log
 ui-debug.log
+updateWordList.js
+five-letter-test.txt

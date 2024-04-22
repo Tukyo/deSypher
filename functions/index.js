@@ -364,8 +364,6 @@ const app = express();
 app.use(express.json());
 
 const maxAttempts = 4;
-const fs = require('fs'); // For choosing the random word from the filesystem
-const { log } = require('console');
 
 // #region Setup & CORS
 // Define your website's origin
@@ -417,7 +415,7 @@ app.post('/game', async (req, res) => {
     }
   } else {
     console.log(`Starting new game for player: ${playerAddress}`);
-    correctWord = chooseWord();  // Select a new word for the game
+    correctWord = await chooseWord();  // Select a new word for the game
 
     session = {
       result: [],
@@ -447,11 +445,15 @@ app.post('/game', async (req, res) => {
   var attempts = maxAttempts - session.attemptsLeft;
   var guesses = session.guesses;
 
+  // database.collection('words').get().then((docs) => {
+  //   docs.forEach(doc => {
+  //     console.log(doc.id, '=>', doc.data());
+  //   });
+  // });
+
   // Check if the word is in the word list
-  const words = fs.readFileSync('./five-letter-words.txt', 'utf8').split('\n');
-  const fiveLetterWords = words.map(word => word.replace('\r', '')).filter(word => word.length === 5);
-  console.log('Guessed word:', guessedWord.toLowerCase()); // Print out the guessed word
-  if (!fiveLetterWords.includes(guessedWord.toLowerCase())) {
+  let wordDoc = await database.collection('words').doc(guessedWord.trim().replace(' ', '').toLowerCase()).get();
+  if (!wordDoc.exists) {
     return res.send({ error: 'This word is not valid!' });
   }
 
@@ -465,6 +467,16 @@ app.post('/game', async (req, res) => {
     word: guessedWord.toLowerCase(),
     result: result,
     isWin: isWin
+  });
+
+  // In your /game POST route
+  const guessedWordRef = database.collection('words').doc(guessedWord.trim().replace(' ', '').toLowerCase());
+  database.runTransaction(async (transaction) => {
+    const doc = await transaction.get(guessedWordRef);
+    if (doc.exists) {
+      const newTimesGuessed = (doc.data().timesGuessed || 0) + 1;
+      transaction.update(guessedWordRef, { timesGuessed: newTimesGuessed });
+    }
   });
 
   let rewardAmount = ethers.parseUnits("0", 18);  // Default to no reward
@@ -523,10 +535,15 @@ async function handleTransactionConfirmation(txHash) {
 }
 
 // Function to grab a random word from the word list
-function chooseWord() {
-  const words = fs.readFileSync('./five-letter-words.txt', 'utf8').split('\n');
-  const fiveLetterWords = words.filter(word => word.trim().replace('\r', '').length === 5);
-  return fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].replace('\r', '').toLowerCase();
+async function chooseWord() {
+  let configDoc = await database.collection('config').doc('wordConfig').get();
+  let count = configDoc.data().count;
+
+  let randomIndex = Math.floor(Math.random() * count);
+
+  let wordDoc = (await database.collection('words').where('index', '==', randomIndex).get()).docs[0];
+
+  return wordDoc.id;
 }
 
 // Function that checks the guessed word based on the input word against the correct word
@@ -586,11 +603,6 @@ app.post('/verify-session', async (req, res) => {
 
   res.send(session);
 });
-
-
-
-
-
 // #endregion Word Game Main Logic
 
 // #region reCAPTCHA Verification
