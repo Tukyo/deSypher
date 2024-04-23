@@ -388,7 +388,7 @@ const minReward = 2;
 
 // #region Setup & CORS
 // Define your website's origin
-const allowedOrigins = ["http://localhost:5000", "https://www.desypher.net", "https://desypher-6245f.web.app", "https://desypher-6245f.firebaseapp.com"]; // Add your website's domain here
+const allowedOrigins = ["http://localhost:5000", "https://desypher.net", "https://desypher-6245f.web.app", "https://desypher-6245f.firebaseapp.com"]; // Add your website's domain here
 
 // CORS options
 const corsOptions = {

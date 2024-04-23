@@ -41,6 +41,17 @@ function sendGuess() {
         revealMusicPlayer();
         return; // Do not proceed with the fetch request
     }
+    if (word.toLowerCase() === 'color') {
+        console.log("Cheat code activated: Changing the color scheme.");
+        changeColorScheme();
+        changeImageColor();
+        changeSpritesheetColor();
+        return;
+    }
+    if (word.toLowerCase() === 'colin') {
+        document.dispatchEvent(new CustomEvent('appError', { detail: "Tehe!" }));
+        return;
+    }
     // Disable the submit button while processing the guess
     submitButton.disabled = true;
     document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Processing..." }));
@@ -354,11 +365,13 @@ function updateMainContentPadding() {
 // #region Effects & Extras
 
 // #region Cyber Rain
+let currentHueRotation = '';
 function spawnSpritesheet() {
     // console.log("spawning matrix rain");
     const sprite = document.createElement('div');
     sprite.className = 'spritesheet';
     sprite.style.left = Math.random() * (window.innerWidth - 128) + 'px'; // Randomize the horizontal position
+    sprite.style.filter = currentHueRotation;
     document.body.appendChild(sprite);
 
     // Start cycling through the spritesheet frames
@@ -386,6 +399,7 @@ setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
 // #endregion Cyber Rain
 
 // #region Cheat Codes
+
 document.addEventListener('DOMContentLoaded', () => {
     let konamiCode = [
         'ArrowUp', 'ArrowUp', 'ArrowDown',
@@ -418,6 +432,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+function changeColorScheme() {
+    const root = document.documentElement;
+    const getRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
+
+    root.style.setProperty('--desypher-green-main', getRandomColor());
+    root.style.setProperty('--desypher-green-dark', getRandomColor());
+    root.style.setProperty('--desypher-green-bright', getRandomColor());
+    root.style.setProperty('--glow-green-main', getRandomColor());
+    root.style.setProperty('--glow-green-secondary', getRandomColor());
+    root.style.setProperty('--glow-green-dark', getRandomColor());
+
+    console.log("Changed color scheme to random colors.");
+}
+function changeImageColor() {
+    const images = document.querySelectorAll('.game-logo');
+    const getRandomHueRotate = () => `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+
+    images.forEach(image => {
+        image.style.filter = getRandomHueRotate();
+    });
+
+    console.log("Applied random color filter to game logo images.");
+}
+function changeSpritesheetColor() {
+    const getRandomHueRotate = () => `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+    currentHueRotation = getRandomHueRotate();
+
+    // Apply the new hue rotation to all existing spritesheets
+    document.querySelectorAll('.spritesheet').forEach(sprite => {
+        sprite.style.filter = currentHueRotation;
+    });
+
+    console.log("Applied random color filter to all spritesheets.");
+}
 // #endregion Cheat Codes
 
 // #region Audio

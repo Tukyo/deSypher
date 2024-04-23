@@ -1,7 +1,16 @@
 :root {
+    /* Coinbase Blue */
     --coinbase-blue: #0052ff;
+
+    /* deSypher Main Colors */
     --desypher-green-main: #2dc60e;
     --desypher-green-dark: #166009;
+    --desypher-green-bright: #39e016;
+
+    /* Glow Colors */
+    --glow-green-main: #00ff00c2;
+    --glow-green-secondary: #00ff009e;
+    --glow-green-dark: #00ff005f;
 }
 .link {
     color: var(--desypher-green-main);
@@ -36,7 +45,6 @@ body {
     height: auto;
     margin-bottom: 50px;
     margin-top: 10px;
-    
     animation: transitionDown 5s;
     animation-timing-function: ease-in;
     align-self: center;
@@ -61,7 +69,7 @@ body {
 #connect-button:hover {
     scale: 1.05;
     background: var(--desypher-green-main);
-    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     color: white;
     border-color: var(--desypher-green-main);
 }
@@ -121,7 +129,7 @@ body {
     font-style: bold;
     text-transform: uppercase;
     text-align: right;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     padding: 2px 6px;
     cursor: pointer;
     z-index: 1;
@@ -150,7 +158,7 @@ body {
     left: 15px;
     z-index: 1000;
     padding: 10px 20px;
-    background: #39e016;
+    background: var(--desypher-green-bright);
     color: black;
     padding: 10px 20px;
     border: black;
@@ -165,17 +173,17 @@ body {
 .dropdown-button:hover {
     scale: 1.05;
     background: var(--desypher-green-main);
-    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     color: white;
 }
 .dropdown-content {
     display: none;
     position: sticky;
     background-color: #000000a6;
-    border-left: 2px solid #00ff005f;
+    border-left: 2px solid var(--glow-green-dark);
     min-width: 160px;
     text-align: left;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     padding: 12px 16px;
     z-index: 1;
 }
@@ -195,7 +203,7 @@ body {
 }
 #mute-button:hover {
     color: var(--desypher-green-main);
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     cursor: pointer;
 }
 #keyboard-button {
@@ -209,7 +217,7 @@ body {
 }
 #keyboard-button:hover {
     color: var(--desypher-green-main);
-    text-shadow: 0 0 15px #00ff00c2, 0 0 30px #00ff009e;
+    text-shadow: 0 0 15px var(--glow-green-main), 0 0 30px var(--glow-green-secondary);
     cursor: pointer;
 }
 #keyboard-helper {
@@ -240,7 +248,7 @@ body {
     /* Consistent rounded corners */
     user-select: none;
     /* Prevent text selection */
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 0 #00000033;
     /* Subtle shadow for depth */
     color: white;
     /* Text color for visibility against background */
@@ -311,7 +319,7 @@ body {
 .game-button:hover {
     scale: 1.15;
     background: var(--desypher-green-main);
-    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     color: white;
 }
 .game-button:active {
@@ -436,7 +444,7 @@ body {
 }
 .social-icon:hover {
     color: #dddddd;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 10px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 10px var(--glow-green-secondary);
 }
 /* #endregion Social Media */
 
@@ -518,7 +526,7 @@ body {
 }
 #song-info:hover {
     cursor: pointer;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     overflow: visible;
 }
 /* #endregion Music Player */
@@ -577,7 +585,7 @@ body {
     display: inline-block;
 }
 .color-box.green {
-    background-color: #39e016;
+    background-color: var(--desypher-green-bright);
 }
 .color-box.yellow {
     background-color: yellow;
@@ -600,11 +608,11 @@ body {
     position: relative;
     top: 5px;
     background-color: #000000a6;
-    border-left: 2px solid #00ff005f;
+    border-left: 2px solid var(--glow-green-dark);
     max-width: 700px;
     width: 100%;
     text-align: left;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     padding: 12px 16px;
     z-index: 1;
     margin-bottom: 20px;
@@ -675,9 +683,9 @@ body {
     position: relative;
     top: 5px;
     background-color: #000000a6;
-    border-left: 2px solid #00ff005f;
+    border-left: 2px solid var(--glow-green-dark);
     text-align: left;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     padding: 12px 16px;
     z-index: 1;
     margin-bottom: 20px;
@@ -716,7 +724,7 @@ body {
 }
 .roadmap-item-container:hover {
     width: 75%;
-    box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     cursor: pointer;
 }
 .link:hover {
@@ -755,9 +763,9 @@ body {
     position: relative;
     top: 5px;
     background-color: #000000a6;
-    border-left: 2px solid #00ff005f;
+    border-left: 2px solid var(--glow-green-dark);
     text-align: left;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     padding: 12px 16px;
     z-index: 1;
     margin-bottom: 20px;
@@ -777,12 +785,12 @@ body {
     position: relative;
     top: 5px;
     background-color: #000000a6;
-    border-left: 2px solid #00ff005f;
+    border-left: 2px solid var(--glow-green-dark);
     max-width: 600px;
     width: 100%;
     max-height: 800px;
     text-align: left;
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     padding: 12px 16px;
     z-index: 1;
     margin-bottom: 20px;
@@ -846,7 +854,7 @@ body {
 .page-navigation-section a:hover {
     cursor: pointer;
     color: var(--desypher-green-main);
-    text-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
 }
 /* #endregion Page Navigation */
 
