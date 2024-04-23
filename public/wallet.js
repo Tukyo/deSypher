@@ -481,6 +481,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const formattedBalance = ethers.utils.formatUnits(rewardsBalance, 18);
         document.getElementById('rewards-balance').innerText = formattedBalance;
 
+        rewardsButtonVisible = true;
+
         // Check if rewards balance is greater than 0
         if (parseFloat(formattedBalance) > 0) {
           if (!rewardsButtonVisible) {
