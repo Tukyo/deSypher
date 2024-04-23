@@ -406,7 +406,6 @@ body {
     font-size: 18px;
     text-transform: uppercase;
     background-color: black;
-    box-shadow: 0 0 10px red, 0 0 20px red;
     padding-left: 20px;
     padding-right: 20px;
     top: 50%;
@@ -720,14 +719,11 @@ body {
     box-shadow: 0 0 10px #00ff00c2, 0 0 20px #00ff009e;
     cursor: pointer;
 }
-.roadmap-link {
-    text-decoration: none;
-    color: var(--desypher-green-main);
-}
-.roadmap-link:hover {
+.link:hover {
     font-size: 18px;
     font-style: bold;
     text-transform: uppercase;
+    cursor: pointer;
 }
 .roadmap-container .roadmap-item-container {
     animation: fadeIn 0.25s forwards;

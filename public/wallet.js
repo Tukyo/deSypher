@@ -188,22 +188,34 @@ document.addEventListener('DOMContentLoaded', function () {
   // #endregion NEW GAME / LOAD Game Button Processing
 
   // #region Game Start Processing
-  async function startGame() {
-    console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
-    playButton.textContent = "Waiting on transaction...";
-    const signer = provider.getSigner();
-    const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+  async function startGame(useExistingTransaction = false, existingTransactionHash = null) {
     try {
-      playerAddress = await signer.getAddress();
-      console.log("Player address:", playerAddress);
-      const playGameTx = await gameContract.PlayGame(await signer.getAddress());
-      showLoadingAnimation();
-      console.log("Waiting for game transaction to be mined...");
-      await playGameTx.wait();
-      console.log("Game started successfully on blockchain");
+      if (!useExistingTransaction) {
+        console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
+        playButton.textContent = "Waiting on transaction...";
+        const signer = provider.getSigner();
+        const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+        try {
+          playerAddress = await signer.getAddress();
+          console.log("Player address:", playerAddress);
+          const playGameTx = await gameContract.PlayGame(await signer.getAddress());
+          showLoadingAnimation();
+          console.log("Waiting for game transaction to be mined...");
+          await playGameTx.wait();
+          console.log("Game started successfully on blockchain");
 
-      transactionHash = playGameTx.hash;
-      console.log("Transaction hash:", transactionHash);
+          transactionHash = playGameTx.hash;
+          console.log("Transaction hash:", transactionHash);
+        } catch (error) {
+          console.error("Failed to start the game on the blockchain:", error);
+          window.location.reload();
+          return;
+        }
+      } else {
+        // Use the existing transaction hash and do not initiate a new transaction
+        console.log("Using existing transaction hash for game session:", existingTransactionHash);
+        transactionHash = existingTransactionHash;
+      }
 
       let word = null;
 
@@ -214,8 +226,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         body: JSON.stringify({ playerAddress, transactionHash, word }),
       })
-      .then(response => response.json())
-      .then(data => {
+        .then(response => response.json())
+        .then(data => {
           console.log('Started game with data:', data);
         });
 
@@ -230,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
       resetGameInputs();
       showKeyboardHelperButton();
 
-    } catch (error) {
+    } catch (error) { // This catch is now correctly positioned to handle errors from any part of the function
       console.error("Failed to start the game on the blockchain:", error);
       window.location.reload();
     }
@@ -569,20 +581,19 @@ document.addEventListener('DOMContentLoaded', function () {
   retrieveTransaction.addEventListener('keypress', async function (event) {
     if (event.key === 'Enter') {
       event.preventDefault();
+      document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Verifying ownership of transaction..." }));
       transactionVerification();
     }
   });
-
   // Attach event listener to the Cancel button for page reload
   cancelButton.addEventListener('click', function () {
     console.log("Page reload initiated by cancel button.");
     window.location.reload();
   });
-
   submitLoadButton.addEventListener('click', function () {
+    document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Verifying ownership of transaction..." }));
     transactionVerification();
   });
-
   async function transactionVerification() {
     transactionHash = retrieveTransaction.value;
     console.log("User submitted: " + transactionHash);
@@ -591,6 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const validHashRegex = /^0x[a-fA-F0-9]{64}$/;
     if (!validHashRegex.test(transactionHash)) {
       console.error("Invalid transaction hash format:", transactionHash);
+      document.dispatchEvent(new Event('hideSystemMessage'));
       document.dispatchEvent(new CustomEvent('appError', { detail: "Invalid transaction hash format. Please check and try again." }));
       return; // Stop further execution if the hash is invalid
     }
@@ -608,30 +620,40 @@ document.addEventListener('DOMContentLoaded', function () {
         body: JSON.stringify({ transactionHash, signature }),
       })
         .then(async response => {
-          const data = await response.json(); // Parse JSON even in case of an error
+          const data = await response.json();
           if (!response.ok) {
-            // Log the error and dispatch a detailed error message
             console.error('Fetch error:', data.error, data.details || '');
-            let detailedError = `${data.error || "Unknown error"}`;
-            if (data.details) {
-              detailedError += ` - Details: ${data.details}`;
+            document.dispatchEvent(new CustomEvent('appError', { detail: data.error || "Error during session verification." }));
+            // If the specific error is "Session not found", check if the transaction is a PlayGame transaction
+            if (data.error === "Session not found for the provided transaction hash.") {
+              checkIfPlayGameTransaction(transactionHash)
+                .then(isPlayGame => {
+                  console.log(`Is the transaction a 'PlayGame' transaction? ${isPlayGame}`);
+                  document.dispatchEvent(new Event('hideSessionRecoveryForm'));
+                  startGame(true, transactionHash);
+                })
+                .catch(error => {
+                  console.error("Error checking transaction type:", error);
+                });
             }
-            document.dispatchEvent(new CustomEvent('appError', { detail: detailedError }));
-            return; // Return to prevent further execution in the promise chain
+            return;
           }
-          return data;
-        })
-        .then(data => {
           console.log('Session verification:', data);
+          document.dispatchEvent(new Event('hideSystemMessage'));
           triggerGameRestart(data);
         })
         .catch(error => {
           console.error('Fetch error:', error.message);
-          alert(error.message); // Optionally show error details to the user
+          document.dispatchEvent(new CustomEvent('appError', { detail: error.message || "Network error. Please try again." }));
         });
 
     } catch (error) {
       console.error('Error:', error);
+      if (error.code === 4001) {
+        document.dispatchEvent(new CustomEvent('appError', { detail: "User rejected the request." }));
+      } else {
+        document.dispatchEvent(new CustomEvent('appError', { detail: "An unexpected error occurred. Please try again." }));
+      }
     }
   }
   function triggerGameRestart(data) {
@@ -645,10 +667,27 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Dispatched game restart event with data.");
     showKeyboardHelperButton();
   }
+  async function checkIfPlayGameTransaction(transactionHash) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const transaction = await provider.getTransaction(transactionHash);
+
+    if (!transaction) {
+      throw new Error("Transaction not found");
+    }
+
+    // Check if the transaction is to the game contract and is a PlayGame call
+    const playGameMethodId = getMethodId("PlayGame"); // Ensure you have this function defined to get the method ID
+    return transaction.to.toLowerCase() === gameContractAddress.toLowerCase() && transaction.data.startsWith(playGameMethodId);
+  }
+  function getMethodId(methodName) {
+    const abi = new ethers.utils.Interface(gameContractABI);
+    return abi.getSighash(methodName);
+  }
   // #endregion Restore Game Session - LOAD GAME
 
   // #region reCAPTCHA Section
   window.onSubmitPlay = async function (token) {
+    document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "reCaptcha Verification in Progress..." }));
     console.log("reCAPTCHA token generated:", token);
     try {
       console.log("Sending reCAPTCHA token to server...");
@@ -664,6 +703,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const data = await response.json();
       console.log("Server response data:", data);
       if (data.success) {
+        document.dispatchEvent(new Event('hideSystemMessage'));
         console.log("reCAPTCHA verification successful, checking for token approval...");
         const hasSufficientAllowance = await checkTokenAllowance();
         console.log("Token allowance check:", hasSufficientAllowance);
@@ -673,6 +713,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("Token spend approval status:", approvalSuccess);
           if (!approvalSuccess) {
             console.log("Token spend approval failed");
+            document.dispatchEvent(new Event('hideSystemMessage'));
             return; // Stop the flow if the user doesn't approve the spend
           }
         }
@@ -684,8 +725,10 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
       console.error("Error during reCAPTCHA verification:", error);
     }
+    document.dispatchEvent(new Event('hideSystemMessage'));
   }
   window.onSubmitLoad = async function (token) {
+    document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "reCaptcha Verification in Progress..." }));
     console.log("reCAPTCHA token generated:", token);
     try {
       console.log("Sending reCAPTCHA token to server...");
@@ -702,6 +745,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log("Server response data:", data);
       if (data.success) {
         console.log("reCAPTCHA verification successful, revealing recovery form...");
+        document.dispatchEvent(new Event('hideSystemMessage'));
         revealSessionRecoveryForm();
       } else {
         console.log("reCAPTCHA verification failed");
@@ -709,6 +753,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
       console.error("Error during reCAPTCHA verification:", error);
     }
+    document.dispatchEvent(new Event('hideSystemMessage'));
   }
   async function reCaptchaInitialization() {
     if (window.ethereum) {

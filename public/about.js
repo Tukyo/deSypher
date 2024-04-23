@@ -54,10 +54,10 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
 
         switch (title.textContent) {
             case "$SYPHER Launch":
-                textContent = "$SYPHER was initially launched on [DATE] with a total supply of 1,000,000 tokens. More information can be found on the <a href='/tokenomics.html' class='roadmap-link'>tokenomics page</a> <i class='fa-solid fa-arrow-up-right-from-square roadmap-link'></i>.";
+                textContent = "$SYPHER was initially launched on [DATE] with a total supply of 1,000,000 tokens. More information can be found on the <a href='/tokenomics.html' class='link'>tokenomics page <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
                 break;
             case "deSypher Launch":
-                textContent = "deSypher will be launching shortly after the token. It is currently undergoing beta testing. If you are interested in trying the game on testnet, please reach out on telegram.";
+                textContent = "deSypher will launch shortly after the token. It is currently undergoing beta testing. If you are interested in trying the game on testnet, please reach out on <a href='https://t.me/tukyogames' class='link'>telegram <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
                 break;
             case "Optimizations":
                 textContent = "After the initial launch, we will be focusing on optimizing the game for a better user experience. This includes bug fixes, performance improvements, and QOL upgrades.";

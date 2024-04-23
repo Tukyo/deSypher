@@ -12,7 +12,7 @@ const retrieveTransaction = document.getElementById('retrieve-transaction');
 const REQUIRED_CHAIN_ID = 8453; // Base L2
 
 const songs = [
-    'vaang-h4ck3rm0d3act1v4t3d.ogg', 'tukyo-deSypher.ogg', 'vaang-caliente.ogg', '333amethyst-mantis(P.2).ogg'
+    'tukyo-deSypher.ogg', 'vaang-caliente.ogg', '333amethyst-mantis(P.2).ogg'
 ];
 
 // #region WordGame Main 
@@ -43,6 +43,7 @@ function sendGuess() {
     }
     // Disable the submit button while processing the guess
     submitButton.disabled = true;
+    document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Processing..." }));
     console.log('Guess submitted:', word);
 
     fetch('/game', {
@@ -59,6 +60,7 @@ function sendGuess() {
                 const errorEvent = new CustomEvent('appError', { detail: data.error });
                 document.dispatchEvent(errorEvent);
             } else {
+                document.dispatchEvent(new Event('hideSystemMessage'));
                 updateUI(data);
                 submitButton.disabled = false;
             }
@@ -307,7 +309,6 @@ function addAudioListener(element) {
 // Add listeners to the initial row of inputs
 const initialInputs = document.querySelectorAll('.puzzle-input');
 addInputListeners(initialInputs);
-
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 });
@@ -704,8 +705,10 @@ document.addEventListener('gameRestart', (e) => {
         loadGame(e.detail.sessionData);  // Correctly pass session data to the loadGame function
     } else {
         console.error("No session data received with the game restart event.");  // Only log this when no data is received
+        document.dispatchEvent(new CustomEvent('appError', { detail: 'No session data found...' }));
     }
 });
+document.addEventListener('hideSessionRecoveryForm', resetUIElements);
 function loadGame(sessionData) {
     document.getElementById('inputContainer').innerHTML = '';
     form.style.display = 'block';
@@ -719,7 +722,7 @@ function loadGame(sessionData) {
     } else {
         console.error("No guesses found in the session data or session data is missing.");
         document.dispatchEvent(new CustomEvent('appError', { detail: 'No guesses found in the session data or session data is missing.' }));
-        return;
+        sendGuess();
     }
 
     // UI reset for the game elements
