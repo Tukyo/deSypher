@@ -5,8 +5,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Ensuring this script runs after all DOM content is fully loaded, including scripts.
     const addressElement = document.getElementById('address-text');
-    addressElement.textContent = tokenContractAddress;
-    console.log("Updated contract address to: " + tokenContractAddress);
+    addressElement.textContent = "COMING SOON!";
+    // addressElement.textContent = tokenContractAddress;
+    // console.log("Updated contract address to: " + tokenContractAddress);
 
     setDistributionValues();
 });

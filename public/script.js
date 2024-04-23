@@ -45,11 +45,16 @@ function sendGuess() {
         console.log("Cheat code activated: Changing the color scheme.");
         changeColorScheme();
         changeImageColor();
+        changeBackgroundColor();
         changeSpritesheetColor();
         return;
     }
     if (word.toLowerCase() === 'colin') {
         document.dispatchEvent(new CustomEvent('appError', { detail: "Tehe!" }));
+        return;
+    }
+    if (word.toLowerCase() === 'lazer') {
+        lazerRayz();
         return;
     }
     // Disable the submit button while processing the guess
@@ -432,28 +437,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+function getRandomGradient() {
+    const getRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
+    const color1 = getRandomColor();
+    const color2 = getRandomColor();
+    const gradient = `linear-gradient(to left, ${color1} 1%, ${color2} 99%)`;
+
+    return gradient;
+}
 function changeColorScheme() {
     const root = document.documentElement;
     const getRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
-
     root.style.setProperty('--desypher-green-main', getRandomColor());
     root.style.setProperty('--desypher-green-dark', getRandomColor());
+    root.style.setProperty('--desypher-green-ultradark', getRandomColor());
     root.style.setProperty('--desypher-green-bright', getRandomColor());
     root.style.setProperty('--glow-green-main', getRandomColor());
     root.style.setProperty('--glow-green-secondary', getRandomColor());
     root.style.setProperty('--glow-green-dark', getRandomColor());
+    root.style.setProperty('--font-color', getRandomColor());
+    root.style.setProperty('--background-gradient', getRandomGradient());
 
-    console.log("Changed color scheme to random colors.");
+    console.log("Changed color scheme to random colors including gradient.");
 }
 function changeImageColor() {
     const images = document.querySelectorAll('.game-logo');
     const getRandomHueRotate = () => `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
-
     images.forEach(image => {
         image.style.filter = getRandomHueRotate();
     });
-
     console.log("Applied random color filter to game logo images.");
+}
+function changeBackgroundColor() {
+    const background = document.querySelector('.background-image');
+    const getRandomHueRotate = () => `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+    background.style.filter = getRandomHueRotate();
+    console.log("Applied random color filter to the background.");
 }
 function changeSpritesheetColor() {
     const getRandomHueRotate = () => `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
@@ -465,6 +484,40 @@ function changeSpritesheetColor() {
     });
 
     console.log("Applied random color filter to all spritesheets.");
+}
+function lazerRayz() {
+    const lazerContainer = document.getElementById('lazerContainer');
+
+    document.addEventListener('mousemove', function(e) {
+        // Remove all existing lazers before creating new ones
+        while (lazerContainer.firstChild) {
+            lazerContainer.removeChild(lazerContainer.firstChild);
+        }
+
+        const minLazers = 3; // Minimum number of lazers to spawn
+        const maxLazers = 10; // Maximum number of lazers to spawn
+        const numLazers = Math.floor(Math.random() * (maxLazers - minLazers + 1)) + minLazers;
+
+        for (let i = 0; i < numLazers; i++) {
+            const lazer = document.createElement('div');
+            lazer.className = 'lazer';
+            const color = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`;
+            lazer.style.background = color;
+            lazer.style.left = `${e.pageX}px`;
+            lazer.style.top = `${e.pageY}px`;
+            const angle = Math.random() * 360;
+            lazer.style.transform = `rotate(${angle}deg)`;
+            lazer.style.width = `${Math.max(window.innerWidth, window.innerHeight)}px`;
+            lazer.style.boxShadow = `0 0 10px ${color}`;
+
+            lazerContainer.appendChild(lazer);
+
+            const lifetime = Math.random() * 1000 + 500; // 500 to 1500 milliseconds
+            setTimeout(() => {
+                lazer.remove();
+            }, lifetime);
+        }
+    });
 }
 // #endregion Cheat Codes
 

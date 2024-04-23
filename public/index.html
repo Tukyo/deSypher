@@ -16,6 +16,8 @@
 </head>
 <body background-color= black>
 
+    <div class="background-image"></div>
+
     <div class="header">        
         
         <!-- #region Wallet Connectivity Section -->
@@ -24,10 +26,12 @@
             <div id="base-logo">
                 <img src="https://raw.githubusercontent.com/base-org/brand-kit/7d3531058f5d89aeb627ab2045e1c5df3efb5de8/logo/symbol/Base_Symbol_Blue.svg" alt="Base Logo">
             </div>
-            <div id="wallet-details-section">
-                <p id="token-balance-section">$SYPHER <span id="token-balance">0</span></p>
-                <p id="rewards-balance-section"> REWARDS <span id="rewards-balance">0</span></p>
-                <button id="claim-rewards-button">Claim Rewards</button>
+            <div class="wallet-details-container">
+                <div id="wallet-details-section">
+                    <p id="token-balance-section">$SYPHER <span id="token-balance">0</span></p>
+                    <p id="rewards-balance-section"> REWARDS <span id="rewards-balance">0</span></p>
+                    <button id="claim-rewards-button">CLAIM TOKENS</button>
+                </div>
             </div>
         </div>
         <!-- #endregion Wallet Connectivity Section -->
@@ -49,10 +53,19 @@
         <!-- #endregion SYPHER Cache-->
 
     </div>
-
+    
     <div class="main-content">
-        <img src="assets/logo_full.webp" alt="Logo of the game" class="game-logo" id="game-logo">
+        
+        <div class= "game-logo-container">
+            <img src="assets/logo_full.webp" alt="Logo of the game" class="game-logo" id="game-logo">
+            <div class="mobile-game-logo-container">
+                <img src="assets/logo_transparent.webp" alt="Logo of the game" class="game-logo" id="mobile-game-logo">
+            </div>
+        </div>
 
+        <div id="lazerContainer"></div>
+
+        <!-- #region Help Section Dropdown Content -->
         <div class="dropdown-content">
             <h3>The goal of the game is to guess the correct word.</h3>
             <ul class="color-key">
@@ -62,6 +75,7 @@
             </ul>
             <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
         </div>
+        <!-- #endregion Help Section Dropdown Content -->
 
         <!-- #region Keyboard Helper Layout -->
         <div id="keyboard-helper">

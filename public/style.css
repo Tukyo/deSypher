@@ -4,13 +4,18 @@
 
     /* deSypher Main Colors */
     --desypher-green-main: #2dc60e;
-    --desypher-green-dark: #166009;
     --desypher-green-bright: #39e016;
+    --desypher-green-dark: #166009;
+    --desypher-green-ultradark: #0f3e07;
 
     /* Glow Colors */
     --glow-green-main: #00ff00c2;
     --glow-green-secondary: #00ff009e;
     --glow-green-dark: #00ff005f;
+
+    --background-gradient: linear-gradient(to left, #041f00 1%, black 99%);
+
+    --font-color: white;
 }
 .link {
     color: var(--desypher-green-main);
@@ -32,37 +37,88 @@ body {
     justify-content: center;
     align-items: center;
     font-family: monospace, sans-serif;
-    color: white;
+    color: var(--font-color);
+    background-color: black;
+}
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url('assets/background.webp');
     background-size: contain;
     background-position: center;
     background-repeat: repeat;
     background-attachment: fixed;
+    z-index: -1;
 }
 /* #region Home Page */
-.game-logo {
+.game-logo-container {
+    display: flex;
+    justify-content: center;
+    max-width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+}
+.game-logo, #mobile-game-logo {
     max-width: 80%;
     height: auto;
     margin-bottom: 50px;
     margin-top: 10px;
-    animation: transitionDown 5s;
-    animation-timing-function: ease-in;
     align-self: center;
 }
-/* #region Wallet Connect Section */
-#connect-button {
+.game-logo {
+    animation: fadeInFont 1.5s;
+    animation-timing-function: ease-in;
+}
+.mobile-game-logo-container {
     opacity: 0%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--desypher-green-bright);
+    max-height: 75px;
+    margin-bottom: 20px; 
+    animation: tvScreenOn .5s forwards;
+}
+#mobile-game-logo {
+    opacity: 0%;
+    scale: 25%;
+    display: none;
+    align-self: center;
+    height: auto;
+    margin: 10px;
+    animation: fadeInFont .5s forwards;
+    animation-delay: .25s;
+}
+/* #region Wallet Connect Section */
+.wallet-connection-section {
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: right;
     top: 15px;
     right: 15px;
+    max-width: 150px;
+    width: 100%;
     z-index: 1000;
-    padding: 10px 20px;
+}
+#connect-button {
+    opacity: 0%;
     border-radius: 10px;
+    padding: 10px 20px;
     background: black;
+    width: 100%;
     border-color: var(--desypher-green-main);
-    color: white;
+    border-style: solid;
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+    color: var(--font-color);
     cursor: pointer;
     font-family: monospace, sans-serif;
+    z-index: 1001;
     animation: transitionRight 1s forwards;
     animation-delay: 0.25s;
 }
@@ -70,7 +126,7 @@ body {
     scale: 1.05;
     background: var(--desypher-green-main);
     box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    color: white;
+    color: var(--font-color);
     border-color: var(--desypher-green-main);
 }
 #base-logo {
@@ -84,27 +140,23 @@ body {
     animation: transitionScaleDelayed .5s forwards;
     animation-delay: .5s;
 }
+.wallet-details-container {
+    width: 100%;
+    max-width: 97%;
+    z-index: 500;
+    position: relative;
+    top: -20px;
+}
 #wallet-details-section {
     opacity: 0%;
-    position: fixed;
-    top: 45px;
-    right: 5px;
-    z-index: 500;
     background: black;
     border-radius: 10px;
-    border-left: #0f3e07;
-    border-right: #0f3e07;
+    border: var(--desypher-green-ultradark) 1px solid;
     border-top: black;
-    border-bottom: #0f3e07;
-    max-width: 115px;
     font-size: small;
-    padding-top: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 10px;
+    padding: 10px 20px;
+    padding-top: 20px;
     border-style: solid;
-    text-align: right;
-    scale: 0.85;
     animation: foldOut 1s forwards;
     animation-delay: 1s;
     transform-origin: top;
@@ -121,8 +173,8 @@ body {
 }
 #claim-rewards-button {
     opacity: 0%;
-    color: white;
-    background: linear-gradient(to left, #041f00 1%, black 99%);
+    color: var(--font-color);
+    background: var(--background-gradient);
     border: black;
     border-right: 2px solid var(--desypher-green-main);
     font-size: 12px;
@@ -158,14 +210,18 @@ body {
     left: 15px;
     z-index: 1000;
     padding: 10px 20px;
+    max-width: 150px;
+    width: 100%;
     background: var(--desypher-green-bright);
     color: black;
-    padding: 10px 20px;
     border: black;
     border-radius: 10px;
+    border-color: var(--desypher-green-bright);
+    border-style: solid;
     cursor: help;
-    text-align: left;
+    text-align: center;
     font-family: monospace, sans-serif;
+    text-transform: uppercase;
     white-space: nowrap;
     animation: transitionLeft 1s forwards;
     animation-delay: 1s;
@@ -174,7 +230,7 @@ body {
     scale: 1.05;
     background: var(--desypher-green-main);
     box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    color: white;
+    color: var(--font-color);
 }
 .dropdown-content {
     display: none;
@@ -236,22 +292,16 @@ body {
     display: inline-block;
     position: sticky;
     width: 35px;
-    /* Size of each key */
     height: 35px;
     line-height: 35px;
-    /* Center the text vertically */
     border: 2px solid var(--desypher-green-main);
     padding: 10px 20px;
     margin-right: 5px;
     background-color: black;
     border-radius: 10px;
-    /* Consistent rounded corners */
     user-select: none;
-    /* Prevent text selection */
     box-shadow: 0 2px 0 #00000033;
-    /* Subtle shadow for depth */
-    color: white;
-    /* Text color for visibility against background */
+    color: var(--font-color);
 }
 /* #endregion Rules Dropdown Section */
 
@@ -265,12 +315,13 @@ body {
     padding-bottom: 100px;
     padding-top: 200px;
     margin: 100px;
-    max-width: 100%;
+    max-width: 100vw;
+    width: 100%;
 }
 .puzzle-input {
     scale: 1.5;
     background-color: black;
-    color: white;
+    color: var(--font-color);
     border: none;
     border-radius: 5px;
     width: 40px;
@@ -302,7 +353,7 @@ body {
 /* #region Game Buttons */
 .game-button {
     background-color: var(--desypher-green-main);
-    color: white;
+    color: var(--font-color);
     margin-top: 50px;
     border-radius: 5px;
     padding: 15px 30px;
@@ -311,16 +362,13 @@ body {
     text-transform: uppercase;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    /* Smooth transition for hover effect */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow for depth */
     outline: none;
 }
 .game-button:hover {
-    scale: 1.15;
     background: var(--desypher-green-main);
     box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    color: white;
+    color: var(--font-color);
 }
 .game-button:active {
     background-color: #194e0f;
@@ -328,15 +376,13 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 .game-button:focus {
-    border: 2px solid #0f3e07;
+    border: 2px solid var(--desypher-green-ultradark);
 }
-.play-button,
-#load-button {
+.play-button, #load-button {
     display: inline-block;
     width: 50%;
     margin: 0 auto;
     margin-top: 20px;
-    ;
     margin-bottom: 10px;
     text-align: center;
     padding: 15px 30px;
@@ -346,26 +392,27 @@ body {
 .play-button {
     opacity: 0%;
     border: none;
-    animation: transitionScale 2.5s forwards, pulse 2s infinite ease-in-out 2.5s;
+    max-width: 700px;
+    width: 100%;
+    animation-delay: .1s;
+    animation: transitionScale 1.25s forwards, pulse 2s infinite ease-in-out 2.5s;
 }
 #load-button {
     opacity: 0%;
-    scale: 0.80;
     background-color: black;
     border-left: var(--desypher-green-main);
     border-right: var(--desypher-green-main);
-    ;
     border-radius: 5px;
     border-color: var(--desypher-green-main);
-    max-width: 600px;
-    max-height: 75px;
+    max-width: 500px;
+    width: 100%;
+    height: 1px;
     animation: transitionUp 2.5s forwards;
     animation-delay: .5s;
     line-height: 0px;
-    padding: 25px 30px;
+    padding: 20px 30px;
 }
 #load-button:hover {
-    scale: 0.85;
     background-color: var(--desypher-green-main);
 }
 #retrieve-transaction {
@@ -374,7 +421,7 @@ body {
     margin-top: 20px;
     align-self: center;
     background-color: black;
-    color: white;
+    color: var(--font-color);
     font-family: monospace, sans-serif;
     font-size: 18px;
     text-align: center;
@@ -387,8 +434,7 @@ body {
     justify-content: center;
     gap: 10px;
 }
-#cancel-button,
-#submit-load-button {
+#cancel-button, #submit-load-button {
     display: none;
     opacity: 0%;
     margin-top: 20px;
@@ -431,7 +477,7 @@ body {
     padding-top: 25px;
     padding-bottom: 5px;
     position: fixed;
-    bottom: 35px;
+    bottom: 25px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
@@ -454,7 +500,7 @@ body {
     width: 12px;
 }
 ::-webkit-scrollbar-thumb {
-    background: #0f3e07;
+    background: var(--desypher-green-ultradark);
     border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -491,7 +537,7 @@ body {
 }
 .music-controls button {
     background-color: var(--desypher-green-dark);
-    color: white;
+    color: var(--font-color);
     border: black;
     border-radius: 2.5px;
     margin: 0 2px;
@@ -812,8 +858,8 @@ body {
     animation-delay: 1.25s;
 }
 #copy-icon:hover {
-    text-shadow: 0 0 10px white, 0 0 20px white;
-    color: white;
+    text-shadow: 0 0 10px var(--font-color), 0 0 20px var(--font-color);
+    color: var(--font-color);
     cursor: pointer;
 }
 .tokenomics-main-section h1, .distribution-section h1 {
@@ -840,7 +886,7 @@ body {
     padding: 1px 0;
     text-align: center;
     position: fixed;
-    bottom: 10px;
+    bottom: 5px;
     left: 0;
     right: 0;
     z-index: 100;
@@ -868,9 +914,13 @@ body {
     align-items: center;
     z-index: 1000;
     text-transform: uppercase;
+    background-color: black;
+    border-top: var(--desypher-green-dark) 2px solid;
 }
 .home-page-footer {
     height: 80px;
+    background-color: #00000000;
+    border: none;
 }
 .about-page-footer, .tokenomics-page-footer, .leaderboards-footer {
     height: 45px;
@@ -991,7 +1041,7 @@ body {
 @keyframes transitionScale {
     from {
         opacity: 0;
-        scale: 1.25;
+        scale: 1.15;
     }
     to {
         opacity: 1;
@@ -1025,12 +1075,11 @@ body {
     }
 }
 @keyframes pulse {
-    0%,
-    100% {
+    0%, 100% {
         transform: scale(1);
     }
     50% {
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
 }
 @keyframes tvScreenOn {
@@ -1169,6 +1218,21 @@ body {
         opacity: 1;
     }
 }
+@keyframes fadeInFont {
+    0% {
+        opacity: 0;
+        filter: none;
+    }
+    50% {
+        opacity: 0.5;
+        filter: grayscale(100%) contrast(150%);
+        filter: blur(2px) brightness(75%);
+        text-shadow: 0 0 10px var(--desypher-green-main), 0 0 20px #00ff0053;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 @keyframes fadeOut {
     0% {
         opacity: 1;
@@ -1186,11 +1250,27 @@ body {
     }
 
 }
+@keyframes fadeOutFont {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+        filter: grayscale(100%) contrast(150%);
+        filter: blur(2px) brightness(75%);
+        text-shadow: 0 0 10px var(--desypher-green-main), 0 0 20px #00ff0053;
+    }
+    100% {
+        opacity: 0;
+        filter: none;
+        display: none;
+    }
+
+}
 /* #endregion Animations */
 
 /* #region Responsive Design */
-
-@media (max-width: 700px) {
+@media (max-width: 775px) {
     /* #region Home Page Adjustments */
     .main-content {
         margin: 50px;
@@ -1198,6 +1278,7 @@ body {
     .game-logo {
         max-width: 90%;
         margin-top: 25px;
+        margin-bottom: 5px;
         padding-bottom: 20px;
     }
     .game-button {
@@ -1211,27 +1292,30 @@ body {
         border: solid 2px var(--desypher-green-dark);
         box-shadow: 0 0 10px var(--desypher-green-dark);
         border-radius: 10px;
-        width: fit-content;
-        margin: 0 auto;
-        margin-bottom: 25px;
+        width: 80%;
+        margin: 25px auto;
         padding: 20px 10px;
     }
+    .wallet-connection-section{
+        top: 30px;
+        max-width: 135px;
+    }
     #connect-button {
-        scale: .85;
-        padding: 8px 16px;
-        font-size: 14px;
-        right: 15px;
-        top: 15px;
+        padding: 5px 10px;
+        font-size: 12px;
     }
     .dropdown-button {
-        scale: .85;
-        width: auto;
-        min-width: 120px;
-        padding: 8px 16px;
-        font-size: 14px;
-        left: 15px;
-        top: 15px;
-        right: auto;
+        padding: 5px 10px;
+        font-size: 10px;
+        top: 30px;
+        max-width: 135px;
+        width: 100%;
+    }
+    #wallet-details-section {
+        font-size: 10px;
+    }
+    #claim-rewards-button {
+        font-size: 10px;
     }
     .puzzle-input {
         scale: 1;
@@ -1242,26 +1326,23 @@ body {
     .puzzle-input:hover {
         scale: 1.25;
     }
-    #wallet-details-section {
-        top: 40px;
-        scale: 0.8;
-        right: 13px;
-        padding: 10px 10px;
-        max-width: 120px;
-        width: 100%;
+    .play-button, #load-button {
+        width: 100vw;
+        max-width: 100vw;
+        font-size: 14px;
+        padding: 15px 20px;
+        border-radius: 0px;
+        margin-top: 100px;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        animation: tvScreenOn 2.5s forwards;
     }
     .play-button {
-        max-width: 250px;
-        font-size: 14px;
-        padding: 15px 20px;
+        font-size: 18px;
     }
     #load-button {
-        max-width: 150px;
-        font-size: 14px;
-        padding: 15px 20px;
-    }
-    .social-media-section {
-        margin-bottom: 15px;
+        margin-top: 0px;
+        animation-delay: .25s;
     }
     #base-logo {
         max-width: 0%;
@@ -1280,7 +1361,13 @@ body {
         scale: 55%;
     }
     .sypher-cache-section {
-        max-width: 175px;
+        top: 0px;
+        width: 100%;
+        max-width: 100vh;
+        border-radius: 0px;
+        border-left: none;
+        border-right: none;
+        border-top: black;
     }
     #sypher-cache-header {
         font-size: 14px;
@@ -1293,6 +1380,10 @@ body {
         width: 250px;
         margin-top: none;
         padding: 5px 20px;
+    }
+    .home-page-footer {
+        background-color: black;
+        border-top: var(--desypher-green-dark) 2px solid;
     }
     /* #endregion Home Page Adjustments */
 
@@ -1307,15 +1398,6 @@ body {
         top: 30px;
         left: 5px;
     }
-    .sypher-cache-section {
-        top: 0px;
-        width: 100%;
-        max-width: 100vh;
-        border-radius: 0px;
-        border-left: none;
-        border-right: none;
-        border-top: black;
-    }
     #connect-button {
         top: 30px;
         right: 5px;
@@ -1324,24 +1406,24 @@ body {
         top: 55px;
         right: 3px;
     }
-    .page-navigation-section {
-        font-size: 11px;
-    }
-    .social-media-section {
-        bottom: 15px;
-    }
-    .social-icon {
-        font-size: 26px;
-    }
     #keyboard-helper {
         scale: 40%;
     }
     .distribution-section {
         max-height: fit-content;
     }
-    /* .wallet-buttons {
-
-    } */
+    .main-content {
+        margin: 10px;
+    }
+    .mobile-game-logo-container {
+        display: flex;
+    }
+    #game-logo {
+        display: none;
+    }
+    #mobile-game-logo {
+        display: block;
+    }
 }
 /* #endregion Responsive Design */
 
@@ -1351,4 +1433,26 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+}
+
+
+#magicInput {
+    position: absolute;
+    top: 100px;
+}
+
+#lazerContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Ensure the container doesn't interfere with mouse events */
+}
+
+.lazer {
+    position: absolute;
+    height: 2px; /* Line thickness */
+    background: var(--font-color); /* Initial color, will be set by JS */
+    transform-origin: left center; /* Ensures rotation happens from one end of the line */
 }
