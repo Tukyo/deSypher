@@ -126,6 +126,7 @@ body {
     cursor: pointer;
     font-family: monospace, sans-serif;
     text-align: right;
+    text-wrap: nowrap;
     z-index: 1001;
     animation: transitionRight .5s forwards;
     animation-delay: 0.1s;

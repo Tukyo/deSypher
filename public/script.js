@@ -12,7 +12,7 @@ const retrieveTransaction = document.getElementById('retrieve-transaction');
 const REQUIRED_CHAIN_ID = 8453; // Base L2
 
 const songs = [
-    'tukyo-deSypher.ogg', 'vaang-caliente.ogg', '333amethyst-mantis(P.2).ogg'
+    'tukyo-deSypher.ogg', 'vaang-caliente.ogg', '333amethyst-mantis(P.2).ogg', 'web4-happyhappyjoyjoy.ogg'
 ];
 
 // #region WordGame Main 

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const keyboardButton = document.getElementById('keyboard-button');
   const keyboardHelper = document.getElementById('keyboard-helper');
   const walletDetailsSection = document.getElementById('wallet-details-section');
+  const walletConnectionSection = document.getElementById('wallet-connection-section');
   const minimumBalance = 10; // Cost to play the game
 
   let reCaptchaInitialized = false;
@@ -35,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453
 
   let walletDetailsSectionVisible = false;
+
+  updateWalletConnectionSectionStyle('150px');
 
   // #region Manual Wallet Connection
   // Add click event listener to the connect button
@@ -324,8 +327,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (chainId !== REQUIRED_CHAIN_ID) {
         UpdateButtonWithIncorrectChainMessage();
         console.error(`Please connect to the ${REQUIRED_CHAIN_ID} network`);
+        updateWalletConnectionSectionStyle('210px');
+      } else {
+        updateWalletConnectionSectionStyle('175px');
       }
-      checkTokenBalance(); // Call the function to check the wallet balance
+      checkTokenBalance();
     } else {
       walletDetailsSection.style.display = 'none'; // Hide the token balance section if a Wallet is not installed
     }
@@ -354,6 +360,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const accounts = await provider.listAccounts();
       if (accounts.length === 0) {
         console.log("No accounts connected. Please connect a wallet.");
+        updateWalletConnectionSectionStyle('150px');
         return; // Exit the function if no accounts are connected
       }
 
@@ -811,4 +818,8 @@ document.addEventListener('DOMContentLoaded', function () {
     Debug.Log("Glow/sheen animation removed after first click.");
   });
   // #endregion Keyboard Helper Logic
+
+function updateWalletConnectionSectionStyle(size) {
+    walletConnectionSection.style.maxWidth = size;
+}
 });
