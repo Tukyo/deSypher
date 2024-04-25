@@ -365,8 +365,6 @@ function updateMainContentPadding() {
 }
 // #endregion Dynamic Graphical Adjustments Based on Number of Input Rows
 
-// #endregion WordGame Main
-
 // #region Effects & Extras
 
 // #region Cyber Rain
@@ -580,9 +578,11 @@ window.revealMusicPlayer = function () {
 
     const pageNavigation = document.querySelector('.page-navigation-section');
     const socialMediaIcons = document.querySelector('.social-media-section');
+    const footerSection = document.querySelector('.home-page-footer');
 
     pageNavigation.style.bottom = '35px';
     socialMediaIcons.style.bottom = '55px';
+    footerSection.style.height = '110px';
 
     function playSong(index) {
         const selectedSong = songs[index];

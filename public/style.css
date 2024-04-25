@@ -1,3 +1,4 @@
+/* #region Root Content */
 :root {
     /* Coinbase Blue */
     --coinbase-blue: #0052ff;
@@ -53,7 +54,11 @@ body {
     background-attachment: fixed;
     z-index: -1;
 }
+/* #endregion Root Content */
+
 /* #region Home Page */
+
+/* #region Game Logo Section */
 .game-logo-container {
     display: flex;
     justify-content: center;
@@ -92,6 +97,8 @@ body {
     animation: fadeInFont .5s forwards;
     animation-delay: .25s;
 }
+/* #endregion Game Logo Section */
+
 /* #region Wallet Connect Section */
 .wallet-connection-section {
     position: fixed;
@@ -102,7 +109,7 @@ body {
     text-align: right;
     top: 15px;
     right: 15px;
-    max-width: 150px;
+    max-width: 175px;
     width: 100%;
     z-index: 1000;
 }
@@ -118,9 +125,10 @@ body {
     color: var(--font-color);
     cursor: pointer;
     font-family: monospace, sans-serif;
+    text-align: right;
     z-index: 1001;
-    animation: transitionRight 1s forwards;
-    animation-delay: 0.25s;
+    animation: transitionRight .5s forwards;
+    animation-delay: 0.1s;
 }
 #connect-button:hover {
     scale: 1.05;
@@ -132,13 +140,12 @@ body {
 #base-logo {
     display: none;
     opacity: 0%;
-    scale: 0.25;
     position: fixed;
     top: -23px;
-    right: 130px;
-    z-index: 500;
-    animation: transitionScaleDelayed .5s forwards;
-    animation-delay: .5s;
+    right: 100px;
+    z-index: 1001;
+    animation: transitionBaseLogo .5s forwards;
+    animation-delay: .15s;
 }
 .wallet-details-container {
     width: 100%;
@@ -158,18 +165,18 @@ body {
     padding-top: 20px;
     border-style: solid;
     animation: foldOut 1s forwards;
-    animation-delay: 1s;
+    animation-delay: .5s;
     transform-origin: top;
 }
 #token-balance-section {
     opacity: 0%;
     animation: transitionWipeLeft .5s forwards;
-    animation-delay: 1.5s;
+    animation-delay: .75s;
 }
 #rewards-balance-section {
     opacity: 0%;
     animation: transitionWipeLeft .5s forwards;
-    animation-delay: 2s;
+    animation-delay: .95s;
 }
 #claim-rewards-button {
     opacity: 0%;
@@ -182,11 +189,12 @@ body {
     text-transform: uppercase;
     text-align: right;
     text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    text-wrap: nowrap;
     padding: 2px 6px;
     cursor: pointer;
     z-index: 1;
     animation: transitionWipeLeft .75s forwards;
-    animation-delay: 2.5s;
+    animation-delay: 1.15s;
 }
 #claim-rewards-button:hover::before {
     content: '';
@@ -224,7 +232,7 @@ body {
     text-transform: uppercase;
     white-space: nowrap;
     animation: transitionLeft 1s forwards;
-    animation-delay: 1s;
+    animation-delay: .5s;
 }
 .dropdown-button:hover {
     scale: 1.05;
@@ -904,6 +912,7 @@ body {
 }
 /* #endregion Page Navigation */
 
+/* #region Footer Section */
 .home-page-footer, .about-page-footer, .tokenomics-page-footer, .leaderboards-footer {
     padding: 10px;
     box-sizing: border-box;
@@ -915,19 +924,64 @@ body {
     z-index: 1000;
     text-transform: uppercase;
     background-color: black;
-    border-top: var(--desypher-green-dark) 2px solid;
 }
 .home-page-footer {
     height: 80px;
-    background-color: #00000000;
-    border: none;
+    background-color: black;
+    border-top: var(--desypher-green-dark) 2px solid;
+    animation: homeFooterIn .5s forwards;
 }
 .about-page-footer, .tokenomics-page-footer, .leaderboards-footer {
     height: 45px;
     background-color: black;
     border-top: 2px solid var(--desypher-green-main);
-    animation: transitionWipeCenter 1s forwards;
+    animation: otherFooterIn .5s forwards;
 }
+@keyframes homeFooterIn {
+    0% {
+        height: 0px;
+        border-top: var(--desypher-green-bright) 0px solid;
+        box-shadow: 0 0 0px var(--glow-green-main), 0 0 00px var(--glow-green-secondary);
+        filter:sepia(0%)
+    }
+    50% {
+        filter:sepia(50%);
+        border-top: var(--desypher-green-bright) 50px solid;
+    }
+    75% {
+        box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    }
+    100% {
+        border-top: 2px solid var(--desypher-green-dark);
+        box-shadow: none;
+        height: 80px;
+        filter:sepia(0%)
+    }
+
+}
+@keyframes otherFooterIn {
+    0% {
+        height: 0px;
+        border-top: var(--desypher-green-bright) 0px solid;
+        box-shadow: 0 0 0px var(--glow-green-main), 0 0 00px var(--glow-green-secondary);
+        filter:sepia(0%)
+    }
+    50% {
+        filter:sepia(50%);
+        border-top: var(--desypher-green-bright) 45px solid;
+    }
+    75% {
+        box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    }
+    100% {
+        border-top: 2px solid var(--desypher-green-dark);
+        box-shadow: none;
+        height: 45px;
+        filter:sepia(0%)
+    }
+
+}
+/* #endregion Footer Section */
 
 /* #region Loading Bar */
 .loading-bar, .loading-bar div {
@@ -938,6 +992,7 @@ body {
     top: 55%;
     left: 50%;
     position: fixed;
+    margin-top: 50px;
     width: 80px;
     height: 80px;
     transform: translate(-50%, -50%);
@@ -1048,22 +1103,18 @@ body {
         transform: scale(var(--default-scale));
     }
 }
-@keyframes transitionScaleDelayed {
+@keyframes transitionBaseLogo {
     0% {
         opacity: 0;
-        scale: 0.05;
+        scale: 0.01;
     }
     50% {
-        opacity: 0;
-        scale: 0.05;
-    }
-    75% {
         opacity: .5;
-        scale: 0.35;
+        scale: 0.25;
     }
     100% {
         opacity: 1;
-        scale: 0.25;
+        scale: 0.2;
     }
 }
 @keyframes fall {
@@ -1267,6 +1318,20 @@ body {
     }
 
 }
+#lazerContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Ensure the container doesn't interfere with mouse events */
+}
+.lazer {
+    position: absolute;
+    height: 2px; /* Line thickness */
+    background: var(--font-color); /* Initial color, will be set by JS */
+    transform-origin: left center; /* Ensures rotation happens from one end of the line */
+}
 /* #endregion Animations */
 
 /* #region Responsive Design */
@@ -1303,6 +1368,7 @@ body {
     #connect-button {
         padding: 5px 10px;
         font-size: 12px;
+        text-align: center;
     }
     .dropdown-button {
         padding: 5px 10px;
@@ -1381,10 +1447,6 @@ body {
         margin-top: none;
         padding: 5px 20px;
     }
-    .home-page-footer {
-        background-color: black;
-        border-top: var(--desypher-green-dark) 2px solid;
-    }
     /* #endregion Home Page Adjustments */
 
     /* #region Tokenomics Page Adjustments */
@@ -1433,26 +1495,4 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-}
-
-
-#magicInput {
-    position: absolute;
-    top: 100px;
-}
-
-#lazerContainer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none; /* Ensure the container doesn't interfere with mouse events */
-}
-
-.lazer {
-    position: absolute;
-    height: 2px; /* Line thickness */
-    background: var(--font-color); /* Initial color, will be set by JS */
-    transform-origin: left center; /* Ensures rotation happens from one end of the line */
 }

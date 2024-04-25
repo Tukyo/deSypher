@@ -6,3 +6,5 @@ firebase-debug.log
 ui-debug.log
 updateWordList.js
 five-letter-test.txt
+config.json
+_word-list.json

@@ -8,9 +8,10 @@
 airdrop-list.json
 hardhat.config.js
 serviceAccountKey.json
-five-letter-words.txt
+*five-letter-words.txt
 .env
 *.log
 firebase-debug.log
 .firebase/hosting.cHVibGlj.cache
 .vs
+public/five-letter-words
