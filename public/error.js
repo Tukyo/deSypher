@@ -1,5 +1,4 @@
 // This script manages all error messages that are displayed to the user
-console.log('Error handling script loaded...');
 let timeoutHandle;  // Declare a variable to keep track of the timeout
 
 const errorSound = new Audio('assets/audio/error-sound.ogg');

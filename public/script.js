@@ -8,6 +8,16 @@ const submitButton = document.getElementById('submitButton');
 const submitLoadButton = document.getElementById('submit-load-button');
 const cancelButton = document.getElementById('cancel-button');
 const retrieveTransaction = document.getElementById('retrieve-transaction');
+const versionNumber = document.getElementById('version-number');
+
+const version = '0.1';
+
+document.addEventListener('DOMContentLoaded', () => {
+    function updateVersionNumber() {
+        versionNumber.textContent = "Ver. " + version;
+    }
+    updateVersionNumber();
+});
 
 const REQUIRED_CHAIN_ID = 8453; // Base L2
 
@@ -582,7 +592,11 @@ window.revealMusicPlayer = function () {
 
     pageNavigation.style.bottom = '35px';
     socialMediaIcons.style.bottom = '55px';
-    footerSection.style.height = '110px';
+
+    const expandedHeight = '110px'; // Expanded height when the player is visible
+    document.documentElement.style.setProperty('--footer-height', expandedHeight);
+
+    footerSection.style.animation = 'homeFooterIn 1s forwards';
 
     function playSong(index) {
         const selectedSong = songs[index];

@@ -3,6 +3,18 @@ var transactionHash = null;
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  if (!sessionStorage.getItem('reloadBuffer')) {
+    sessionStorage.setItem('reloadBuffer', 'true');
+    console.log("Reload buffer initialized.");
+
+    setTimeout(() => {
+      sessionStorage.removeItem('reloadBuffer');
+      console.log("Reload buffer cleared.");
+    }, 1000);
+  }
+
+  const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/tbG9Ls0pfxJL1IGYyoi-eB0AMcgbjc-k');
+
   const gameLogo = document.getElementById('game-logo');
   const connectButton = document.getElementById('connect-button');
   const claimRewardsButton = document.getElementById('claim-rewards-button');
@@ -18,26 +30,65 @@ document.addEventListener('DOMContentLoaded', function () {
   const keyboardHelper = document.getElementById('keyboard-helper');
   const walletDetailsSection = document.getElementById('wallet-details-section');
   const walletConnectionSection = document.getElementById('wallet-connection-section');
+  const connectButtonText = document.getElementById('connect-button-text');
   const minimumBalance = 10; // Cost to play the game
+
+  const walletStylePresets = {
+    default: { size: '150px', alignment: 'center' },
+    incorrectChain: { size: '210px', alignment: 'right' },
+    correctChain: { size: '175px', alignment: 'right' },
+    incorrectChainMobile: { size: '175px', alignment: 'center'},
+    correctChainMobile: { size: '135px', alignment: 'center'}
+  };
+
+  const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453 "Base Mainnet"
 
   let reCaptchaInitialized = false;
   let keyboardHelperVisible = false;
-
   let rewardsButtonVisible = false;
 
   if (window.ethereum) {
     var provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log("Wallet installed. Provider initialized.");
+
+    ethereum.on("chainChanged", (newChainId) => {
+      console.log(`Chain ID changed to ${newChainId}`);
+      // Check if reload buffer is active
+      if (!sessionStorage.getItem('reloadBuffer')) {
+        console.log("Reloading page due to chain change.");
+        window.location.reload();
+      } else {
+        console.log("Reload buffer is active.");
+      }
+    });
+
+    ethereum.on("message", (message) => console.log(message));
+
+    ethereum.on("connect", (connectInfo) => {
+      console.log(`Connected to ${connectInfo.chainId} network`);
+    });
+
+    ethereum.on("disconnect", () => window.location.reload());
+    ethereum.on("accountsChanged", (accounts) => {
+      console.log('Attempting to switch accounts...');
+      if (accounts.length > 0) {
+        console.log(`Using account ${accounts[0]}`);
+        connectButtonText.textContent = 'Connected: ' + accounts[0];
+        walletDetailsSection.style.display = '';
+        window.location.reload();
+      } else {
+        console.error("0 accounts available!");
+        walletDetailsSection.style.display = 'none'; // Hide the token balance section if no accounts are connected
+        window.location.reload();
+      }
+    });
     setupTokenEventListener();
     rewardsBalanceEventListeners();
   }
 
-  // Base Mainnet
-  const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453
-
   let walletDetailsSectionVisible = false;
 
-  updateWalletConnectionSectionStyle('150px');
+  updateWalletConnectionSectionStyle('default');
 
   // #region Manual Wallet Connection
   // Add click event listener to the connect button
@@ -90,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         await ethereum.request({ method: 'eth_requestAccounts' });
         const network = await provider.getNetwork();
         const chainId = network.chainId;
+        console.log("Connected to chain ID:", chainId);
 
         const REQUIRED_CHAIN_HEX = '0x' + (REQUIRED_CHAIN_ID).toString(16);
 
@@ -262,16 +314,47 @@ document.addEventListener('DOMContentLoaded', function () {
   // #region Updating Wallet Connect Button
   // Function to update the button text with the wallet address
   function updateButtonWithAddress(address) {
-    provider.lookupAddress(address).then(ensName => {
+    // Immediately set button text to shortened address
+    connectButtonText.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    console.log("Displaying shortened address: " + connectButtonText.textContent);
+
+    updateWalletButtonWithENS(address, connectButtonText.textContent);
+  }
+  function updateWalletButtonWithENS(address, originalText) {
+    mainnetProvider.lookupAddress(address).then(ensName => {
       if (ensName) {
-        connectButton.textContent = `${ensName}`; // Display the ENS name if one exists
-      } else {
-        connectButton.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
+        // Check if ENS name is longer than 13 characters and truncate if necessary
+        if (ensName.length > 13) {
+          const truncatedEnsName = ensName.substring(0, 5) + '...' + ensName.substring(ensName.length - 5);
+          connectButtonText.textContent = truncatedEnsName; // Display the truncated ENS name
+          console.log("ENS name truncated and displayed: " + truncatedEnsName);
+        } else {
+          typeOutENSName(originalText, ensName, connectButtonText, 50);
+          console.log("ENS name found and displayed: " + ensName);
+        }
       }
+      // If no ENS name found, the address display remains unchanged
     }).catch(error => {
-      console.error("ENS is not supported on this network");
-      connectButton.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`; // Display a shortened version of the address
+      console.error("Error in ENS lookup: ", error.message);
+      // In case of an error, the initial address display remains
     });
+  }
+  function typeOutENSName(originalText, ensName, element, typeTime) {
+    let currentIndex = originalText.length - 1; // Start from the end of the original text
+    let ensIndex = ensName.length - 1;           // Start from the end of the ENS name
+
+    const typeInterval = setInterval(() => {
+      if (ensIndex < 0) {
+        clearInterval(typeInterval);
+        element.textContent = ensName;
+      } else {
+        // Replace character by character
+        originalText = originalText.substring(0, currentIndex) + ensName.charAt(ensIndex) + originalText.substring(currentIndex + 1);
+        element.textContent = originalText;
+        currentIndex--;
+        ensIndex--;
+      }
+    }, typeTime);
   }
   function updateButtonWithLogo() {
     const baseLogo = document.getElementById('base-logo');
@@ -280,38 +363,21 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Connected to base mainnet. Revealing Base logo.")
   }
   function UpdateButtonWithIncorrectChainMessage() {
-    connectButton.textContent = 'Switch to Base Mainnet!';
+    connectButtonText.textContent = 'Switch to Base Mainnet!';
     connectButton.style.borderColor = '#0052FF';
+  }
+  function updateWalletConnectionSectionStyle(preset) {
+    const { size, alignment } = walletStylePresets[preset] || walletStylePresets.default;
+
+    if (window.innerWidth > 775) {
+      walletConnectionSection.style.maxWidth = size;
+      connectButton.style.textAlign = alignment;
+    }
   }
   // #endregion Updating Wallet Connect Button
 
   // #region On Page Load Events for Connectivity/Network Checks
-  if (window.ethereum) {
-    ethereum.on("chainChanged", () => { window.location.reload(); });
-
-    ethereum.on("message", (message) => console.log(message));
-
-    ethereum.on("connect", (connectInfo) => {
-      console.log(`Connected to ${connectInfo.chainId} network`);
-    });
-
-    ethereum.on("disconnect", () => window.location.reload());
-    ethereum.on("accountsChanged", (accounts) => {
-      console.log('Attempting to switch accounts...');
-      if (accounts.length > 0) {
-        console.log(`Using account ${accounts[0]}`);
-        connectButton.textContent = 'Connected: ' + accounts[0];
-        walletDetailsSection.style.display = '';
-        window.location.reload();
-      } else {
-        console.error("0 accounts available!");
-        walletDetailsSection.style.display = 'none'; // Hide the token balance section if no accounts are connected
-        window.location.reload();
-      }
-    });
-  }
-  // Check if wallet is already connected when the page loads, if it is, do stuff..
-  window.addEventListener('load', async () => {
+  async function updateWalletSection() {
     if (window.ethereum) {
       const network = await provider.getNetwork();
       const chainId = network.chainId;
@@ -327,9 +393,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (chainId !== REQUIRED_CHAIN_ID) {
         UpdateButtonWithIncorrectChainMessage();
         console.error(`Please connect to the ${REQUIRED_CHAIN_ID} network`);
-        updateWalletConnectionSectionStyle('210px');
+        updateWalletConnectionSectionStyle('incorrectChain');
       } else {
-        updateWalletConnectionSectionStyle('175px');
+        updateWalletConnectionSectionStyle('correctChain');
       }
       checkTokenBalance();
     } else {
@@ -338,6 +404,10 @@ document.addEventListener('DOMContentLoaded', function () {
     walletDetailsSectionVisible = walletDetailsSection.style.display !== 'none';
 
     updateRewardsBalance();
+  }
+  // Check if wallet is already connected when the page loads, if it is, do stuff..
+  window.addEventListener('load', async () => {
+    updateWalletSection();
   });
   // #endregion On Page Load Events for Connectivity/Network Checks
 
@@ -360,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const accounts = await provider.listAccounts();
       if (accounts.length === 0) {
         console.log("No accounts connected. Please connect a wallet.");
-        updateWalletConnectionSectionStyle('150px');
+        updateWalletConnectionSectionStyle('default');
         return; // Exit the function if no accounts are connected
       }
 
@@ -437,20 +507,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     return allowance.gte(costToPlay); // Returns true if allowance is greater than or equal to cost
   }
-
   async function approveTokenSpend() {
     const signer = provider.getSigner();
     const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+    const costToPlay = ethers.utils.parseUnits("10", 18); // Update with the actual cost
     // Use maximum value for "unlimited" approval
-    const maxUint256 = ethers.constants.MaxUint256;
     playButton.textContent = "Waiting on Approval...";
     try {
-      const approvalTx = await tokenContract.approve(gameContractAddress, maxUint256);
+      const approvalTx = await tokenContract.approve(gameContractAddress, costToPlay);
       await approvalTx.wait();
       console.log("Approval transaction for token spend granted...");
       return true;
     } catch (error) {
       console.error("Approval transaction failed:", error);
+      window.location.reload();
       return false;
     }
   }
@@ -818,8 +888,4 @@ document.addEventListener('DOMContentLoaded', function () {
     Debug.Log("Glow/sheen animation removed after first click.");
   });
   // #endregion Keyboard Helper Logic
-
-function updateWalletConnectionSectionStyle(size) {
-    walletConnectionSection.style.maxWidth = size;
-}
 });

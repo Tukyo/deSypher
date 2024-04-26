@@ -17,6 +17,8 @@
     --background-gradient: linear-gradient(to left, #041f00 1%, black 99%);
 
     --font-color: white;
+
+    --footer-height: 80px;
 }
 .link {
     color: var(--desypher-green-main);
@@ -130,6 +132,9 @@ body {
     z-index: 1001;
     animation: transitionRight .5s forwards;
     animation-delay: 0.1s;
+}
+#connect-button-text {
+    text-overflow: clip;
 }
 #connect-button:hover {
     scale: 1.05;
@@ -889,10 +894,20 @@ body {
 }
 /* #endregion Tokenomics Page */
 
+/* #region Leaderboards Page */
+.coming-soon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    animation: fadeInFont 1.25s forwards;
+}
+/* #endregion Leaderboard Section */
+
 /* #region Page Navigation */
 .page-navigation-section {
     margin-top: 40px;
-    padding: 1px 0;
     text-align: center;
     position: fixed;
     bottom: 5px;
@@ -938,6 +953,15 @@ body {
     border-top: 2px solid var(--desypher-green-main);
     animation: otherFooterIn .5s forwards;
 }
+.version-number {
+    position: fixed;
+    bottom: 0;
+    left: 10px;
+    font-size: 12px;
+    font-family: monospace, sans-serif;
+    color: var(--desypher-green-dark);
+    z-index: 1001;
+}
 @keyframes homeFooterIn {
     0% {
         height: 0px;
@@ -955,10 +979,9 @@ body {
     100% {
         border-top: 2px solid var(--desypher-green-dark);
         box-shadow: none;
-        height: 80px;
+        height: var(--footer-height);
         filter:sepia(0%)
     }
-
 }
 @keyframes otherFooterIn {
     0% {
@@ -1448,6 +1471,10 @@ body {
         margin-top: none;
         padding: 5px 20px;
     }
+    .version-number {
+        top: 0;
+        color: var(--desypher-green-main);
+    }
     /* #endregion Home Page Adjustments */
 
     /* #region Tokenomics Page Adjustments */
@@ -1489,11 +1516,3 @@ body {
     }
 }
 /* #endregion Responsive Design */
-
-.coming-soon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
