@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Ensure you are using the GameManager address and ABI here since it manages the Sypher Cache
         const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
 
-        // Fetch initial value
+        // Fetch initial cache value
         try {
             const sypherCache = await gameManagerContract.getSypherCache();
             const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
@@ -298,7 +298,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             sypherCacheElement.innerHTML = 'Current Sypher Cache: Error loading data...';
         }
 
-        // Assuming the event handling should also use the deSypher contract
         const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
         // Set up event listener for live updates from deSypher contract
         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
@@ -311,5 +310,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         sypherCacheElement.innerHTML = 'Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">Please install a wallet...</span>';
     }
 });
-
 // #endregion SYPHER Cache Logic

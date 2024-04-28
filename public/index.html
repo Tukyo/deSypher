@@ -57,6 +57,8 @@
         <!-- #endregion SYPHER Cache-->
 
     </div>
+
+    <input type="text" id="dev-tools" placeholder="enter command.." style="display: none;">
     
     <div class="main-content">
         
@@ -134,6 +136,7 @@
         <div class="loading-bar"><div></div><div></div><div></div><div></div></div>
         
         <!-- #region Puzzle Section -->
+        <div id="hint-box" style="display: none;"></div>
         <form id="wordPuzzleForm" style="display: none;">
             <div id="inputContainer" class="input-fields">
               <input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input">
@@ -168,18 +171,30 @@
                 Your browser does not support the audio element.
             </audio>
             <div class="music-controls">
+                <div id="volume-controls" style="display: none;">
+                    <div id="volume-bar" class="volume-bar">
+                        <div id="volume-indicator" class="volume-indicator"></div>
+                    </div>
+                </div>
                 <button id="prevTrack"><i class="fa-solid fa-backward-fast"></i></button>
                 <button id="playPauseBtn"><i class="fa-solid fa-play"></i></button>
                 <button id="loopToggle"><i class="fa-solid fa-repeat"></i></button>
                 <button id="nextTrack"><i class="fa-solid fa-forward-fast"></i></button>
+                <button id="volume-button"><i class="fa-solid fa-volume-high"></i></button>
                 <div class="music-progress-container" id="musicProgressContainer">
                     <div id="musicProgressBar" class="music-progress-bar"></div>
                 </div>
                 <div id="song-info"></div>
             </div>
-        </div>     
+        </div>
         <!-- #endregion Music Player Section -->
-    
+
+        <!-- #region Iframe -->
+        <div class="youtube-iframe" id="youtubeIframe" style="display: none;">
+            <div id="closeButton"></div>
+            <iframe id="iframe"></iframe>
+        </div>
+        <!-- #endregion Iframe -->
     </div>
 
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
@@ -188,6 +203,7 @@
     <script src="contracts.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
+    <script src="dev.js"></script>
     <!-- <script type="module" src="analytics.js"></script> -->
 </body>
 </html>

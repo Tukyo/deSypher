@@ -1,4 +1,22 @@
-let gameOver = false; // Checks if game is over
+window.gameActive = false;
+
+let gameStartEvent = new CustomEvent("gameStart");
+window.dispatchEvent(gameStartEvent);
+
+let gameCompleteEvent = new CustomEvent("gameComplete");
+window.dispatchEvent(gameCompleteEvent);
+
+window.addEventListener("gameStart", function() {
+    window.gameActive = true;
+    console.log("Game started...");
+});
+
+window.addEventListener("gameComplete", function() {
+    window.gameActive = false;
+    console.log("Game completed...");
+});
+
+let gameOver = false;
 
 const form = document.getElementById('wordPuzzleForm');
 const inputContainer = document.getElementById('inputContainer');
@@ -10,7 +28,7 @@ const cancelButton = document.getElementById('cancel-button');
 const retrieveTransaction = document.getElementById('retrieve-transaction');
 const versionNumber = document.getElementById('version-number');
 
-const version = '0.1';
+const version = '0.1.1';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -53,10 +71,7 @@ function sendGuess() {
     }
     if (word.toLowerCase() === 'color') {
         console.log("Cheat code activated: Changing the color scheme.");
-        changeColorScheme();
-        changeImageColor();
-        changeBackgroundColor();
-        changeSpritesheetColor();
+        changeColors();
         return;
     }
     if (word.toLowerCase() === 'colin') {
@@ -65,6 +80,10 @@ function sendGuess() {
     }
     if (word.toLowerCase() === 'lazer') {
         lazerRayz();
+        return;
+    }
+    if (word.toLowerCase() === 'tukyo') {
+        tukyoMode();
         return;
     }
     // Disable the submit button while processing the guess
@@ -183,6 +202,7 @@ function updateUI(data) {
             let randomMessage = getRandomLosingMessage(losingMessages);
             submitButton.textContent = randomMessage;
             submitButton.style.marginTop = "0px";
+            window.dispatchEvent(gameCompleteEvent);
         }
         submitButton.disabled = false;
 
@@ -207,6 +227,7 @@ function updateUI(data) {
         };
     } else {
         console.log(`Try again! Attempts left: ${data.attemptsLeft}`);
+        hintBox(false, '');
         // Reset the button for regular game flow
         submitButton.textContent = "Submit";
         submitButton.disabled = false; // Ensure it's enabled for further guesses
@@ -261,6 +282,17 @@ function createInputRow(lastGuessResult = []) {
 
     return newInputs;
 }
+function hintBox(show, message) {
+    const hintBox = document.getElementById('hint-box');
+    if (show) {
+      hintBox.textContent = message; // Set the hint message
+      hintBox.style.display = 'block';
+      console.log("Displayed the hint box with message:", message);
+    } else {
+      hintBox.style.display = 'none';
+      console.log("Hidden the hint box.");
+    }
+  }
 // Helper function to determine the color based on the status
 function getColorForStatus(status) {
     const colorPalette = {
@@ -412,7 +444,6 @@ setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
 // #endregion Cyber Rain
 
 // #region Cheat Codes
-
 document.addEventListener('DOMContentLoaded', () => {
     let konamiCode = [
         'ArrowUp', 'ArrowUp', 'ArrowDown',
@@ -445,6 +476,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+function changeColors() {
+    changeColorScheme();
+    changeImageColor();
+    changeBackgroundColor();
+    changeSpritesheetColor();
+}
 function getRandomGradient() {
     const getRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
     const color1 = getRandomColor();
@@ -496,7 +533,7 @@ function changeSpritesheetColor() {
 function lazerRayz() {
     const lazerContainer = document.getElementById('lazerContainer');
 
-    document.addEventListener('mousemove', function(e) {
+    document.addEventListener('mousemove', function (e) {
         // Remove all existing lazers before creating new ones
         while (lazerContainer.firstChild) {
             lazerContainer.removeChild(lazerContainer.firstChild);
@@ -526,6 +563,71 @@ function lazerRayz() {
             }, lifetime);
         }
     });
+}
+let tukyoModeActive = false;
+
+function tukyoMode() {
+    if (tukyoModeActive) {
+        console.log("Tukyo mode is already active.");
+        return; // Prevent multiple instances if it's already active
+    }
+
+    tukyoModeActive = true; // Set the mode as active
+
+    var youtubeUrls = [
+        { url: "https://www.youtube.com/embed/_9IX9spM2P4?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/l7jVlOGH4ww?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/tvPUT4NplbM?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/uxfpWD7R6aA?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/pmxUA9P0iOA?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/BToi56kK3Lg?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/5kW_DPHrzFA?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/jNEtE7DeyZQ?autoplay=1&mute=0", weight: 10 },
+        { url: "https://www.youtube.com/embed/Dt6buhLTaMc?autoplay=1&mute=0", weight: 10 },
+    ];
+
+    function chooseWeightedUrl(urls) {
+        var totalWeight = urls.reduce((total, item) => total + item.weight, 0);
+        var randomNum = Math.random() * totalWeight;
+        var weightSum = 0;
+
+        for (var item of urls) {
+            weightSum += item.weight;
+            if (randomNum <= weightSum) {
+                return item.url;
+            }
+        }
+    }
+
+    var youtubeUrl = chooseWeightedUrl(youtubeUrls);
+    console.log("Selected YouTube URL:", youtubeUrl);
+
+    var youtubeIframe = document.getElementById('youtubeIframe');
+    var closeButton = document.getElementById('closeButton');
+    var iframe = document.getElementById('iframe');
+
+    youtubeIframe.style.display = "block"; // Show the iframe
+    youtubeIframe.style.aspectRatio = "16 / 9"; // Ensures nothing extends outside the container
+
+    iframe.setAttribute('src', youtubeUrl);
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.border = "none";
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+
+    // Create a close button
+    closeButton.style.display = "block"; // Show the close button
+    closeButton.innerHTML = "X";
+
+    closeButton.onclick = function () {
+        iframe.src = "";
+        youtubeIframe.style.display = "none"; // Hide the iframe
+        tukyoModeActive = false;
+        console.log("Tukyo mode deactivated.");
+    };
+
+    console.log("Tukyo mode activated: Video displayed with autoplay.");
 }
 // #endregion Cheat Codes
 
@@ -580,15 +682,18 @@ window.revealMusicPlayer = function () {
     const nextTrackBtn = document.getElementById('nextTrack');
     const prevTrackBtn = document.getElementById('prevTrack');
     const loopToggleBtn = document.getElementById('loopToggle');
+    const volumeControlsBtn = document.getElementById('volume-button');
+    const volumeControls = document.getElementById('volume-controls');
+    const volumeSlider = document.getElementById('volume-slider');
     const music = document.getElementById('music');
     const progressBar = document.getElementById('musicProgressBar');
     const progressContainer = document.getElementById('musicProgressContainer');
-    let currentIndex = Math.floor(Math.random() * songs.length);
-    let isLooping = false;
-
     const pageNavigation = document.querySelector('.page-navigation-section');
     const socialMediaIcons = document.querySelector('.social-media-section');
     const footerSection = document.querySelector('.home-page-footer');
+
+    let currentIndex = Math.floor(Math.random() * songs.length);
+    let isLooping = false;
 
     pageNavigation.style.bottom = '35px';
     socialMediaIcons.style.bottom = '55px';
@@ -634,6 +739,8 @@ window.revealMusicPlayer = function () {
 
     // Function to jump to a different part of the song
     function setPlaybackPosition(e) {
+        e.preventDefault();
+
         const width = progressContainer.clientWidth; // Width of the container
         const clickX = e.offsetX; // X position of the click within the container
         const duration = music.duration; // Total duration of the song
@@ -643,6 +750,25 @@ window.revealMusicPlayer = function () {
 
     progressContainer.addEventListener('click', setPlaybackPosition);
     music.addEventListener('timeupdate', updateProgressBar);
+
+    function toggleVolumeControls() {
+        // Check the current display state of the volume controls
+        if (volumeControls.style.display === 'none') {
+            // Show volume controls and hide other buttons
+            volumeControls.style.display = 'block';
+            prevTrackBtn.style.display = 'none';
+            playPauseBtn.style.display = 'none';
+            nextTrackBtn.style.display = 'none';
+            loopToggleBtn.style.display = 'none';
+        } else {
+            // Hide volume controls and show other buttons
+            volumeControls.style.display = 'none';
+            prevTrackBtn.style.display = 'block';
+            playPauseBtn.style.display = 'block';
+            nextTrackBtn.style.display = 'block';
+            loopToggleBtn.style.display = 'block';
+        }
+    }
 
     playPauseBtn.addEventListener('click', () => {
         if (music.paused) {
@@ -658,31 +784,31 @@ window.revealMusicPlayer = function () {
             playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
         }
     });
-
     nextTrackBtn.addEventListener('click', () => {
         goToNextTrack();
     });
-
     prevTrackBtn.addEventListener('click', () => {
         currentIndex = (currentIndex - 1 + songs.length) % songs.length; // Go to previous track, loop to end if at start
         playSong(currentIndex);
     });
-
     loopToggleBtn.addEventListener('click', () => {
         isLooping = !isLooping;
         music.loop = isLooping;
         if (isLooping) {
-            loopToggleBtn.style.color = '#4CAF50'; // Example: green color when active
+            loopToggleBtn.style.color = '#4CAF50'; // Green color when active
         } else {
             loopToggleBtn.style.color = 'white'; // Revert to original color when not active
         }
         console.log("Looping " + (isLooping ? "enabled" : "disabled"));
     });
-
-    // Handle automatic track change when a song ends
+    volumeControlsBtn.addEventListener('click', toggleVolumeControls);
+    volumeSlider.addEventListener('input', function () {
+        music.volume = this.value / 100;
+        console.log("Volume set to: " + this.value);
+    });
     music.addEventListener('ended', () => {
         if (!isLooping) {
-            goToNextTrack();
+            goToNextTrack(); // Handle automatic track change when a song ends
         }
     });
 }
@@ -729,9 +855,15 @@ function animateSongInfo() {
         clearInterval(scrollInterval);  // Ensure to clear interval when page unloads
     });
 }
-
 animateSongInfo();
-
+document.getElementById('volume-bar').addEventListener('click', function (event) {
+    const barWidth = this.offsetWidth;
+    const clickedPosition = event.offsetX;
+    const volume = clickedPosition / barWidth;
+    document.getElementById('music').volume = volume;
+    document.getElementById('volume-indicator').style.width = `${volume * 100}%`;
+    console.log("Volume set to: " + Math.round(volume * 100) + "%");
+});
 
 // #endregion Music Player
 
@@ -775,28 +907,27 @@ document.addEventListener('DOMContentLoaded', function () {
 // #endregion Rules Dropdown
 
 // #region SYPHER Cache Logic
-// TODO Use an endpoint to initialize the SYPHER CACHE even if someone doesn't have a wallet or is not connected
 document.addEventListener('DOMContentLoaded', async () => {
     const sypherCacheElement = document.getElementById('sypher-cache-value');
     const sypherCacheContainer = document.querySelector('.sypher-cache');
+    let provider;
 
-    if (typeof window.ethereum !== 'undefined') {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+    try {
+        const response = await fetch('endpoints.json');
+        const config = await response.json();
+
+        // Initialize provider using the testnet endpoint from the configuration
+        provider = new ethers.providers.JsonRpcProvider(config.testnetEndpoint);
 
         // Assuming you have the correct addresses and ABIs
         const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
         const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
 
-        try {
-            // Fetch the sypher cache value from GameManager
-            const sypherCache = await gameManagerContract.getSypherCache();
-            const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
-            sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedSypherCache}</span>`;
-            console.log("Sypher Cache loaded: " + formattedSypherCache);
-        } catch (error) {
-            console.error("Error loading the Sypher Cache: ", error);
-            sypherCacheContainer.style.display = 'none';
-        }
+        // Fetch the sypher cache value from GameManager
+        const sypherCache = await gameManagerContract.getSypherCache();
+        const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
+        sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedSypherCache}</span>`;
+        console.log("Sypher Cache loaded: " + formattedSypherCache);
 
         // Event listener for SypherCacheUpdated from deSypher contract
         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
@@ -805,8 +936,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedNewCache}</span>`;
             console.log("Sypher Cache updated live: " + formattedNewCache);
         });
-    } else {
-        console.log("Ethereum provider not found. Make sure you have MetaMask installed.");
+
+    } catch (error) {
+        console.error("Failed to load configuration or blockchain interaction failed: ", error);
         sypherCacheContainer.style.display = 'none';
     }
 });

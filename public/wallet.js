@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/tbG9Ls0pfxJL1IGYyoi-eB0AMcgbjc-k');
 
   const gameLogo = document.getElementById('game-logo');
+  const mobileGameLogo = document.getElementById('mobile-game-logo');
   const connectButton = document.getElementById('connect-button');
   const claimRewardsButton = document.getElementById('claim-rewards-button');
   const tokenBalanceSection = document.getElementById('token-balance-section');
@@ -37,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     default: { size: '150px', alignment: 'center' },
     incorrectChain: { size: '210px', alignment: 'right' },
     correctChain: { size: '175px', alignment: 'right' },
-    incorrectChainMobile: { size: '175px', alignment: 'center'},
-    correctChainMobile: { size: '135px', alignment: 'center'}
+    incorrectChainMobile: { size: '175px', alignment: 'center' },
+    correctChainMobile: { size: '135px', alignment: 'center' }
   };
 
   const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453 "Base Mainnet"
@@ -243,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // #endregion NEW GAME / LOAD Game Button Processing
 
   // #region Game Start Processing
-  async function startGame(useExistingTransaction = false, existingTransactionHash = null) {
+  window.startGame = async function (useExistingTransaction = false, existingTransactionHash = null) {
     try {
       if (!useExistingTransaction) {
         console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
@@ -274,6 +275,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       let word = null;
 
+      window.dispatchEvent(gameStartEvent);
+
       fetch('/game', {
         method: 'POST',
         headers: {
@@ -296,13 +299,14 @@ document.addEventListener('DOMContentLoaded', function () {
       // Clear the input fields for the new game
       resetGameInputs();
       showKeyboardHelperButton();
-
+      if (!keyboardHelperVisible) {
+        hintBox(true, 'Use the boxes below to input your guess!');
+      }
     } catch (error) { // This catch is now correctly positioned to handle errors from any part of the function
       console.error("Failed to start the game on the blockchain:", error);
       window.location.reload();
     }
   }
-
   function resetGameInputs() {
     const inputs = document.querySelectorAll('.puzzle-input');
     inputs.forEach(input => {
@@ -510,11 +514,11 @@ document.addEventListener('DOMContentLoaded', function () {
   async function approveTokenSpend() {
     const signer = provider.getSigner();
     const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
-    const costToPlay = ethers.utils.parseUnits("10", 18); // Update with the actual cost
+    const maxAllowance = ethers.utils.parseUnits("1000000", 18); // Update with the actual cost
     // Use maximum value for "unlimited" approval
     playButton.textContent = "Waiting on Approval...";
     try {
-      const approvalTx = await tokenContract.approve(gameContractAddress, costToPlay);
+      const approvalTx = await tokenContract.approve(gameContractAddress, maxAllowance);
       await approvalTx.wait();
       console.log("Approval transaction for token spend granted...");
       return true;
@@ -633,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // #endregion Loading Animation Functions
 
   // #region Restore Game Session - LOAD GAME
-  async function revealSessionRecoveryForm() {
+  window.revealSessionRecoveryForm = async function () {
     console.log("Revealing session recovery form...");
     // Hide the New Game/Load Game buttons
     playButton.style.animation = 'foldInRemove .25s forwards';
@@ -869,23 +873,51 @@ document.addEventListener('DOMContentLoaded', function () {
   // #endregion reCAPTCHA Section
 
   // #region Keyboard Helper Logic
-  function showKeyboardHelperButton() {
+  window.showKeyboardHelperButton = function () {
     console.log("Revealing keyboard helper button...");
     keyboardButton.style.display = 'block'; // Ensure button is visible
     keyboardButton.classList.add('glow-effect'); // Apply glow/sheen animation
   }
   keyboardButton.addEventListener('click', () => {
     keyboardHelperVisible = !keyboardHelperVisible; // Toggle visibility state
+    localStorage.setItem('keyboardHelperVisible', keyboardHelperVisible);
+
+    // Toggle visibility based on keyboardHelperVisible and screen width
+    const screenWidth = window.innerWidth;
+    const useMobileLogo = screenWidth <= 485;
+
     keyboardHelper.style.display = keyboardHelperVisible ? 'flex' : 'none'; // Apply visibility state to CSS
     keyboardHelper.style.animation = keyboardHelperVisible ? 'tvScreenOn .25s forwards' : 'tvScreenOff .25s forwards'; // Apply animation based on visibility
-    gameLogo.style.display = keyboardHelperVisible ? 'none' : 'block'; // Toggle game logo visibility opposite to keyboard helper
-    gameLogo.style.animation = keyboardHelperVisible ? 'tvScreenOff .25s forwards' : 'tvScreenOn .25s forwards'; // Apply animation based on visibility
-    Debug.Log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
-    Debug.Log("Game logo visibility set to: " + (keyboardHelperVisible ? "Hidden" : "Visible"));
+
+    if (useMobileLogo) {
+      mobileGameLogo.style.display = keyboardHelperVisible ? 'none' : 'block'; // Toggle mobile game logo visibility
+      mobileGameLogo.style.animation = keyboardHelperVisible ? 'tvScreenOff .25s forwards' : 'tvScreenOn .25s forwards'; // Apply animation based on visibility
+    } else {
+      gameLogo.style.display = keyboardHelperVisible ? 'none' : 'block'; // Toggle main game logo visibility
+      gameLogo.style.animation = keyboardHelperVisible ? 'tvScreenOff .25s forwards' : 'tvScreenOn .25s forwards'; // Apply animation based on visibility
+    }
+
+    console.log("Keyboard helper visibility toggled to: " + (keyboardHelperVisible ? "Visible" : "Hidden"));
+    console.log("Game logo visibility set to: " + (keyboardHelperVisible ? "Hidden" : "Visible"));
 
     // Remove the glow/sheen animation on first click
     keyboardButton.style.animation = 'none';
-    Debug.Log("Glow/sheen animation removed after first click.");
+    console.log("Glow/sheen animation removed after first click.");
   });
   // #endregion Keyboard Helper Logic
+
+  window.addEventListener("gameStart", function () {
+    // Check the status of the keyboard helper visibility in the local storage for persistence across sessions
+    const storedVisibility = localStorage.getItem('keyboardHelperVisible');
+    if (storedVisibility !== null) {
+        keyboardHelperVisible = storedVisibility === 'true'; // Convert string to boolean
+        keyboardHelper.style.display = keyboardHelperVisible ? 'flex' : 'none'; // Set initial display based on stored value
+        console.log("Keyboard helper visibility restored from local storage:", keyboardHelperVisible);
+        if (window.innerWidth > 485) {
+            gameLogo.style.display = keyboardHelperVisible ? 'none' : 'block';
+        } else {
+            mobileGameLogo.style.display = keyboardHelperVisible ? 'none' : 'block';
+        }
+    }
+});
 });

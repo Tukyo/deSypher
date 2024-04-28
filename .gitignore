@@ -16,3 +16,4 @@ firebase-debug.log
 .vs
 public/five-letter-words
 public/dev.js
+public/endpoints.json
