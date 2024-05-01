@@ -925,8 +925,18 @@ document.addEventListener('DOMContentLoaded', function () {
   // #region Faucet Distribution
   async function faucet() {
     document.getElementById('faucet-container').addEventListener('click', async () => {
-      const signer = provider.getSigner();
-      playerAddress = await signer.getAddress();
+      let signer;
+      let playerAddress;
+  
+      try {
+        signer = provider.getSigner();
+        playerAddress = await signer.getAddress();
+      } catch (error) {
+        console.error("Error obtaining signer or address:", error);
+        document.dispatchEvent(new CustomEvent('appError', { detail: "Could not access user's address. Please ensure your wallet is connected." }));
+        return; // Exit the function if we cannot get the signer or the address
+      }
+
       const recipientAddress = playerAddress; // This should be the address obtained from the user's wallet connection
 
       // Check the ETH balance first
@@ -945,7 +955,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const tokenAmount = 100; // Define the amount of tokens to send
 
       console.log("Requesting faucet distribution to:", recipientAddress);
-
       document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Requesting faucet distribution..." }));
 
       fetch('/distribute-tokens', {
@@ -962,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(result => {
           if (result.status === 200) {
             console.log("Transaction submitted, hash:", result.body.transactionHash);
-            document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Faucet distribution successful!" }));
+            document.dispatchEvent(new CustomEvent('appErrorMessage', { detail: "Faucet distribution successful!" }));
           } else {
             // This handles custom errors from the server, like cooldown
             console.error("Error distributing tokens:", result.body.error);
