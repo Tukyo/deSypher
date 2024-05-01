@@ -889,3 +889,10 @@ var tokenContractABI = [
 ];
 // Token Contract Address
 var tokenContractAddress = '0x50590A8612F995b90533C04E60cE07340654E2C3'; // TOKEN CONTRACT
+
+
+
+
+
+// Base Mainnet Token Address
+var baseMainnetTokenAddress = '0x21b9D428EB20FA075A29d51813E57BAb85406620'; // BASE MAINNET CONTRACT

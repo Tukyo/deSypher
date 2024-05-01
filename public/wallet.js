@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function () {
   async function checkTokenAllowance() {
     const signer = provider.getSigner();
     const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
-    const playerAddress = await signer.getAddress();
+    playerAddress = await signer.getAddress();
     const allowance = await tokenContract.allowance(playerAddress, gameContractAddress);
 
     const costToPlay = ethers.utils.parseUnits("10", 18); // Update with the actual cost
@@ -910,14 +910,71 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check the status of the keyboard helper visibility in the local storage for persistence across sessions
     const storedVisibility = localStorage.getItem('keyboardHelperVisible');
     if (storedVisibility !== null) {
-        keyboardHelperVisible = storedVisibility === 'true'; // Convert string to boolean
-        keyboardHelper.style.display = keyboardHelperVisible ? 'flex' : 'none'; // Set initial display based on stored value
-        console.log("Keyboard helper visibility restored from local storage:", keyboardHelperVisible);
-        if (window.innerWidth > 485) {
-            gameLogo.style.display = keyboardHelperVisible ? 'none' : 'block';
-        } else {
-            mobileGameLogo.style.display = keyboardHelperVisible ? 'none' : 'block';
-        }
+      keyboardHelperVisible = storedVisibility === 'true'; // Convert string to boolean
+      keyboardHelper.style.display = keyboardHelperVisible ? 'flex' : 'none'; // Set initial display based on stored value
+      console.log("Keyboard helper visibility restored from local storage:", keyboardHelperVisible);
+      if (window.innerWidth > 485) {
+        gameLogo.style.display = keyboardHelperVisible ? 'none' : 'block';
+      } else {
+        mobileGameLogo.style.display = keyboardHelperVisible ? 'none' : 'block';
+      }
     }
-});
+  });
+
+
+  // #region Faucet Distribution
+  async function faucet() {
+    document.getElementById('faucet-container').addEventListener('click', async () => {
+      const signer = provider.getSigner();
+      playerAddress = await signer.getAddress();
+      const recipientAddress = playerAddress; // This should be the address obtained from the user's wallet connection
+
+      // Check the ETH balance first
+      const balance = await provider.getBalance(recipientAddress);
+      if (balance.isZero()) {
+        const noGasContainer = document.getElementById('no-gas-container');
+        noGasContainer.style.display = 'block';
+  
+        setTimeout(() => {
+          noGasContainer.style.display = 'none';
+        }, 10000); // 10000 milliseconds = 10 seconds
+  
+        return;
+      }
+
+      const tokenAmount = 100; // Define the amount of tokens to send
+
+      console.log("Requesting faucet distribution to:", recipientAddress);
+
+      document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Requesting faucet distribution..." }));
+
+      fetch('/distribute-tokens', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ recipientAddress, tokenAmount })
+      })
+        .then(response => response.json().then(data => ({
+          status: response.status,
+          body: data
+        })))
+        .then(result => {
+          if (result.status === 200) {
+            console.log("Transaction submitted, hash:", result.body.transactionHash);
+            document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Faucet distribution successful!" }));
+          } else {
+            // This handles custom errors from the server, like cooldown
+            console.error("Error distributing tokens:", result.body.error);
+            document.dispatchEvent(new CustomEvent('appError', { detail: result.body.message }));
+          }
+        })
+        .catch(error => {
+          console.error("Network or server error:", error);
+          document.dispatchEvent(new CustomEvent('appError', { detail: "Error distributing tokens. Please try again." }));
+        });
+    });
+  }
+  faucet();
+  // #endregion Faucet Distribution
 });

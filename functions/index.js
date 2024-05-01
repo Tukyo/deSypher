@@ -1,6 +1,7 @@
 // This script handles the main portion of server-side functionality for the word game
 // It serves the static files, and handles the game logic
 const functions = require('firebase-functions');
+const { Firestore } = require("firebase-admin/firestore");
 const admin = require('firebase-admin');
 const ethers = require('ethers');
 const express = require('express');
@@ -27,6 +28,9 @@ const sypherGameAddress = config.game.address;
 const sypherGameABI = config.game.abi;
 const gameManagerAddress = config.gameManager.address;
 const gameManagerABI = config.gameManager.abi;
+
+const tokenAddress = config.token.address;
+const tokenABI = config.token.abi;
 
 const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI, signer);
 const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
@@ -314,5 +318,81 @@ app.post('/verify_recaptcha', express.json(), async (req, res) => {
   }
 });
 // #endregion reCAPTCHA Verification
+
+// #region Faucet Section
+app.post('/distribute-tokens', async (req, res) => {
+  const { recipientAddress, tokenAmount } = req.body;
+
+  try {
+    const cooldownStatus = await checkCooldown(recipientAddress);
+    if (cooldownStatus.isWithinCooldown) {
+      return res.status(429).json({
+        error: 'Request too soon',
+        message: `Please wait ${Math.ceil(cooldownStatus.timeRemaining / 60000)} minutes before requesting tokens again.`
+      });
+    }
+
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      tokenABI,
+      signer
+    );
+
+    const tokenDecimalAmount = ethers.parseUnits(tokenAmount.toString(), 18);
+    const tx = await tokenContract.transfer(recipientAddress, tokenDecimalAmount);
+
+    // Wait for the transaction to be mined to ensure it's been processed by the network
+    const receipt = await tx.wait();
+
+    // Log the transaction in the database
+    await recordTransaction(tx.hash, signer.address, recipientAddress, tokenAmount);
+
+    console.log("Transaction successful with hash:", tx.hash);
+    res.json({ transactionHash: tx.hash });
+  } catch (error) {
+    console.error("Failed to send transaction:", error);
+    console.error("Detailed Error: ", error.message);
+    res.status(500).json({ error: 'Transaction failed', details: error.message });
+  }
+});
+async function recordTransaction(transactionHash, fromAddress, toAddress, amount) {
+  const transactionRecord = {
+      from: fromAddress,
+      to: toAddress,
+      amount,
+      timestamp: Firestore.FieldValue.serverTimestamp()
+  };
+
+  await database.collection('faucet').doc(transactionHash).set(transactionRecord);
+}
+
+const ONE_HOUR = 3600000; // Milliseconds in one hour
+const COOLDOWN_PERIOD = 24 * ONE_HOUR; // 24 hours
+
+async function checkCooldown(recipientAddress) {
+  const now = Date.now();
+  try {
+    const latestTransaction = await database.collection('faucet')
+      .where('to', '==', recipientAddress)
+      .orderBy('timestamp', 'desc')
+      .limit(1)
+      .get();
+
+    if (!latestTransaction.empty) {
+      const lastTransactionTime = latestTransaction.docs[0].data().timestamp.toMillis();
+      if (now - lastTransactionTime < COOLDOWN_PERIOD) {
+        return {
+          isWithinCooldown: true,
+          timeRemaining: COOLDOWN_PERIOD - (now - lastTransactionTime)
+        };
+      }
+    }
+    return { isWithinCooldown: false };
+  } catch (error) {
+    console.error("Error checking cooldown:", error);
+    throw error; // Propagate error
+  }
+}
+// #endregion Faucet Section
 
 exports.app = functions.https.onRequest(app);

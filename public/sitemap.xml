@@ -6,27 +6,27 @@
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
-  <loc>https://desypher-6245f.web.app/</loc>
+  <loc>https://desypher.net/</loc>
   <lastmod>2024-04-22T18:43:53+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://desypher-6245f.web.app/about.html</loc>
+  <loc>https://desypher.net/about.html</loc>
   <lastmod>2024-04-22T18:43:53+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://desypher-6245f.web.app/tokenomics.html</loc>
+  <loc>https://desypher.net/tokenomics.html</loc>
   <lastmod>2024-04-22T18:43:53+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://desypher-6245f.web.app/leaderboards.html</loc>
+  <loc>https://desypher.net/leaderboards.html</loc>
   <lastmod>2024-04-22T18:43:53+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://desypher-6245f.web.app/index.html</loc>
+  <loc>https://desypher.net/index.html</loc>
   <lastmod>2024-04-22T18:43:53+00:00</lastmod>
   <priority>0.64</priority>
 </url>

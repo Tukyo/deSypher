@@ -16,13 +16,17 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "public/dev.js"
     ],
     "rewrites": [
       {
         "source": "**",
         "function": "app"
       }
+    ],
+    "headers": [
+      { "source":"/service-worker.js", "headers": [{"key": "Cache-Control", "value": "no-cache"}] }
     ]
   },
   "emulators": {

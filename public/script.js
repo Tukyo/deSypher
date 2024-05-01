@@ -295,11 +295,15 @@ function hintBox(show, message) {
   }
 // Helper function to determine the color based on the status
 function getColorForStatus(status) {
+    // Get the root element's computed style to access CSS variables
+    const rootStyle = getComputedStyle(document.documentElement);
+    
     const colorPalette = {
-        correct: '#2dc60e',
-        misplaced: '#f6f626cb',
-        incorrect: '#f02020ad',
+        correct: rootStyle.getPropertyValue('--desypher-green-bright').trim(), // Get the CSS variable for 'correct' status
+        misplaced: rootStyle.getPropertyValue('--yellow').trim(), // Get the CSS variable for 'misplaced' status
+        incorrect: rootStyle.getPropertyValue('--red').trim(), // Get the CSS variable for 'incorrect' status
     };
+
     return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
 }
 // #endregion UI Update Logic
@@ -965,6 +969,7 @@ function loadGame(sessionData) {
             console.log(`Guess ${index + 1}: ${guess.word}`);
         });
         restoreGameSession(sessionData.guesses);
+        restoreKeyboardHelper(sessionData.guesses);
         console.log("Game session restored successfully.");
     } else {
         console.error("No guesses found in the session data or session data is missing.");
@@ -1035,5 +1040,25 @@ function restoreInputRows(guessResult = []) {
     });
 
     inputContainer.appendChild(row);
+}
+function restoreKeyboardHelper(allGuesses) {
+    const buttons = document.querySelectorAll('.keyboard-button');
+    let letterColors = {};
+
+    allGuesses.forEach(guess => {
+        guess.result.forEach(result => {
+            // If the letter is correct or if it's not already marked as correct, update the color
+            if (result.status === 'correct' || letterColors[result.letter] !== 'green') {
+                letterColors[result.letter] = result.status === 'correct' ? 'green' : 'red';
+            }
+        });
+    });
+    for (const [letter, color] of Object.entries(letterColors)) {
+        buttons.forEach(button => {
+            if (button.textContent.toUpperCase() === letter.toUpperCase()) {
+                button.style.backgroundColor = color;
+            }
+        });
+    }
 }
 // #endregion Load Game Logic

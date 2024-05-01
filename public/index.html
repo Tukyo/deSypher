@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,24 +12,32 @@
     <link rel="icon" sizes="32x32" type="image/png" href="assets/favicon-32x32.png">
     <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
     <!-- #endregion Favicon -->
-    
+
+    <!-- #region Social Media Preview Image  -->
+    <meta property="og:image" content="assets/preview_image.webp">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <!-- #endregion Social Media Preview Image -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body background-color= black>
+
+<body background-color=black>
 
     <div class="background-image"></div>
 
-    <div class="header">   
-        
+    <div class="header">
+
         <div class="version-number">
             <span id="version-number"></span>
         </div>
-        
+
         <!-- #region Wallet Connectivity Section -->
         <div class="wallet-connection-section" id="wallet-connection-section">
             <button id="connect-button"><span id="connect-button-text">Connect Wallet</span></button>
             <div id="base-logo">
-                <img src="https://raw.githubusercontent.com/base-org/brand-kit/7d3531058f5d89aeb627ab2045e1c5df3efb5de8/logo/symbol/Base_Symbol_Blue.svg" alt="Base Logo">
+                <img src="https://raw.githubusercontent.com/base-org/brand-kit/7d3531058f5d89aeb627ab2045e1c5df3efb5de8/logo/symbol/Base_Symbol_Blue.svg"
+                    alt="Base Logo">
             </div>
             <div class="wallet-details-container">
                 <div id="wallet-details-section">
@@ -47,7 +56,7 @@
             <i id="keyboard-button" class="fa-regular fa-keyboard" style="display: none;"></i>
         </div>
         <!-- #endregion Rules Dropdown -->
-   
+
         <!-- #region SYPHER Cache -->
         <div class="sypher-cache">
             <div class="sypher-cache-section">
@@ -59,10 +68,9 @@
     </div>
 
     <input type="text" id="dev-tools" placeholder="enter command.." style="display: none;">
-    
+
     <div class="main-content">
-        
-        <div class= "game-logo-container">
+        <div class="game-logo-container">
             <img src="assets/logo_full.webp" alt="Logo of the game" class="game-logo" id="game-logo">
             <div class="mobile-game-logo-container">
                 <img src="assets/logo_transparent.webp" alt="Logo of the game" class="game-logo" id="mobile-game-logo">
@@ -79,43 +87,54 @@
                 <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
                 <li><span class="color-box red"></span> Incorrect letter.</li>
             </ul>
-            <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
+            <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i
+                        class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a
+                    href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i
+                        class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
         </div>
         <!-- #endregion Help Section Dropdown Content -->
 
         <!-- #region Keyboard Helper Layout -->
         <div id="keyboard-helper">
             <div class="keyboard-row">
-                <span class="keyboard-button">Q</span><span class="keyboard-button">W</span><span class="keyboard-button">E</span><span class="keyboard-button">R</span><span class="keyboard-button">T</span><span class="keyboard-button">Y</span><span class="keyboard-button">U</span><span class="keyboard-button">I</span><span class="keyboard-button">O</span><span class="keyboard-button">P</span>
+                <span class="keyboard-button">Q</span><span class="keyboard-button">W</span><span
+                    class="keyboard-button">E</span><span class="keyboard-button">R</span><span
+                    class="keyboard-button">T</span><span class="keyboard-button">Y</span><span
+                    class="keyboard-button">U</span><span class="keyboard-button">I</span><span
+                    class="keyboard-button">O</span><span class="keyboard-button">P</span>
             </div>
             <div class="keyboard-row">
-                <span class="keyboard-button">A</span><span class="keyboard-button">S</span><span class="keyboard-button">D</span><span class="keyboard-button">F</span><span class="keyboard-button">G</span><span class="keyboard-button">H</span><span class="keyboard-button">J</span><span class="keyboard-button">K</span><span class="keyboard-button">L</span>
+                <span class="keyboard-button">A</span><span class="keyboard-button">S</span><span
+                    class="keyboard-button">D</span><span class="keyboard-button">F</span><span
+                    class="keyboard-button">G</span><span class="keyboard-button">H</span><span
+                    class="keyboard-button">J</span><span class="keyboard-button">K</span><span
+                    class="keyboard-button">L</span>
             </div>
             <div class="keyboard-row">
-                <span class="keyboard-button">Z</span><span class="keyboard-button">X</span><span class="keyboard-button">C</span><span class="keyboard-button">V</span><span class="keyboard-button">B</span><span class="keyboard-button">N</span><span class="keyboard-button">M</span>
+                <span class="keyboard-button">Z</span><span class="keyboard-button">X</span><span
+                    class="keyboard-button">C</span><span class="keyboard-button">V</span><span
+                    class="keyboard-button">B</span><span class="keyboard-button">N</span><span
+                    class="keyboard-button">M</span>
             </div>
-        </div>        
+        </div>
         <!-- #endregion Keyboard Helper Layout -->
 
         <!-- #region Game Buttons -->
-        <button
-            id="playButton"
-            type="button"
-            class="game-button play-button"
-            data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq"
-            data-theme="dark"
-            data-callback="onSubmitPlay">
+        <button id="playButton" type="button" class="game-button play-button"
+            data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq" data-theme="dark" data-callback="onSubmitPlay">
             NEW GAME
         </button>
 
-        <button
-            id="load-button"
-            type="button"
-            class="game-button load-button"
-            data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq"
-            data-callback="onSubmitLoad">
+        <button id="load-button" type="button" class="game-button load-button"
+            data-sitekey="6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq" data-callback="onSubmitLoad">
             LOAD GAME
         </button>
+        <button id="faucet-container">
+            <i class="fa-solid fa-faucet" id="faucet"></i>
+        </button>
+        <container id="no-gas-container" style="display: none;">
+            <p id="no-gas-message">No Sepolia ETH Detected. Please <a href="https://sepolia-faucet.pk910.de/" class="link" target="_blank">click here <i class="fa-solid fa-arrow-up-right-from-square"></i></a> to obtain.</p>
+        </container>
         <!-- #endregion Game Buttons -->
 
         <!-- #region Transaction Recovery-->
@@ -133,35 +152,46 @@
         </div>
         <!-- #endregion Error Message Box-->
 
-        <div class="loading-bar"><div></div><div></div><div></div><div></div></div>
-        
+        <div class="loading-bar">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
         <!-- #region Puzzle Section -->
         <div id="hint-box" style="display: none;"></div>
         <form id="wordPuzzleForm" style="display: none;">
             <div id="inputContainer" class="input-fields">
-              <input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input">
+                <input type="text" maxlength="1" class="puzzle-input"><input type="text" maxlength="1"
+                    class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input"><input type="text"
+                    maxlength="1" class="puzzle-input"><input type="text" maxlength="1" class="puzzle-input">
             </div>
-            
+
             <button type="submit" id="submitButton" class="game-button">Submit</button>
-                  
+
         </form>
         <!-- #endregion Puzzle Section -->
-    
+
     </div>
 
-    <div class= "home-page-footer">   
-        
+    <div class="home-page-footer">
+
         <!-- #region Social Media Section -->
         <div class="social-media-section">
-            <a href="https://twitter.com/TUKYOWAVE" alt="Twitter Icon Link" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
-            <a href="https://t.me/tukyogames" alt="Telegram Icon Link" target="_blank" class="social-icon"><i class="fab fa-telegram"></i></a>
-            <a href="https://github.com/Tukyo/deSypher" alt="Github Icon Link" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+            <a href="https://twitter.com/TUKYOWAVE" alt="Twitter Icon Link" target="_blank" class="social-icon"><i
+                    class="fab fa-twitter"></i></a>
+            <a href="https://t.me/tukyogames" alt="Telegram Icon Link" target="_blank" class="social-icon"><i
+                    class="fab fa-telegram"></i></a>
+            <a href="https://github.com/Tukyo/deSypher" alt="Github Icon Link" target="_blank" class="social-icon"><i
+                    class="fab fa-github"></i></a>
         </div>
         <!-- #endregion Social Media Section -->
-        
+
         <!-- #region Page Navigation Section -->
         <div class="page-navigation-section">
-            <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a> • <a href="/leaderboards.html">Leaderboards</a>
+            <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a> • <a
+                href="/leaderboards.html">Leaderboards</a>
         </div>
         <!-- #endregion Page Navigation Section -->
 
@@ -203,7 +233,8 @@
     <script src="contracts.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
-    <script src="dev.js"></script>
+    <!-- <script src="dev.js"></script> -->
     <!-- <script type="module" src="analytics.js"></script> -->
 </body>
+
 </html>

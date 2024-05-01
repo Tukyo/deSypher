@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Ensuring this script runs after all DOM content is fully loaded, including scripts.
     const addressElement = document.getElementById('address-text');
     addressElement.textContent = "COMING SOON!";
-    // addressElement.textContent = tokenContractAddress;
-    // console.log("Updated contract address to: " + tokenContractAddress);
+    addressElement.textContent = baseMainnetTokenAddress;
+    console.log("Updated contract address to: " + baseMainnetTokenAddress);
 
     setDistributionValues();
 });
@@ -19,24 +19,21 @@ canvas.width = document.querySelector('.distribution-section').clientWidth - 24;
 
 const distributionData = {
     "Circulating Supply": 750000,
-    "Initial Rewards Pool": 175000,
-    "Sypher Cache": 1000,
-    "Profectio Airdrop": 5000,
+    "Initial Rewards Pool": 170000,
+    "Profectio Airdrop": 10000,
     "Bug Bounty": 44000,
-    "Development": 25000
+    "Development": 26000
 };
 const distributionColors = {
     "Circulating Supply": "#2dc60e",
     "Initial Rewards Pool": "#ffff00",
-    "Sypher Cache": "#2dc60e",
-    "Profectio Airdrop": "#ffff00",
-    "Bug Bounty": "#2dc60e",
+    "Profectio Airdrop": "#2dc60e",
+    "Bug Bounty": "#ffff00",
     "Development": "#ffff00"
 };
 function setDistributionValues() {
     document.querySelector('#circulating-supply-value').textContent = distributionData["Circulating Supply"].toLocaleString();
     document.querySelector('#initial-reward-pool-value').textContent = distributionData["Initial Rewards Pool"].toLocaleString();
-    document.querySelector('#initial-sypher-cache-value').textContent = distributionData["Sypher Cache"].toLocaleString();
     document.querySelector('#bug-bounty-value').textContent = distributionData["Bug Bounty"].toLocaleString();
     document.querySelector('#airdrop-value').textContent = distributionData["Profectio Airdrop"].toLocaleString();
     document.querySelector('#development-value').textContent = distributionData["Development"].toLocaleString();
@@ -139,7 +136,6 @@ canvas.addEventListener('mousemove', function (event) {
 const spanToCategoryMap = {
     'circulating-supply-value': 'Circulating Supply',
     'initial-reward-pool-value': 'Initial Rewards Pool',
-    'initial-sypher-cache-value': 'Sypher Cache',
     'bug-bounty-value': 'Bug Bounty',
     'airdrop-value': 'Profectio Airdrop',
     'development-value': 'Development'
@@ -174,7 +170,7 @@ Object.entries(spanToCategoryMap).forEach(([spanId, category]) => {
         const percentage = (originalValue / totalTokens * 100).toFixed(2);
         spanElement.textContent = `${percentage}%`;
         redrawChart(currentHoverCategory);
-        Debug.Log("Mouse entered: " + category + " showing " + percentage + "%");
+        console.log("Mouse entered: " + category + " showing " + percentage + "%");
     });
 
     // Handle mouse leave
@@ -279,35 +275,37 @@ document.getElementById('copy-icon').addEventListener('click', function () {
 // #endregion Contract Address Copy Functionality
 
 // #region SYPHER Cache Logic
-document.addEventListener('DOMContentLoaded', async () => {
-    const sypherCacheElement = document.getElementById('current-sypher-cache');
+// document.addEventListener('DOMContentLoaded', async () => {
+//     const sypherCacheElement = document.getElementById('current-sypher-cache');
+//     let provider;
 
-    if (typeof window.ethereum !== 'undefined') {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        // Ensure you are using the GameManager address and ABI here since it manages the Sypher Cache
-        const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+//     try {
+//         const response = await fetch('endpoints.json');
+//         const config = await response.json();
 
-        // Fetch initial cache value
-        try {
-            const sypherCache = await gameManagerContract.getSypherCache();
-            const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
-            sypherCacheElement.innerHTML = `Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">${formattedSypherCache}</span>`;
-            console.log("Sypher Cache loaded: " + formattedSypherCache);
-        } catch (error) {
-            console.error("Error loading the Sypher Cache: ", error);
-            sypherCacheElement.innerHTML = 'Current Sypher Cache: Error loading data...';
-        }
+//         // Initialize provider using the testnet endpoint from the configuration
+//         provider = new ethers.providers.JsonRpcProvider(config.testnetEndpoint);
 
-        const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
-        // Set up event listener for live updates from deSypher contract
-        deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
-            const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
-            sypherCacheElement.innerHTML = `Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">${formattedNewCache}</span>`;
-            console.log("Sypher Cache updated live: " + formattedNewCache);
-        });
-    } else {
-        console.log("Ethereum provider not found. Make sure you have MetaMask installed.");
-        sypherCacheElement.innerHTML = 'Current Sypher Cache: <span style="font-weight: bold; font-size: 22px;">Please install a wallet...</span>';
-    }
-});
+//         // Assuming you have the correct addresses and ABIs
+//         const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+//         const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+
+//         // Fetch the sypher cache value from GameManager
+//         const sypherCache = await gameManagerContract.getSypherCache();
+//         const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
+//         sypherCacheElement.innerHTML = `<span style="font-weight: bold; font-size: 24px; color: #2dc60e; text-shadow: 0 0 10px #2dc60e 0 0 20px #2dc60e;">${formattedSypherCache}</span> tokens are currently in the TESTNET Sypher Cache.`;
+//         console.log("Sypher Cache loaded: " + formattedSypherCache);
+
+//         // Event listener for SypherCacheUpdated from deSypher contract
+//         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
+//             // TODO: Shuffle letters or add a visual effect when the cache is updated
+//             const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
+//             sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedNewCache}</span>`;
+//             console.log("Sypher Cache updated live: " + formattedNewCache);
+//         });
+
+//     } catch (error) {
+//         console.error("Failed to load configuration or blockchain interaction failed: ", error);
+//     }
+// });
 // #endregion SYPHER Cache Logic

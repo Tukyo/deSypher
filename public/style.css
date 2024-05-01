@@ -13,6 +13,10 @@
     --glow-green-main: #00ff00c2;
     --glow-green-secondary: #00ff009e;
     --glow-green-dark: #00ff005f;
+    
+    /* Game Colors */
+    --yellow: yellow;
+    --red: #de1717;
 
     --background-gradient: linear-gradient(to left, #041f00 1%, black 99%);
 
@@ -429,7 +433,7 @@ body {
     max-width: 700px;
     width: 100%;
     animation-delay: .1s;
-    animation: transitionScale 1.25s forwards, pulse 2s infinite ease-in-out 2.5s;
+    animation: transitionScale .75s forwards, pulse 2s infinite ease-in-out 2.5s;
 }
 #load-button {
     opacity: 0%;
@@ -441,7 +445,7 @@ body {
     max-width: 500px;
     width: 100%;
     height: 1px;
-    animation: transitionUp 2.5s forwards;
+    animation: transitionUp 1s forwards;
     animation-delay: .5s;
     line-height: 0px;
     padding: 20px 30px;
@@ -484,6 +488,44 @@ body {
     border-radius: 5px;
 }
 /* #endregion Game Buttons */
+
+/* #region Faucet Section */
+#faucet-container {
+    opacity: 0%;
+    display: inline-block;
+    background-color: black;
+    border: var(--desypher-green-dark) 1px solid;
+    border-radius: 5px;
+    max-width: 200px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 20px;
+    animation: fadeIn .5s forwards;
+    animation-delay: 1.5s;
+}
+#faucet-container:hover {
+    background: var(--desypher-green-main);
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    cursor: pointer;
+}
+#faucet {
+    color: var(--font-color);
+}
+#no-gas-container {
+    opacity: 0%;
+    z-index: 1000;
+    padding: 5px 10px;
+    max-width: 4000px;
+    background: black;
+    color: var(--font-color);
+    font-family: monospace, sans-serif;
+    outline: 2px solid var(--red);
+    border-radius: 10px;
+    display: block;
+    margin: 30px auto;
+    animation: fadeIn .5s forwards;
+}
+/* #endregion Faucet Section */
 
 /* #region Error Messages */
 .error-message-box {
@@ -720,7 +762,6 @@ body {
 }
 .color-box {
     flex-shrink: 0;
-    /* Prevent the color box from shrinking */
     width: 1em;
     height: 1em;
     margin-right: 5px;
@@ -732,10 +773,10 @@ body {
     background-color: var(--desypher-green-bright);
 }
 .color-box.yellow {
-    background-color: yellow;
+    background-color: var(--yellow);
 }
 .color-box.red {
-    background-color: #de1717;
+    background-color: var(--red);
 }
 /* #endregion Color Key Section */
 
@@ -747,7 +788,7 @@ body {
     padding-bottom: 55px;
     padding-left: 20px;
 }
-.what-is-desypher-section, .getting-started-section, .funding-wallet-section, .roadmap-section, .disclaimer-section {
+.what-is-desypher-section, .getting-started-section, .funding-wallet-section, .roadmap-section, .disclaimer-section, .contact-section {
     opacity: 0%;
     position: relative;
     top: 5px;
@@ -823,16 +864,6 @@ body {
     box-shadow: 0 0 10px #F50DB4, 0 0 20px #B90A9C;
 }
 .roadmap-section {
-    opacity: 0%;
-    position: relative;
-    top: 5px;
-    background-color: #000000a6;
-    border-left: 2px solid var(--glow-green-dark);
-    text-align: left;
-    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    padding: 12px 16px;
-    z-index: 1;
-    margin-bottom: 20px;
     animation: transitionUp 0.5s forwards;
     animation-delay: 2s;
 }
@@ -902,19 +933,23 @@ body {
 .roadmap-container .roadmap-item-container:nth-child(7) {
     animation-delay: 3.75s;
 }
-.disclaimer-section {
-    opacity: 0%;
-    position: relative;
-    top: 5px;
-    background-color: #000000a6;
-    border-left: 2px solid var(--glow-green-dark);
-    text-align: left;
-    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    padding: 12px 16px;
-    z-index: 1;
-    margin-bottom: 20px;
+.contact-section {
     animation: transitionUp 0.5s forwards;
     animation-delay: 4s;
+}
+.disclaimer-section {
+    animation: transitionUp 0.5s forwards;
+    animation-delay: 4.5s;
+}
+.tukyo-logo-section, .motor-logo-section {
+    display: flex;
+    align-items: center;
+}
+.tukyo-logo, .motor-logo {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
 }
 /* #endregion About Page */
 
@@ -989,6 +1024,25 @@ body {
 }
 /* #endregion Leaderboard Section */
 
+/* #region Airdrop Page */
+.airdrop-distribution-container {
+    opacity: 0%;
+    position: absolute;
+    background-color: #000000a6;
+    border-left: 2px solid var(--glow-green-dark);
+    max-width: 700px;
+    width: 100%;
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    padding: 12px 16px;
+    z-index: 1;
+    margin-bottom: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fadeIn 1s forwards;
+}
+/* #endregion Airdrop Page */
+
 /* #region Page Navigation */
 .page-navigation-section {
     margin-top: 40px;
@@ -1013,7 +1067,7 @@ body {
 /* #endregion Page Navigation */
 
 /* #region Footer Section */
-.home-page-footer, .about-page-footer, .tokenomics-page-footer, .leaderboards-footer, .four-oh-four-page-footer {
+.home-page-footer, .about-page-footer, .tokenomics-page-footer, .leaderboards-footer, .four-oh-four-page-footer, .airdrop-page-footer {
     padding: 10px;
     box-sizing: border-box;
     position: fixed;
@@ -1031,7 +1085,7 @@ body {
     border-top: var(--desypher-green-dark) 2px solid;
     animation: homeFooterIn .5s forwards;
 }
-.about-page-footer, .tokenomics-page-footer, .leaderboards-footer, .four-oh-four-page-footer {
+.about-page-footer, .tokenomics-page-footer, .leaderboards-footer, .four-oh-four-page-footer, .airdrop-page-footer {
     height: 45px;
     background-color: black;
     border-top: 2px solid var(--desypher-green-main);
