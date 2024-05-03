@@ -37,7 +37,7 @@ function setDistributionValues() {
     document.querySelector('#bug-bounty-value').textContent = distributionData["Bug Bounty"].toLocaleString();
     document.querySelector('#airdrop-value').textContent = distributionData["Profectio Airdrop"].toLocaleString();
     document.querySelector('#development-value').textContent = distributionData["Development"].toLocaleString();
-    
+
     console.log("Updated text content with formatted numbers.");
 }
 
@@ -274,38 +274,4 @@ document.getElementById('copy-icon').addEventListener('click', function () {
 });
 // #endregion Contract Address Copy Functionality
 
-// #region SYPHER Cache Logic
-// document.addEventListener('DOMContentLoaded', async () => {
-//     const sypherCacheElement = document.getElementById('current-sypher-cache');
-//     let provider;
-
-//     try {
-//         const response = await fetch('endpoints.json');
-//         const config = await response.json();
-
-//         // Initialize provider using the testnet endpoint from the configuration
-//         provider = new ethers.providers.JsonRpcProvider(config.testnetEndpoint);
-
-//         // Assuming you have the correct addresses and ABIs
-//         const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
-//         const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
-
-//         // Fetch the sypher cache value from GameManager
-//         const sypherCache = await gameManagerContract.getSypherCache();
-//         const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
-//         sypherCacheElement.innerHTML = `<span style="font-weight: bold; font-size: 24px; color: #2dc60e; text-shadow: 0 0 10px #2dc60e 0 0 20px #2dc60e;">${formattedSypherCache}</span> tokens are currently in the TESTNET Sypher Cache.`;
-//         console.log("Sypher Cache loaded: " + formattedSypherCache);
-
-//         // Event listener for SypherCacheUpdated from deSypher contract
-//         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
-//             // TODO: Shuffle letters or add a visual effect when the cache is updated
-//             const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
-//             sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedNewCache}</span>`;
-//             console.log("Sypher Cache updated live: " + formattedNewCache);
-//         });
-
-//     } catch (error) {
-//         console.error("Failed to load configuration or blockchain interaction failed: ", error);
-//     }
-// });
 // #endregion SYPHER Cache Logic

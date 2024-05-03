@@ -3,12 +3,21 @@ var transactionHash = null;
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  const bufferSetTime = sessionStorage.getItem('bufferSetTime');
+
+  if (bufferSetTime && (Date.now() - parseInt(bufferSetTime) > 1000)) {
+    sessionStorage.removeItem('reloadBuffer');
+    console.log("Stale reload buffer cleared.");
+  }
+
   if (!sessionStorage.getItem('reloadBuffer')) {
     sessionStorage.setItem('reloadBuffer', 'true');
+    sessionStorage.setItem('bufferSetTime', Date.now().toString());
     console.log("Reload buffer initialized.");
 
     setTimeout(() => {
       sessionStorage.removeItem('reloadBuffer');
+      sessionStorage.removeItem('bufferSetTime');
       console.log("Reload buffer cleared.");
     }, 1000);
   }
@@ -33,6 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const walletConnectionSection = document.getElementById('wallet-connection-section');
   const connectButtonText = document.getElementById('connect-button-text');
   const minimumBalance = 10; // Cost to play the game
+
+  const faucetButton = document.getElementById('faucet-container');
 
   const walletStylePresets = {
     default: { size: '150px', alignment: 'center' },
@@ -232,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("All wallet checks passed. Starting reCaptcha verification...");
           playButton.disabled = true;
           loadButton.disabled = true;
+          faucetButton.disabled = true;
         }
       }
     } else {
@@ -608,6 +620,10 @@ document.addEventListener('DOMContentLoaded', function () {
         loadButton.style.animation = 'foldInRemove .25s forwards';
         loadButton.style.display = 'none';
       }
+      if (faucetButton) {
+        faucetButton.style.animation = 'foldInRemove .25s forwards';
+        faucetButton.style.display = 'none';
+      }
       console.log("Showing loading bar...");
       loadingBar.style.display = 'inline-block'; // Show the loadingBar
 
@@ -644,6 +660,8 @@ document.addEventListener('DOMContentLoaded', function () {
     playButton.style.display = 'none';
     loadButton.style.animation = 'foldInRemove .25s forwards';
     loadButton.style.display = 'none';
+    faucetButton.style.animation = 'foldInRemove .25s forwards';
+    faucetButton.style.display = 'none';
 
     // Show the input field for the transaction hash
     retrieveTransaction.style.display = 'block';
@@ -879,6 +897,9 @@ document.addEventListener('DOMContentLoaded', function () {
     keyboardButton.classList.add('glow-effect'); // Apply glow/sheen animation
   }
   keyboardButton.addEventListener('click', () => {
+    keyboardHelperToggle();
+  });
+  function keyboardHelperToggle() {
     keyboardHelperVisible = !keyboardHelperVisible; // Toggle visibility state
     localStorage.setItem('keyboardHelperVisible', keyboardHelperVisible);
 
@@ -903,9 +924,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Remove the glow/sheen animation on first click
     keyboardButton.style.animation = 'none';
     console.log("Glow/sheen animation removed after first click.");
-  });
-  // #endregion Keyboard Helper Logic
-
+  };
   window.addEventListener("gameStart", function () {
     // Check the status of the keyboard helper visibility in the local storage for persistence across sessions
     const storedVisibility = localStorage.getItem('keyboardHelperVisible');
@@ -920,14 +939,14 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
-
+  // #endregion Keyboard Helper Logic
 
   // #region Faucet Distribution
   async function faucet() {
-    document.getElementById('faucet-container').addEventListener('click', async () => {
+    faucetButton.addEventListener('click', async () => {
       let signer;
       let playerAddress;
-  
+
       try {
         signer = provider.getSigner();
         playerAddress = await signer.getAddress();
@@ -944,11 +963,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (balance.isZero()) {
         const noGasContainer = document.getElementById('no-gas-container');
         noGasContainer.style.display = 'block';
-  
+
         setTimeout(() => {
           noGasContainer.style.display = 'none';
         }, 10000); // 10000 milliseconds = 10 seconds
-  
+
         return;
       }
 
@@ -971,7 +990,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(result => {
           if (result.status === 200) {
             console.log("Transaction submitted, hash:", result.body.transactionHash);
-            document.dispatchEvent(new CustomEvent('appErrorMessage', { detail: "Faucet distribution successful!" }));
+            document.dispatchEvent(new CustomEvent('appError', { detail: "Faucet distribution successful!" }));
           } else {
             // This handles custom errors from the server, like cooldown
             console.error("Error distributing tokens:", result.body.error);

@@ -15,8 +15,9 @@
     --glow-green-dark: #00ff005f;
     
     /* Game Colors */
-    --yellow: yellow;
-    --red: #de1717;
+    --correct: chartreuse;
+    --misplaced: yellow;
+    --incorrect: red;
 
     --background-gradient: linear-gradient(to left, #041f00 1%, black 99%);
 
@@ -273,25 +274,10 @@ body {
     display: block;
     animation: tvScreenOn 0.5s ease;
 }
-#mute-button {
-    opacity: 0%;
-    position: fixed;
-    top: 60px;
-    left: 30px;
-    z-index: 1000;
-    color: var(--desypher-green-dark);
-    animation: transitionRight 1s forwards;
-    animation-delay: 1.25s;
-}
-#mute-button:hover {
-    color: var(--desypher-green-main);
-    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    cursor: pointer;
-}
 #keyboard-button {
     display: block;
     position: fixed;
-    top: 60px;
+    top: 65px;
     left: 60px;
     z-index: 1001;
     color: var(--desypher-green-dark);
@@ -307,6 +293,7 @@ body {
     flex-direction: column;
     align-items: center;
     font-family: monospace, sans-serif;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
     text-align: center;
     width: 100%;
 }
@@ -357,6 +344,7 @@ body {
     text-align: center;
     font-size: 24px;
     text-transform: uppercase;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
     box-shadow: 0 0 10px var(--desypher-green-dark);
     animation: transitionScale .1s forwards;
 }
@@ -585,16 +573,12 @@ body {
 /* #endregion Scrollbar */
 
 /* #region Visual Effects */
-.spritesheet {
-    position: fixed;
+#rain {
+    background: none;
+    position: absolute;
+    mix-blend-mode: screen;
     top: 0;
-    background-image: url('assets/spritesheet.webp');
-    background-repeat: no-repeat;
-    width: 128px;
-    height: 1024px; /* Width of each frame in the spritesheet */
-    animation: fall 5s linear forwards; /* Height of each frame in the spritesheet */
-    scale: .25;
-    z-index: 0;
+    left: 0;
 }
 /* #endregion Visual Effects */
 
@@ -748,6 +732,100 @@ body {
 }
 /* #endregion Sypher Cache */
 
+/* #region Settings Menu */
+.settings-menu-container {
+    display: none;
+    opacity: 0%;
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    background-color: black;
+    border: 2px solid var(--desypher-green-main);
+    border-radius: 20px;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    font-family: monospace, sans-serif;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 500px;
+    width: 90vw;
+    height: 100%;
+    z-index: 5001;
+}
+#mute-button {
+    z-index: 1000;
+    color: var(--desypher-green-main);
+}
+#mute-button:hover {
+    color: var(--desypher-green-main);
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    cursor: pointer;
+}
+#vfx-toggle {
+    z-index: 1001;
+    color: var(--desypher-green-main);
+}
+.color-slider-container {
+    position: relative;
+    margin: auto;
+    width: 60%;
+    height: 10px;
+    border-radius: 100px;
+    background: linear-gradient(to right, rgb(255,0,0), rgb(255,255,0), rgb(0,255,0),rgb(0,255,255),rgb(0,0,255),rgb(255,0,255),rgb(255,0,0));
+}
+.color-slider-track {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: none;
+    top: 8px;
+}
+.color-slider-handle {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: var(--font-color);
+    border: 5px solid transparent;
+    border-radius: 100px;
+    box-sizing: border-box;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: border-width 0.15s ease-in-out;
+}
+#default-color-button {
+    background-color: black;
+    color: var(--font-color);
+    margin: 15px;
+    border: 2px solid var(--desypher-green-main);
+    font-family: monospace, sans-serif;
+    border-radius: 5px;
+    z-index: 1001;
+}
+#default-color-button:hover {
+    background: var(--desypher-green-main);
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    cursor: pointer;
+}
+#settings-button {
+    opacity: 0%;
+    position: fixed;
+    top: 65px;
+    left: 25px;
+    z-index: 1000;
+    color: var(--desypher-green-dark);
+    animation: transitionRight 1s forwards;
+    animation-delay: .5s;
+}
+#settings-button:hover {
+    color: var(--desypher-green-main);
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    cursor: pointer;
+}
+/* #endregion Settings Menu */
+
 /* #endregion Home Page */
 
 /* #region Color Key Section */
@@ -769,14 +847,14 @@ body {
     border: 1px solid #000000;
     display: inline-block;
 }
-.color-box.green {
-    background-color: var(--desypher-green-bright);
+.color-box.correct {
+    background-color: var(--correct);
 }
-.color-box.yellow {
-    background-color: var(--yellow);
+.color-box.misplaced {
+    background-color: var(--misplaced);
 }
-.color-box.red {
-    background-color: var(--red);
+.color-box.incorrect {
+    background-color: var(--incorrect);
 }
 /* #endregion Color Key Section */
 
@@ -941,11 +1019,11 @@ body {
     animation: transitionUp 0.5s forwards;
     animation-delay: 4.5s;
 }
-.tukyo-logo-section, .motor-logo-section {
+.tukyo-logo-section, .motor-logo-section, .rohan-logo-section {
     display: flex;
     align-items: center;
 }
-.tukyo-logo, .motor-logo {
+.tukyo-logo, .motor-logo, .rohan-logo {
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -1025,21 +1103,36 @@ body {
 /* #endregion Leaderboard Section */
 
 /* #region Airdrop Page */
-.airdrop-distribution-container {
+.airdrop-page-body {
+    display: flex;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 55px;
+    padding-left: 20px;
+}
+.airdrop-distribution-container, .about-profectio-container {
     opacity: 0%;
-    position: absolute;
+    position: relative;
     background-color: #000000a6;
     border-left: 2px solid var(--glow-green-dark);
     max-width: 700px;
-    width: 100%;
+    width: 90%;
     text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    font-family: monospace, sans-serif;
     padding: 12px 16px;
     z-index: 1;
     margin-bottom: 20px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: fadeIn 1s forwards;
+    animation: tvScreenOn .5s forwards;
+}
+.about-profectio-container {
+    animation-delay: .25s;
+}
+.profectio-preview {
+    max-width: 700px;
+    width: 98%;
+    border: 2px solid var(--desypher-green-main);
+    border-radius: 20px;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
 }
 /* #endregion Airdrop Page */
 
@@ -1577,9 +1670,6 @@ body {
         max-height: 0%;
         top: 0px;
         right: 0px;
-    }
-    #mute-button {
-        display: none;
     }
     #keyboard-button {
         left: 25px;

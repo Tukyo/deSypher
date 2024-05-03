@@ -26,6 +26,8 @@
 
     <div class="background-image"></div>
 
+    <canvas id="rain"></canvas>
+
     <div class="header">
 
         <div class="version-number">
@@ -52,7 +54,7 @@
         <!-- #region Rules Dropdown -->
         <div class="rules-dropdown">
             <button class="dropdown-button">How to Play</button>
-            <i id="mute-button" class="fa-solid fa-volume-high"></i>
+            <i id="settings-button" class="fa-solid fa-gear"></i>
             <i id="keyboard-button" class="fa-regular fa-keyboard" style="display: none;"></i>
         </div>
         <!-- #endregion Rules Dropdown -->
@@ -132,6 +134,7 @@
         <button id="faucet-container">
             <i class="fa-solid fa-faucet" id="faucet"></i>
         </button>
+        
         <container id="no-gas-container" style="display: none;">
             <p id="no-gas-message">No Sepolia ETH Detected. Please <a href="https://sepolia-faucet.pk910.de/" class="link" target="_blank">click here <i class="fa-solid fa-arrow-up-right-from-square"></i></a> to obtain.</p>
         </container>
@@ -152,12 +155,23 @@
         </div>
         <!-- #endregion Error Message Box-->
 
-        <div class="loading-bar">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+        <!-- #region Settings Menu -->
+        <div class="settings-menu-container" id="settings-menu-container">
+            <h2>SETTINGS</h2>
+            <h3>AUDIO</h3>
+            <h4>Game Sounds <i id="mute-button" class="fa-solid fa-volume-high"></i></h4>
+            <h3>VISUAL</h3>
+            <h4>VFX <i id="vfx-toggle" class="fa-solid fa-toggle-on"></i></h4>
+            <h4>Game Color</h4>
+            <div class="color-slider-container">
+                <div class="color-slider-track"></div>
+                <div class="color-slider-handle"></div>
+            </div>
+            <button id="default-color-button">Default Color</button>
         </div>
+        <!-- #endregion Settings Menu -->
+
+        <div class="loading-bar"><div></div><div></div><div></div><div></div></div>
 
         <!-- #region Puzzle Section -->
         <div id="hint-box" style="display: none;"></div>
@@ -233,6 +247,8 @@
     <script src="contracts.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
+    <script src="rain.js"></script>
+    <script src="settings.js"></script>
     <!-- <script src="dev.js"></script> -->
     <!-- <script type="module" src="analytics.js"></script> -->
 </body>

@@ -8,7 +8,7 @@ function installRabby() {
     window.open('https://rabby.io/', '_blank');
 }
 function openUniswap() {
-    window.open('https://app.uniswap.org/#/swap', '_blank');
+    window.open('https://app.uniswap.org/#/swap?outputCurrency=0x21b9D428EB20FA075A29d51813E57BAb85406620', '_blank');
 }
 // Hover and click functionality for roadmap information reveal
 document.querySelectorAll('.roadmap-item-container').forEach(function(container) {
@@ -45,16 +45,19 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
         }
         typeWriter();
     }
-
+    function getTextContentExcludingChildren(element) {
+        return Array.from(element.childNodes).filter(e => e.nodeType === Node.TEXT_NODE).map(e => e.textContent).join("");
+    }
     function setDescriptionText(container) {
         const description = container.querySelector('.roadmap-item-description');
         const title = container.querySelector('h3');
         title.style.color = '#2dc60e';
+        let titleText = getTextContentExcludingChildren(title);
         let textContent = '';
-
-        switch (title.textContent) {
+    
+        switch (titleText.trim()) {
             case "$SYPHER Launch":
-                textContent = "$SYPHER will launch on [DATE] with a total supply of 1,000,000 tokens. More information can be found on the <a href='/tokenomics.html' class='link'>tokenomics page <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
+                textContent = "$SYPHER launched on April 28th, 2024 with a total supply of 1,000,000 tokens. Liquidity was added 24 hours later on April 29th, 2024. More information can be found on the <a href='/tokenomics.html' class='link'>tokenomics page <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
                 break;
             case "deSypher Launch":
                 textContent = "deSypher will launch shortly after the token. It is currently undergoing beta testing. If you are interested in trying the game on testnet, please reach out on <a href='https://t.me/tukyogames' class='link'>telegram <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
@@ -69,7 +72,7 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
                 textContent = "There are multiple use-case improvements planned for $SYPHER. The first improvement will be an innovative mechanism introduced that allows players to earn rewards based on game outcomes, contributing to the overall stability of the game's reward system.";
                 break;
             case "More Games??":
-                textContent = "At Tukyo Games we priotize player experience foremost, and see crypto as a tool to make that possible. Currently in development, we are already working on Super G.I.M.P. Girl and have plans to release more games in the future.";
+                textContent = "At Tukyo Games we prioritize player experience foremost, and see crypto as a tool to make that possible. Currently in development, we are already working on Super G.I.M.P. Girl and have plans to release more games in the future.";
                 break;
         }
 
@@ -80,7 +83,6 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
     container.addEventListener('mouseenter', function() {
         setDescriptionText(container);
     });
-
     container.addEventListener('mouseleave', function() {
         const description = container.querySelector('.roadmap-item-description');
         const title = container.querySelector('h3');
@@ -93,7 +95,6 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
             isTyping = false;
         }
     });
-
     container.addEventListener('click', function() {
         const description = container.querySelector('.roadmap-item-description');
         const title = container.querySelector('h3');
@@ -111,3 +112,27 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
     });
 });
 
+// #region Email Copy Section
+document.addEventListener('DOMContentLoaded', function () {
+    const emailSpan = document.querySelector('.link'); // Adjust to target the span with the email address
+    const confirmTime = 2000; // Time until the copy icon changes back from a checkmark to a copy icon
+
+    emailSpan.addEventListener('click', function () {
+        const emailAddress = emailSpan.textContent.trim(); // Get the email text content
+        navigator.clipboard.writeText(emailAddress).then(function () {
+            console.log('Copying to clipboard was successful!');
+
+            // Change the icon within the span to a check mark
+            const copyIcon = emailSpan.querySelector('i');
+            copyIcon.className = 'fa-solid fa-check';
+
+            // Change the icon back to copy after confirmTime milliseconds
+            setTimeout(function () {
+                copyIcon.className = 'fa-regular fa-copy';
+            }, confirmTime);
+        }, function (err) {
+            console.error('Could not copy text: ', err);
+        });
+    });
+});
+// #endregion Email Copy Section

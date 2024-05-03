@@ -1,5 +1,6 @@
 /node_modules
-/contracts
+/contracts/deSypher.sol
+/contracts/gamemanager.sol
 /scripts
 /cache
 /artifacts

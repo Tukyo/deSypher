@@ -28,7 +28,7 @@ const cancelButton = document.getElementById('cancel-button');
 const retrieveTransaction = document.getElementById('retrieve-transaction');
 const versionNumber = document.getElementById('version-number');
 
-const version = '0.1.1';
+const version = '0.1.3';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -299,9 +299,9 @@ function getColorForStatus(status) {
     const rootStyle = getComputedStyle(document.documentElement);
     
     const colorPalette = {
-        correct: rootStyle.getPropertyValue('--desypher-green-bright').trim(), // Get the CSS variable for 'correct' status
-        misplaced: rootStyle.getPropertyValue('--yellow').trim(), // Get the CSS variable for 'misplaced' status
-        incorrect: rootStyle.getPropertyValue('--red').trim(), // Get the CSS variable for 'incorrect' status
+        correct: rootStyle.getPropertyValue('--correct').trim(), // Get the CSS variable for 'correct' status
+        misplaced: rootStyle.getPropertyValue('--misplaced').trim(), // Get the CSS variable for 'misplaced' status
+        incorrect: rootStyle.getPropertyValue('--incorrect').trim(), // Get the CSS variable for 'incorrect' status
     };
 
     return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
@@ -347,27 +347,6 @@ function getRandomLosingMessage(messages) {
 }
 // #endregion Losing Messages
 
-// #region Audio Listeners for Input Rows
-function addAudioListener(element) {
-    element.addEventListener('mouseenter', () => {
-        // Hover sound
-        const sound = audioPool[audioIndex];
-        sound.currentTime = 0; // Rewind to start
-        sound.play().catch(error => console.log("Error playing sound:", error));
-        audioIndex = (audioIndex + 1) % poolSize;
-    });
-
-    // Adding click sound
-    element.addEventListener('click', () => {
-        // Click sound
-        const clickSound = clickAudioPool[clickAudioIndex];
-        clickSound.currentTime = 0; // Rewind to start
-        clickSound.play().catch(error => console.log("Error playing sound:", error));
-        clickAudioIndex = (clickAudioIndex + 1) % poolSize;
-    });
-}
-// #endregion Audio Listeners for Input Rows
-
 // Add listeners to the initial row of inputs
 const initialInputs = document.querySelectorAll('.puzzle-input');
 addInputListeners(initialInputs);
@@ -412,40 +391,6 @@ function updateMainContentPadding() {
 // #endregion Dynamic Graphical Adjustments Based on Number of Input Rows
 
 // #region Effects & Extras
-
-// #region Cyber Rain
-let currentHueRotation = '';
-function spawnSpritesheet() {
-    // console.log("spawning matrix rain");
-    const sprite = document.createElement('div');
-    sprite.className = 'spritesheet';
-    sprite.style.left = Math.random() * (window.innerWidth - 128) + 'px'; // Randomize the horizontal position
-    sprite.style.filter = currentHueRotation;
-    document.body.appendChild(sprite);
-
-    // Start cycling through the spritesheet frames
-    let frame = 0;
-    const maxFrames = 16;
-    const frameRate = 240; // Frame rate in ms, adjust as needed for animation speed
-    const intervalId = setInterval(() => {
-        if (frame >= maxFrames) {
-            clearInterval(intervalId); // Stop the interval
-            document.body.removeChild(sprite); // Remove the sprite from the DOM
-        } else {
-            sprite.style.backgroundPosition = `${-frame * 128}px 0`; // Move the background position to show the next frame
-            frame++;
-        }
-    }, frameRate);
-
-    // Optionally, you can also remove the sprite after the fall animation ends as a fallback
-    sprite.addEventListener('animationend', function () {
-        clearInterval(intervalId); // Ensure the frame interval is cleared
-        document.body.removeChild(sprite);
-    });
-}
-// Spawn a new spritesheet element every few seconds
-setInterval(spawnSpritesheet, 1000); // Adjust interval as needed
-// #endregion Cyber Rain
 
 // #region Cheat Codes
 document.addEventListener('DOMContentLoaded', () => {
@@ -504,7 +449,7 @@ function changeColorScheme() {
     root.style.setProperty('--glow-green-main', getRandomColor());
     root.style.setProperty('--glow-green-secondary', getRandomColor());
     root.style.setProperty('--glow-green-dark', getRandomColor());
-    root.style.setProperty('--font-color', getRandomColor());
+    // root.style.setProperty('--font-color', getRandomColor());
     root.style.setProperty('--background-gradient', getRandomGradient());
 
     console.log("Changed color scheme to random colors including gradient.");
@@ -637,46 +582,40 @@ function tukyoMode() {
 
 // #region Audio
 let isMuted = false;
-const muteButton = document.getElementById('mute-button');
-muteButton.addEventListener('click', () => {
-    isMuted = !isMuted;
-    muteButton.className = isMuted ? 'fa-solid fa-volume-off' : 'fa-solid fa-volume-high'; // Set the appropriate icon based on the mute state
-    audioPool.forEach(audio => audio.muted = isMuted); // Set the volume of all audio objects in the hover and click pools
-    clickAudioPool.forEach(audio => audio.muted = isMuted);
-    console.log("Mute state changed: " + (isMuted ? "Muted" : "Unmuted"));
-});
 const audioPool = [];
 const poolSize = 5; // Adjust based on needs and testing
 for (let i = 0; i < poolSize; i++) {
     audioPool.push(new Audio('assets/audio/hover-sound.ogg'));
 }
 let audioIndex = 0;
-
 const clickAudioPool = [];
 const clickSound = 'assets/audio/click-sound.ogg';
 for (let i = 0; i < poolSize; i++) {
     clickAudioPool.push(new Audio(clickSound));
 }
 let clickAudioIndex = 0;
-
 const elements = document.querySelectorAll('button, input');
-
 elements.forEach(element => {
+    addAudioListener(element);
+});
+function addAudioListener(element) {
     element.addEventListener('mouseenter', () => {
-        const hoverSound = audioPool[audioIndex];
-        hoverSound.currentTime = 0; // Rewind to start
-        hoverSound.play().catch(error => console.log("Error playing sound:", error));
+        // Hover sound
+        const sound = audioPool[audioIndex];
+        sound.currentTime = 0; // Rewind to start
+        sound.play().catch(error => console.log("Error playing sound:", error));
         audioIndex = (audioIndex + 1) % poolSize;
     });
 
-    // Add click event listener
+    // Adding click sound
     element.addEventListener('click', () => {
+        // Click sound
         const clickSound = clickAudioPool[clickAudioIndex];
         clickSound.currentTime = 0; // Rewind to start
         clickSound.play().catch(error => console.log("Error playing sound:", error));
         clickAudioIndex = (clickAudioIndex + 1) % poolSize;
     });
-});
+}
 // #endregion Audio
 
 // #region Music Player
@@ -878,9 +817,9 @@ function updateKeyboardHelper(results) {
         buttons.forEach(button => {
             if (button.textContent.toUpperCase() === result.letter.toUpperCase()) {
                 if (result.status === 'correct') {
-                    button.style.backgroundColor = 'green';  // Correct guesses get a green background
+                    button.style.backgroundColor = 'var(--correct)';  // Correct guesses get a green background
                 } else if (result.status === 'incorrect') {
-                    button.style.backgroundColor = 'red';    // Incorrect guesses get a red background
+                    button.style.backgroundColor = 'var(--incorrect)';    // Incorrect guesses get a red background
                 }
             }
         });
@@ -970,6 +909,7 @@ function loadGame(sessionData) {
         });
         restoreGameSession(sessionData.guesses);
         restoreKeyboardHelper(sessionData.guesses);
+        window.dispatchEvent(gameStartEvent);
         console.log("Game session restored successfully.");
     } else {
         console.error("No guesses found in the session data or session data is missing.");
@@ -1035,7 +975,7 @@ function restoreInputRows(guessResult = []) {
             input.disabled = true; // Disable input if the letter is correctly placed
         }
 
-        // addAudioListener(input); // Uncomment if you have this function defined
+        addAudioListener(input);
         row.appendChild(input);
     });
 
