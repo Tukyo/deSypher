@@ -54,7 +54,6 @@ function settingsMenu() {
 }
 
 function loadSettings() {
-    // Load and apply all color variables
     const colorVariables = [
         '--desypher-green-main',
         '--desypher-green-bright',
@@ -341,14 +340,25 @@ function getCurrentColorFromPosition(position, totalWidth) {
 // #endregion Color Slider Functionality
 
 // #region Event Listeners for Slider Functionality
-sliderHandle.addEventListener('mousedown', (event) => {
+sliderHandle.addEventListener('mousedown', startDrag);
+document.addEventListener('mousemove', drag);
+document.addEventListener('mouseup', endDrag);
+
+// Mobile event listeners
+sliderHandle.addEventListener('touchstart', startDrag);
+document.addEventListener('touchmove', drag);
+document.addEventListener('touchend', endDrag);
+
+function startDrag(event) {
     isDragging = true;
+    let clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
     console.log("Slider handle interaction started.");
     sliderHandle.style.borderWidth = '15px';  // Increase the border size when grabbed
-});
-document.addEventListener('mousemove', (event) => {
+}
+function drag(event) {
     if (isDragging) {
-        let newLeft = event.clientX - sliderContainer.getBoundingClientRect().left;
+        let clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+        let newLeft = clientX - sliderContainer.getBoundingClientRect().left;
         newLeft = Math.max(0, newLeft);
         newLeft = Math.min(newLeft, sliderContainer.offsetWidth - sliderHandle.offsetWidth);
         sliderHandle.style.left = newLeft + 'px';
@@ -359,12 +369,12 @@ document.addEventListener('mousemove', (event) => {
         let newColorHex = getCurrentColorFromPosition(newLeft, sliderContainer.offsetWidth);
         updateAllColors(newColorHex);
     }
-});
-document.addEventListener('mouseup', () => {
+}
+function endDrag() {
     if (isDragging) {
         isDragging = false;
         console.log("Slider handle interaction ended.");
         sliderHandle.style.borderWidth = '5px';  // Reset the border size when released
     }
-});
+}
 // #endregion Event Listeners for Slider Functionality
