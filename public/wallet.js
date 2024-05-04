@@ -544,24 +544,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // #region Rewards Section
   document.getElementById('claim-rewards-button').addEventListener('click', async () => {
+    claimRewards();
+  });
+  async function claimRewards() {
+    const button = document.getElementById('claim-rewards-button');
     if (!window.ethereum) {
       console.log("Ethereum wallet not detected");
       return;
     }
-
+  
+    button.textContent = "PROCESSING...";
+  
     try {
       const signer = provider.getSigner();
       const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
-
+  
       console.log("Claiming rewards...");
       const claimTx = await gameContract.ClaimRewards();
       await claimTx.wait();
       console.log("Rewards claimed successfully.");
-
+      document.dispatchEvent(new CustomEvent('appError', { detail: "Reward Claim Success!" }));
+      button.textContent = "CLAIM TOKENS";
+  
     } catch (error) {
       console.error("Error claiming rewards:", error);
+      document.dispatchEvent(new CustomEvent('appError', { detail: "Error Claiming Tokens..." }));
+      button.textContent = "CLAIM TOKENS";
     }
-  });
+  }
   async function updateRewardsBalance() {
     const accounts = await window.ethereum.request({ method: 'eth_accounts' });
     if (accounts.length > 0) {
@@ -866,7 +876,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("Starting to render reCAPTCHA for 'playButton'...");
 
           grecaptcha.render('playButton', {
-            'sitekey': '6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq', // Replace with your actual site key
+            'sitekey': '6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k', // Replace with your actual site key
             'callback': onSubmitPlay
           });
 
@@ -875,7 +885,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("Starting to render reCAPTCHA for 'load-button'...");
 
           grecaptcha.render('load-button', {
-            'sitekey': '6Ldq-60pAAAAAJbK-itTDZpw06rHWyW5ND9Y-5bq', // Replace with your actual site key
+            'sitekey': '6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k', // Replace with your actual site key
             'callback': onSubmitLoad
           });
 

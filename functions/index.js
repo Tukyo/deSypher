@@ -35,6 +35,8 @@ const tokenABI = config.token.abi;
 const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI, signer);
 const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
 
+const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+
 const app = express();
 app.use(express.json());
 
@@ -296,7 +298,7 @@ app.post('/verify_recaptcha', express.json(), async (req, res) => {
 
     const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
       params: {
-        secret: '6Ldq-60pAAAAAH3juNkbSpNZ34UBNoBksfXmiUgd',
+        secret: recaptchaSecretKey,
         response: token
       }
     });

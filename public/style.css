@@ -218,9 +218,7 @@ body {
     position: absolute;
     top: 0;
     left: -75%;
-    /* Start the sheen effect from outside the left edge */
     width: 75%;
-    /* Width of the sheen effect */
     height: 100%;
     background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
     animation: sheen 1s infinite;
