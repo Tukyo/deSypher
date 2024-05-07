@@ -764,10 +764,12 @@ document.addEventListener('DOMContentLoaded', function () {
       const signature = await signer.signMessage("Verify ownership for session " + transactionHash);
       console.log("Signature: ", signature);
 
+      sypherAllocation = await fetchSypherAllocationFromDB(transactionHash);
+
       fetch('/verify-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transactionHash, signature }),
+        body: JSON.stringify({ transactionHash, signature, sypherAllocation }),
       })
         .then(async response => {
           const data = await response.json();
@@ -811,6 +813,26 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   }
+  async function fetchSypherAllocationFromDB(transactionHash) {
+    try {
+      const response = await fetch(`/get-sypher-allocation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ transactionHash })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch sypher allocation');
+      }
+      return data.sypherAllocation;
+    } catch (error) {
+      console.error("Error fetching sypher allocation from database:", error);
+      // Handle the error appropriately
+      throw error;  // Rethrowing the error to be caught by the caller
+    }
+  }  
   function triggerGameRestart(data) {
     const gameRestartEvent = new CustomEvent('gameRestart', {
       detail: {

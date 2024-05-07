@@ -314,6 +314,28 @@ app.post('/verify-session', rateLimiter, async (req, res) => {
 
   res.send(session);
 });
+app.post('/get-sypher-allocation', async (req, res) => {
+  const { transactionHash } = req.body;
+  if (!transactionHash) {
+    return res.status(400).send({ error: 'Transaction hash is required' });
+  }
+
+  try {
+    const sessionDoc = await database.collection('sessions').doc(transactionHash).get();
+    if (!sessionDoc.exists) {
+      return res.status(404).send({ error: 'Session not found' });
+    }
+    const session = sessionDoc.data();
+    if (session && session.sypherAllocation) {
+      res.send({ sypherAllocation: session.sypherAllocation });
+    } else {
+      res.status(404).send({ error: 'Sypher allocation not found' });
+    }
+  } catch (error) {
+    console.error(`Database error: ${error}`);
+    res.status(500).send({ error: 'Failed to retrieve sypher allocation from the database' });
+  }
+});
 // #endregion Word Game Main Logic
 
 // #region reCAPTCHA Verification
