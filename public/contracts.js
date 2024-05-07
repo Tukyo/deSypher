@@ -245,19 +245,6 @@ var gameContractABI = [
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newCost",
-        "type": "uint256"
-      }
-    ],
-    "name": "CostToPlayUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "player",
@@ -287,6 +274,12 @@ var gameContractABI = [
         "internalType": "address",
         "name": "player",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sypherAllocation",
+        "type": "uint256"
       }
     ],
     "name": "GameStarted",
@@ -385,6 +378,11 @@ var gameContractABI = [
       },
       {
         "internalType": "uint256",
+        "name": "sypherAllocation",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "rewardAmount",
         "type": "uint256"
       },
@@ -405,22 +403,14 @@ var gameContractABI = [
         "internalType": "address",
         "name": "player",
         "type": "address"
-      }
-    ],
-    "name": "PlayGame",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "newCost",
+        "name": "sypherAllocation",
         "type": "uint256"
       }
     ],
-    "name": "UpdateCostToPlay",
+    "name": "PlayGame",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -459,19 +449,6 @@ var gameContractABI = [
     "name": "WithdrawTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "costToPlay",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -542,7 +519,7 @@ var gameContractABI = [
   }
 ];
 // Game Contract Address
-var gameContractAddress = '0x5bAa2A577D9da1f334cDA9E9CaDf9C039b7aA82A'; // GAME CONTRACT
+var gameContractAddress = '0x03248983A035711670f5A996231e8759379C030A'; // GAME CONTRACT
 
 // Token Contract ABI
 var tokenContractABI = [

@@ -7,6 +7,15 @@ function installCoinbaseWallet() {
 function installRabby() {
     window.open('https://rabby.io/', '_blank');
 }
+function installRainbow() {
+    wubdow.open('https://rainbow.me/', '_blank');
+}
+function installZerion() {
+    window.open('https://zerion.io/', '_blank');
+}
+function installTrust() {
+    window.open('https://trustwallet.com/', '_blank');
+}
 function openUniswap() {
     window.open('https://app.uniswap.org/#/swap?outputCurrency=0x21b9D428EB20FA075A29d51813E57BAb85406620', '_blank');
 }

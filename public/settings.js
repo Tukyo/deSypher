@@ -5,11 +5,27 @@ const settingsMenuContainer = document.getElementById("settings-menu-container")
 
 const muteButton = document.getElementById('mute-button');
 
+const statusCorrectButton = document.getElementById('settings-correct-button');
+const statusIncorrectButton = document.getElementById('settings-incorrect-button');
+const statusMisplacedButton = document.getElementById('settings-misplaced-button');
+const statusColorPickerContainer = document.getElementById('status-color-picker-container');
+
+const redButton = document.getElementById('red-button');
+const orangeButton = document.getElementById('orange-button');
+const yellowButton = document.getElementById('yellow-button');
+const greenButton = document.getElementById('green-button');
+const cyanButton = document.getElementById('cyan-button');
+const blueButton = document.getElementById('blue-button');
+const purpleButton = document.getElementById('purple-button');
+const pinkButton = document.getElementById('pink-button');
+
 let sliderHandle = document.querySelector('.color-slider-handle');
 let sliderContainer = document.querySelector('.color-slider-container');
 let isDragging = false;
 
 let settingsOpen = false;
+
+let lastButtonId = '';
 
 const defaultColors = {
     '--desypher-green-main': '#2dc60e',
@@ -19,6 +35,7 @@ const defaultColors = {
     '--glow-green-main': '#00ff00c2',
     '--glow-green-secondary': '#00ff009e',
     '--glow-green-dark': '#00ff005f',
+    '--desypher-yellow-main': '#ffff00',
     'hueShift': '0deg'
 };
 
@@ -36,9 +53,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     loadSettings();
 });
 
-settingsButton.addEventListener('click', () => {
-    settingsMenu();
-});
+if (settingsButton) {
+    settingsButton.addEventListener('click', () => {
+        settingsMenu();
+    });
+} else {
+    console.error("Settings button not found!");
+}
 
 function settingsMenu() {
     if (settingsOpen) {
@@ -59,9 +80,13 @@ function loadSettings() {
         '--desypher-green-bright',
         '--desypher-green-dark',
         '--desypher-green-ultradark',
+        '--desypher-yellow-main',
         '--glow-green-main',
         '--glow-green-secondary',
-        '--glow-green-dark'
+        '--glow-green-dark',
+        '--correct',
+        '--incorrect',
+        '--misplaced'
     ];
     colorVariables.forEach(varName => {
         const colorValue = localStorage.getItem(varName);
@@ -115,7 +140,11 @@ function saveSettings() {
         '--desypher-green-ultradark',
         '--glow-green-main',
         '--glow-green-secondary',
-        '--glow-green-dark'
+        '--glow-green-dark',
+        '--desypher-yellow-main',
+        '--correct',
+        '--incorrect',
+        '--misplaced'
     ];
     colorVariables.forEach(varName => {
         const colorValue = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -306,7 +335,8 @@ function updateAllColors(interpolatedHex) {
         { var: '--desypher-green-ultradark', lightnessAdjust: -20 },
         { var: '--glow-green-main', lightnessAdjust: 0, alpha: 0.75 },
         { var: '--glow-green-secondary', lightnessAdjust: 0, alpha: 0.62 },
-        { var: '--glow-green-dark', lightnessAdjust: 0, alpha: 0.37 }
+        { var: '--glow-green-dark', lightnessAdjust: 0, alpha: 0.37 },
+        { var: '--desypher-yellow-main', hue: 60, saturationAdjust: 10, lightnessAdjust: 20 }
     ];
 
     adjustments.forEach(adj => {
@@ -378,3 +408,31 @@ function endDrag() {
     }
 }
 // #endregion Event Listeners for Slider Functionality
+
+// #region Status Color Selector
+statusCorrectButton.addEventListener('click', () => {
+    openStatusColorPickerContainer('correct');
+});
+statusIncorrectButton.addEventListener('click', () => {
+    openStatusColorPickerContainer('incorrect');
+});
+statusMisplacedButton.addEventListener('click', () => {
+    openStatusColorPickerContainer('misplaced');
+});
+
+function openStatusColorPickerContainer(buttonId) {
+    console.log("Button pressed:", buttonId);
+    lastButtonId = buttonId; // Remember which button was pressed
+    statusColorPickerContainer.style.display = 'block';  // Make it visible
+}
+statusColorPickerContainer.addEventListener('click', function(event) {
+    if (event.target.className === 'status-color-picker-button') {
+        const color = getComputedStyle(event.target).backgroundColor;  // Get the background color of the clicked button
+        if (['correct', 'incorrect', 'misplaced'].includes(lastButtonId)) {
+            document.documentElement.style.setProperty(`--${lastButtonId}`, color);
+            console.log(`Changed --${lastButtonId} to ${color}`);
+        }
+        statusColorPickerContainer.style.display = 'none';  // Optionally hide the container after selection
+    }
+});
+// #endregion Status Color Selector

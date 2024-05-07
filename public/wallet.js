@@ -1,5 +1,6 @@
 var playerAddress = null;
 var transactionHash = null;
+var sypherAllocation = null;
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -47,10 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const walletStylePresets = {
     default: { size: '150px', alignment: 'center' },
-    incorrectChain: { size: '210px', alignment: 'right' },
+    incorrectChain: { size: '150px', alignment: 'right' },
     correctChain: { size: '175px', alignment: 'right' },
-    incorrectChainMobile: { size: '175px', alignment: 'center' },
-    correctChainMobile: { size: '135px', alignment: 'center' }
   };
 
   const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453 "Base Mainnet"
@@ -87,7 +86,9 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(`Using account ${accounts[0]}`);
         connectButtonText.textContent = 'Connected: ' + accounts[0];
         walletDetailsSection.style.display = '';
-        window.location.reload();
+        if (!sessionStorage.getItem('reloadBuffer')) {
+          window.location.reload();
+        }
       } else {
         console.error("0 accounts available!");
         walletDetailsSection.style.display = 'none'; // Hide the token balance section if no accounts are connected
@@ -202,11 +203,27 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   // #endregion Manual Wallet Connection
 
-  // #region Add Event Listeners to Game Buttons
+  // #region Game Buttons
   // Pass the specific button to the function "handleButtonClick" to handle the event
   playButton.addEventListener('click', (event) => handleButtonClick(playButton, event));
   loadButton.addEventListener('click', (event) => handleButtonClick(loadButton, event));
-  // #endregion Add Event Listeners to Game Buttons
+
+  function hidePlayButton() {
+    playButton.style.animation = 'foldInRemove .25s forwards';
+    playButton.style.display = 'none';
+    console.log("Play button hidden...");
+  }
+  function hideLoadButton() {
+    loadButton.style.animation = 'foldInRemove .25s forwards';
+    loadButton.style.display = 'none';
+    console.log("Load button hidden...");
+  }
+  function hideFaucetButton() {
+    faucetButton.style.animation = 'foldInRemove .25s forwards';
+    faucetButton.style.display = 'none';
+    console.log("Faucet button hidden...");
+  }
+  // #endregion Game Buttons
 
   // #region NEW GAME / LOAD Game Button Processing
   async function handleButtonClick(button, event) {
@@ -257,67 +274,96 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // #region Game Start Processing
   window.startGame = async function (useExistingTransaction = false, existingTransactionHash = null) {
-    try {
-      if (!useExistingTransaction) {
-        console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
-        playButton.textContent = "Waiting on transaction...";
-        const signer = provider.getSigner();
-        const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
-        try {
-          playerAddress = await signer.getAddress();
-          console.log("Player address:", playerAddress);
-          const playGameTx = await gameContract.PlayGame(await signer.getAddress());
-          showLoadingAnimation();
-          console.log("Waiting for game transaction to be mined...");
-          await playGameTx.wait();
-          console.log("Game started successfully on blockchain");
+    const allocationContainer = document.querySelector('.sypher-allocation-container');
+    const submitButton = document.getElementById('allocation-submit');
+    const sypherAllocationInput = document.getElementById('sypher-allocation-input');
 
-          transactionHash = playGameTx.hash;
-          console.log("Transaction hash:", transactionHash);
-        } catch (error) {
-          console.error("Failed to start the game on the blockchain:", error);
-          window.location.reload();
+    allocationContainer.style.display = 'block';
+    sypherAllocationInput.focus();
+
+    playButton.textContent = "Waiting on Allocation...";
+    hideLoadButton();
+    hideFaucetButton();
+
+    return new Promise((resolve, reject) => {
+      submitButton.onclick = async () => {
+
+        sypherAllocation = sypherAllocationInput.value || '0';  // Default to 0 if no input
+        const sypherAllocationWei = ethers.utils.parseUnits(sypherAllocation, 'ether');
+
+        if (sypherAllocation > 1000 || sypherAllocation < 1) {
+          console.error("Invalid Sypher allocation amount:", sypherAllocation);
+          document.dispatchEvent(new CustomEvent('appError', { detail: "SYPHER allocation must be between 1 and 1000." }));
           return;
         }
-      } else {
-        // Use the existing transaction hash and do not initiate a new transaction
-        console.log("Using existing transaction hash for game session:", existingTransactionHash);
-        transactionHash = existingTransactionHash;
-      }
 
-      let word = null;
+        allocationContainer.style.display = 'none';
+        
+        try {
+          if (!useExistingTransaction) {
+            console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
+            playButton.textContent = "Waiting on transaction...";
+            const signer = provider.getSigner();
+            const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+            try {
+              playerAddress = await signer.getAddress();
+              console.log("Player address:", playerAddress);
+              const playGameTx = await gameContract.PlayGame(playerAddress, sypherAllocationWei);
+              showLoadingAnimation();
+              console.log("Waiting for game transaction to be mined...");
+              await playGameTx.wait();
+              console.log("Game started successfully on blockchain");
 
-      window.dispatchEvent(gameStartEvent);
+              transactionHash = playGameTx.hash;
+              console.log("Transaction hash:", transactionHash);
+            } catch (error) {
+              console.error("Failed to start the game on the blockchain:", error);
+              window.location.reload();
+              return;
+            }
+          } else {
+            // Use the existing transaction hash and do not initiate a new transaction
+            console.log("Using existing transaction hash for game session:", existingTransactionHash);
+            transactionHash = existingTransactionHash;
+          }
 
-      fetch('/game', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ playerAddress, transactionHash, word }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Started game with data:', data);
-        });
+          let word = null;
+
+          window.dispatchEvent(gameStartEvent);
+
+          fetch('/game', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ playerAddress, transactionHash, word, sypherAllocation }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Started game with data:', data);
+            });
 
 
-      await checkTokenBalance(); // Update the token balance after the game transaction
+          await checkTokenBalance(); // Update the token balance after the game transaction
 
-      console.log("Server started a new game");
-      // Show the form
-      form.style.display = 'block';
-      hideLoadingAnimationForGameplay();
-      // Clear the input fields for the new game
-      resetGameInputs();
-      showKeyboardHelperButton();
-      if (!keyboardHelperVisible) {
-        hintBox(true, 'Use the boxes below to input your guess!');
-      }
-    } catch (error) { // This catch is now correctly positioned to handle errors from any part of the function
-      console.error("Failed to start the game on the blockchain:", error);
-      window.location.reload();
-    }
+          console.log("Server started a new game");
+          // Show the form
+          form.style.display = 'block';
+          hideLoadingAnimationForGameplay();
+          // Clear the input fields for the new game
+          resetGameInputs();
+          showKeyboardHelperButton();
+          if (!keyboardHelperVisible) {
+            hintBox(true, 'Use the boxes below to input your guess!');
+          }
+          resolve();
+        } catch (error) { // This catch is now correctly positioned to handle errors from any part of the function
+          console.error("Failed to start the game on the blockchain:", error);
+          window.location.reload();
+          reject(error);
+        }
+      };
+    });
   }
   function resetGameInputs() {
     const inputs = document.querySelectorAll('.puzzle-input');
@@ -379,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Connected to base mainnet. Revealing Base logo.")
   }
   function UpdateButtonWithIncorrectChainMessage() {
-    connectButtonText.textContent = 'Switch to Base Mainnet!';
+    connectButtonText.textContent = 'Switch to Base!';
     connectButton.style.borderColor = '#0052FF';
   }
   function updateWalletConnectionSectionStyle(preset) {
@@ -552,20 +598,20 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log("Ethereum wallet not detected");
       return;
     }
-  
+
     button.textContent = "PROCESSING...";
-  
+
     try {
       const signer = provider.getSigner();
       const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
-  
+
       console.log("Claiming rewards...");
       const claimTx = await gameContract.ClaimRewards();
       await claimTx.wait();
       console.log("Rewards claimed successfully.");
       document.dispatchEvent(new CustomEvent('appError', { detail: "Reward Claim Success!" }));
       button.textContent = "CLAIM TOKENS";
-  
+
     } catch (error) {
       console.error("Error claiming rewards:", error);
       document.dispatchEvent(new CustomEvent('appError', { detail: "Error Claiming Tokens..." }));
@@ -666,12 +712,9 @@ document.addEventListener('DOMContentLoaded', function () {
   window.revealSessionRecoveryForm = async function () {
     console.log("Revealing session recovery form...");
     // Hide the New Game/Load Game buttons
-    playButton.style.animation = 'foldInRemove .25s forwards';
-    playButton.style.display = 'none';
-    loadButton.style.animation = 'foldInRemove .25s forwards';
-    loadButton.style.display = 'none';
-    faucetButton.style.animation = 'foldInRemove .25s forwards';
-    faucetButton.style.display = 'none';
+    hidePlayButton();
+    hideLoadButton();
+    hideFaucetButton();
 
     // Show the input field for the transaction hash
     retrieveTransaction.style.display = 'block';
@@ -736,8 +779,13 @@ document.addEventListener('DOMContentLoaded', function () {
               checkIfPlayGameTransaction(transactionHash)
                 .then(isPlayGame => {
                   console.log(`Is the transaction a 'PlayGame' transaction? ${isPlayGame}`);
-                  document.dispatchEvent(new Event('hideSessionRecoveryForm'));
-                  startGame(true, transactionHash);
+                  if (isPlayGame) {
+                    document.dispatchEvent(new Event('hideSessionRecoveryForm'));
+                    startGame(true, transactionHash);
+                  } else {
+                    console.error('Not a PlayGame transaction: ', transactionHash);
+                    document.dispatchEvent(new CustomEvent('appError', { detail: "The transaction is not valid for starting a game." }));
+                  }
                 })
                 .catch(error => {
                   console.error("Error checking transaction type:", error);

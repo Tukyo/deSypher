@@ -37,7 +37,7 @@ function showSystemMessage(message) {
     const systemBox = document.querySelector('.error-message-box');
     systemBox.style.display = 'block';
     systemBox.style.animation = 'fadeIn 0.25s forwards';
-    systemBox.style.boxShadow = '0 0 10px green, 0 0 20px green';  // Set box shadow to green
+    systemBox.style.boxShadow = '0 0 10px var(--desypher-green-main), 0 0 20px var(--desypher-green-main)';
     console.log('System message displayed');
 }
 

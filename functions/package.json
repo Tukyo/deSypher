@@ -19,6 +19,7 @@
     "dotenv": "^16.4.5",
     "ethers": "^6.11.1",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.9.0",
     "node": "^18.20.2",

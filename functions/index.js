@@ -23,6 +23,27 @@ const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL); // RPC_UR
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider); // PRIVATE_KEY of the account that deploys the contract or is authorized to call recordWin
 
 const config = require('./config.json');
+const rateLimit = require("express-rate-limit");
+
+const rateLimiter = rateLimit({
+  windowMs: 1 * 1000,
+  max: 1,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Too many requests from this IP, please try again...' });
+  }
+});
+
+const recaptchaLimiter = rateLimit({
+  windowMs: 10 * 1000,
+  max: 1,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Too many reCAPTCHA requests, please try again after 10 seconds...' });
+  }
+});
 
 const sypherGameAddress = config.game.address;
 const sypherGameABI = config.game.abi;
@@ -42,8 +63,9 @@ app.use(express.json());
 
 const maxAttempts = 4;
 
-const maxReward = 5;
-const minReward = 2;
+// Reward multipliers
+const maxReward = 200;
+const minReward = 150;
 
 // #region Setup & CORS
 // Define your website's origin
@@ -76,12 +98,18 @@ app.get('/', (req, res) => {
 
 // #region Word Game Main Logic
 // Getter function that handles the guess check, and the attempts of guesses
-app.post('/game', async (req, res) => {
-  const { playerAddress, transactionHash, word } = req.body;
+app.post('/game', rateLimiter, async (req, res) => {
+  const { playerAddress, transactionHash, word, sypherAllocation } = req.body;
   var sessionID = transactionHash;
 
   if (!sessionID) {
     return res.status(400).send({ error: 'No txHash provided' });
+  }
+  if (!sypherAllocation) {
+    return res.status(400).send({ error: 'No sypher allocation provided' });
+  }
+  if (sypherAllocation < 1 || sypherAllocation > 1000) {
+    return res.status(400).send({ error: 'Sypher allocation must be between 1 and 1000' });
   }
 
   var sessionDoc = await database.collection('sessions').doc(sessionID).get();
@@ -105,6 +133,7 @@ app.post('/game', async (req, res) => {
       attemptsLeft: maxAttempts,
       correctWord: correctWord,
       playerAddress: playerAddress,
+      sypherAllocation: sypherAllocation
     };
 
     await database.collection('sessions').doc(sessionID).set(session);
@@ -156,7 +185,7 @@ app.post('/game', async (req, res) => {
   let rewardAmount = ethers.parseUnits("0", 18);  // Default to no reward
 
   if (isWin) {
-    const costToPlay = await sypherGameContract.costToPlay();
+    const sypherAllocation = ethers.parseUnits(session.sypherAllocation.toString(), 18);
     switch (attempts) {
       case 1:
         {
@@ -164,26 +193,25 @@ app.post('/game', async (req, res) => {
           if (sypherCache > 0) {
             rewardAmount = sypherCache;
           } else {
-            rewardAmount = ethers.parseUnits("1", 18);
+            rewardAmount = sypherAllocation + ethers.parseUnits("1", 18);
           }
         }
         break;
-      case 2:
-        rewardAmount = costToPlay * BigInt(maxReward);
-        break;
-      case 3:
-        rewardAmount = costToPlay * BigInt(minReward);
-        break;
-      case 4:
-        rewardAmount = costToPlay;
-        break;
-    }
-    // console.log(`Player won on attempt ${attempts}! Reward is ${ethers.formatUnits(rewardAmount, 18)} SYPHER!`);
+        case 2:
+          rewardAmount = sypherAllocation * BigInt(maxReward) / BigInt(100);
+          break;
+        case 3:
+          rewardAmount = sypherAllocation * BigInt(minReward) / BigInt(100);
+          break;
+        case 4:
+          rewardAmount = sypherAllocation;
+          break;
+      }
   }
 
   if (isWin || session.guesses.length === maxAttempts) {
     // Submit the transaction to the blockchain and proceed without waiting
-    const tx = await sypherGameContract.CompleteGame(playerAddress, rewardAmount, isWin);
+    const tx = await sypherGameContract.CompleteGame(playerAddress, ethers.parseUnits(sypherAllocation.toString(), 18), rewardAmount, isWin);
 
     // Log the transaction hash and handle it asynchronously
     console.log(`Transaction submitted: ${tx.hash}`);
@@ -256,7 +284,8 @@ function checkWord(inputWord, correctWord) {
 
   return result;
 }
-app.post('/verify-session', async (req, res) => {
+
+app.post('/verify-session', rateLimiter, async (req, res) => {
   const { transactionHash, signature } = req.body;
 
   if (!transactionHash || !signature) {
@@ -288,7 +317,7 @@ app.post('/verify-session', async (req, res) => {
 // #endregion Word Game Main Logic
 
 // #region reCAPTCHA Verification
-app.post('/verify_recaptcha', express.json(), async (req, res) => {
+app.post('/verify_recaptcha', recaptchaLimiter, express.json(), async (req, res) => {
   const token = req.body.token;
 
   console.log("Received reCAPTCHA token from client:", token); // Log the received token
@@ -322,7 +351,7 @@ app.post('/verify_recaptcha', express.json(), async (req, res) => {
 // #endregion reCAPTCHA Verification
 
 // #region Faucet Section
-app.post('/distribute-tokens', async (req, res) => {
+app.post('/distribute-tokens', rateLimiter, async (req, res) => {
   const { recipientAddress, tokenAmount } = req.body;
 
   try {

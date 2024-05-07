@@ -28,7 +28,7 @@ const cancelButton = document.getElementById('cancel-button');
 const retrieveTransaction = document.getElementById('retrieve-transaction');
 const versionNumber = document.getElementById('version-number');
 
-const version = '0.1.3';
+const version = '0.1.4';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -51,6 +51,10 @@ function sendGuess() {
     }
     if (!transactionHash) {
         console.log('Transaction hash not found');
+        return;
+    }
+    if (!sypherAllocation) {  // Ensure sypherAllocation is not undefined or null
+        console.log('Sypher allocation not set');
         return;
     }
     const rows = document.querySelectorAll('.input-fields');
@@ -96,7 +100,7 @@ function sendGuess() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ playerAddress, transactionHash, word }),
+        body: JSON.stringify({ playerAddress, transactionHash, word, sypherAllocation }),
     })
         .then(response => response.json())
         .then(data => {
@@ -184,10 +188,9 @@ function updateUI(data) {
 
     // Color the inputs based on the guess result
     data.result.forEach((item, index) => {
-        const statusColor = getColorForStatus(item.status);
-        inputs[index].style.backgroundColor = statusColor;
+        inputs[index].style.backgroundColor = `var(--${item.status})`;
         inputs[index].disabled = true; // Disable the input after the guess
-        inputs[index].style.boxShadow = `0 0 10px ${statusColor}, 0 0 20px ${statusColor}`;
+        inputs[index].style.boxShadow = `0 0 10px var(--${item.status}), 0 0 20px var(--${item.status})`;
     });
 
     updateKeyboardHelper(data.result); // Update the keyboard helper
@@ -293,7 +296,7 @@ function hintBox(show, message) {
       console.log("Hidden the hint box.");
     }
   }
-// Helper function to determine the color based on the status
+// Determine the color based on the status
 function getColorForStatus(status) {
     // Get the root element's computed style to access CSS variables
     const rootStyle = getComputedStyle(document.documentElement);
@@ -359,7 +362,7 @@ form.addEventListener('submit', function (event) {
 function updateLogoSize() {
     const logo = document.querySelector('.game-logo');
     const inputRows = document.querySelectorAll('.input-fields');
-    const scaleFactor = 1 - (0.1 * (inputRows.length - 1));
+    const scaleFactor = 1 - (0.15 * (inputRows.length - 1));
     logo.style.transform = `scale(${Math.max(scaleFactor, 0.5)})`; // Ensuring minimum scale is 0.5
 
     // Check if the game has started by checking the number of input rows
@@ -449,7 +452,7 @@ function changeColorScheme() {
     root.style.setProperty('--glow-green-main', getRandomColor());
     root.style.setProperty('--glow-green-secondary', getRandomColor());
     root.style.setProperty('--glow-green-dark', getRandomColor());
-    // root.style.setProperty('--font-color', getRandomColor());
+    root.style.setProperty('--desypher-yellow-main', getRandomColor());
     root.style.setProperty('--background-gradient', getRandomGradient());
 
     console.log("Changed color scheme to random colors including gradient.");

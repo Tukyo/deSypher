@@ -67,6 +67,10 @@
         </div>
         <!-- #endregion SYPHER Cache-->
 
+        <div class="token-price-container">
+            <p id="token-price"></p>
+        </div>
+
     </div>
 
     <input type="text" id="dev-tools" placeholder="enter command.." style="display: none;">
@@ -85,9 +89,9 @@
         <div class="dropdown-content">
             <h3>The goal of the game is to guess the correct word.</h3>
             <ul class="color-key">
-                <li><span class="color-box green"></span> Correct letter, correct position.</li>
-                <li><span class="color-box yellow"></span> Correct letter, incorrect position.</li>
-                <li><span class="color-box red"></span> Incorrect letter.</li>
+                <li><span class="color-box correct"></span> Correct letter, correct position.</li>
+                <li><span class="color-box misplaced"></span> Correct letter, incorrect position.</li>
+                <li><span class="color-box incorrect"></span> Incorrect letter.</li>
             </ul>
             <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i
                         class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a
@@ -120,6 +124,12 @@
             </div>
         </div>
         <!-- #endregion Keyboard Helper Layout -->
+
+        <div class="sypher-allocation-container">
+            <label for="sypher-allocation-input">SYPHER ALLOCATION:</label>
+            <input type="number" id="sypher-allocation-input" name="wager" placeholder="000" min="1" max="1000" required>
+            <button id="allocation-submit">SUBMIT</button>
+        </div>        
 
         <!-- #region Game Buttons -->
         <button id="playButton" type="button" class="game-button play-button"
@@ -167,7 +177,23 @@
                 <div class="color-slider-track"></div>
                 <div class="color-slider-handle"></div>
             </div>
-            <button id="default-color-button">Default Color</button>
+            <button id="default-color-button">DEFAULT COLOR</button>
+            <h4>Status Colors</h4>
+            <div class="status-colors-container">
+                <button id="settings-correct-button" class="status-settings-button">CORRECT</button>
+                <button id="settings-misplaced-button" class="status-settings-button">MISPLACED</button>
+                <button id="settings-incorrect-button" class="status-settings-button">INCORRECT</button>
+            </div>
+            <div class ="status-color-picker-container" id="status-color-picker-container">
+                <button class="status-color-picker-button" id="red-button"></button>
+                <button class="status-color-picker-button" id="orange-button"></button>
+                <button class="status-color-picker-button" id="yellow-button"></button>
+                <button class="status-color-picker-button" id="green-button"></button>
+                <button class="status-color-picker-button" id="cyan-button"></button>
+                <button class="status-color-picker-button" id="blue-button"></button>
+                <button class="status-color-picker-button" id="purple-button"></button>
+                <button class="status-color-picker-button" id="pink-button"></button>
+            </div>
         </div>
         <!-- #endregion Settings Menu -->
 
@@ -183,7 +209,6 @@
             </div>
 
             <button type="submit" id="submitButton" class="game-button">Submit</button>
-
         </form>
         <!-- #endregion Puzzle Section -->
 
@@ -245,11 +270,12 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="error.js"></script>
     <script src="contracts.js"></script>
+    <script src="token.js"></script>
     <script src="script.js"></script>
     <script src="wallet.js"></script>
     <script src="rain.js"></script>
     <script src="settings.js"></script>
-    <!-- <script src="dev.js"></script> -->
+    <script src="dev.js"></script>
     <!-- <script type="module" src="analytics.js"></script> -->
 </body>
 

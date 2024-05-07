@@ -92,8 +92,11 @@ function animate(timeStamp) {
 }
 animate(0);
 
-window.addEventListener('resize', function() {
+window.addEventListener('resize', updateCanvasSize);
+
+function updateCanvasSize() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = document.body.scrollHeight; // This adjusts height to the full document height
     effect.resize(canvas.width, canvas.height);
-});
+}
+updateCanvasSize();
