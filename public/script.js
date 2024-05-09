@@ -6,17 +6,18 @@ window.dispatchEvent(gameStartEvent);
 let gameCompleteEvent = new CustomEvent("gameComplete");
 window.dispatchEvent(gameCompleteEvent);
 
-window.addEventListener("gameStart", function() {
+window.addEventListener("gameStart", function () {
     window.gameActive = true;
     console.log("Game started...");
 });
 
-window.addEventListener("gameComplete", function() {
+window.addEventListener("gameComplete", function () {
     window.gameActive = false;
     console.log("Game completed...");
 });
 
 let gameOver = false;
+let definitionContainerVisible = false;
 
 const form = document.getElementById('wordPuzzleForm');
 const inputContainer = document.getElementById('inputContainer');
@@ -28,7 +29,12 @@ const cancelButton = document.getElementById('cancel-button');
 const retrieveTransaction = document.getElementById('retrieve-transaction');
 const versionNumber = document.getElementById('version-number');
 
-const version = '0.1.4';
+const correctAnswerBox = document.getElementById('correct-answer');
+const wordDefinitionButton = document.getElementById('word-definition-button');
+const definitionContainer = document.getElementById('word-definition-container');
+const wordDefinition = document.getElementById('word-definition');
+
+const version = '0.1.5';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -204,24 +210,50 @@ function updateUI(data) {
             // If the player loses the game
             let randomMessage = getRandomLosingMessage(losingMessages);
             submitButton.textContent = randomMessage;
-            submitButton.style.marginTop = "0px";
+            submitButton.style.marginTop = "40px";
             window.dispatchEvent(gameCompleteEvent);
         }
         submitButton.disabled = false;
 
         if (!data.isWin && data.gameOver) {
-            // Check if the correctAnswer textbox already exists to prevent duplicates
-            let correctAnswerBox = document.getElementById('correct-answer');
-            if (!correctAnswerBox) {
-                // Create and append the textbox if it does not exist
-                correctAnswerBox = document.createElement('div');
-                correctAnswerBox.id = 'correct-answer';
-                // Convert the correct word to uppercase before setting it
-                correctAnswerBox.textContent = `Correct Word: ${data.correctWord.toUpperCase()}`;
-                // Append it to the container that holds the input rows
-                document.getElementById('inputContainer').appendChild(correctAnswerBox);
-            }
+            correctAnswerBox.style.display = 'block';
+            correctAnswerBox.id = 'correct-answer';
+            correctAnswerBox.textContent = `Correct Word: ${data.correctWord.toUpperCase()}`;
         }
+
+        function showDefinitionButton() {
+            wordDefinitionButton.style.display = 'block';
+        }
+
+        showDefinitionButton();
+
+        // Function to fetch and display the definition of the correct word
+        async function defineWord(word) {
+            const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.title === "No Definitions Found") {
+                    console.log("No definitions found for: " + word);
+                    wordDefinition.innerHTML = "No definitions found.";
+                } else {
+                    const definitions = data[0].meanings[0].definitions.map(def => `<li>${def.definition}</li>`).join('');
+                    wordDefinition.innerHTML = `<ol>${definitions}</ol>`;
+                }
+            } catch (error) {
+                console.error("Error retrieving the definition for " + word);
+                wordDefinition.innerHTML = "Error retrieving definition.";
+            }
+
+            document.getElementById('definition-header').textContent = `DEFINITION - ${word.toUpperCase()}`;
+
+            const googleLink = `https://www.google.com/search?q=${encodeURIComponent(word + ' definition english')}`;
+            document.getElementById('definition-google-results').innerHTML = `<a href="${googleLink}" target="_blank" class="link">Click Here <i class="fa-solid fa-arrow-up-right-from-square link"></a>`;
+        }
+
+        // Call defineWord function when needed
+        defineWord(data.correctWord);
 
         // Change the button's event listener to refresh the page
         submitButton.onclick = function (event) {
@@ -242,6 +274,22 @@ function updateUI(data) {
 
         // Focus the first input in the new row for user convenience
         if (newInputs.length > 0) newInputs[0].focus();
+    }
+}
+wordDefinitionButton.addEventListener('click', function () {
+    toggleDefinitionContainer();
+});
+function toggleDefinitionContainer() {
+    if (!definitionContainerVisible) {
+        definitionContainerVisible = true;
+        definitionContainer.style.display = 'block';
+        wordDefinitionButton.textContent = "HIDE DEFINITION";
+        console.log("Definition container not visible, revealing...");
+    } else {
+        definitionContainerVisible = false;
+        definitionContainer.style.display = 'none';
+        wordDefinitionButton.textContent = "SHOW DEFINITION";
+        console.log("Definition container visible, hiding...");
     }
 }
 function createInputRow(lastGuessResult = []) {
@@ -272,7 +320,7 @@ function createInputRow(lastGuessResult = []) {
     }
     inputContainer.appendChild(row);
     updateLogoSize(); // Update the logo size based on the number of rows
-    updateMainContentPadding(); // Adjust the .main-content padding based on the number of rows
+    updateMainContentPaddingAndMargin(); // Adjust the .main-content padding based on the number of rows
 
     const newInputs = row.querySelectorAll('.puzzle-input');
     // Focus on the first enabled input. If all are enabled, this will be the first input.
@@ -288,19 +336,19 @@ function createInputRow(lastGuessResult = []) {
 function hintBox(show, message) {
     const hintBox = document.getElementById('hint-box');
     if (show) {
-      hintBox.textContent = message; // Set the hint message
-      hintBox.style.display = 'block';
-      console.log("Displayed the hint box with message:", message);
+        hintBox.textContent = message; // Set the hint message
+        hintBox.style.display = 'block';
+        console.log("Displayed the hint box with message:", message);
     } else {
-      hintBox.style.display = 'none';
-      console.log("Hidden the hint box.");
+        hintBox.style.display = 'none';
+        console.log("Hidden the hint box.");
     }
-  }
+}
 // Determine the color based on the status
 function getColorForStatus(status) {
     // Get the root element's computed style to access CSS variables
     const rootStyle = getComputedStyle(document.documentElement);
-    
+
     const colorPalette = {
         correct: rootStyle.getPropertyValue('--correct').trim(), // Get the CSS variable for 'correct' status
         misplaced: rootStyle.getPropertyValue('--misplaced').trim(), // Get the CSS variable for 'misplaced' status
@@ -309,32 +357,77 @@ function getColorForStatus(status) {
 
     return colorPalette[status] || 'grey'; // Default to 'grey' if status is unknown
 }
+
+// #region Dynamic Graphical Adjustments Based on Number of Input Rows
+// Functions to resize the elements within the page based on the number of input rows
+function updateLogoSize() {
+    const logo = document.querySelector('.game-logo');
+    const inputRows = document.querySelectorAll('.input-fields');
+    const scaleFactor = 1 - (0.15 * (inputRows.length - 1));
+    logo.style.transform = `scale(${Math.max(scaleFactor, 0.5)})`; // Ensuring minimum scale is 0.5
+
+    // Check if the game has started by checking the number of input rows
+    if (inputRows.length > 0) {
+        logo.style.marginBottom = "0px"; // Set margin-bottom to 0px when game starts
+    } else {
+        logo.style.marginBottom = "50px"; // Reset to default when no game is active
+    }
+
+    console.log(`Updated logo scale: ${Math.max(scaleFactor, 0.5)}`);
+}
+function updateMainContentPaddingAndMargin() {
+    const mainContent = document.querySelector('.main-content');
+    const inputRows = document.querySelectorAll('.input-fields');
+    const totalRows = inputRows.length;
+    const basePadding = 200; // Base padding value in pixels
+    const paddingReductionPerRow = 150; // Reduction per row in pixels
+    const baseMargin = 100; // Base margin value in pixels
+    const marginReductionPerRow = 25; // Reduction per row in pixels
+
+    // Calculate new padding values
+    const newPaddingTop = Math.max(basePadding - (paddingReductionPerRow * totalRows), 50);
+    const newPaddingBottom = Math.max(basePadding - (paddingReductionPerRow * totalRows), 50);
+
+    // Calculate new margin values
+    const newMarginTop = Math.max(baseMargin - (marginReductionPerRow * totalRows), 25);
+    const newMarginBottom = Math.max(baseMargin - (marginReductionPerRow * totalRows), 25);
+
+    // Apply new padding and margin values to .main-content
+    mainContent.style.paddingTop = `${newPaddingTop}px`;
+    mainContent.style.paddingBottom = `${newPaddingBottom}px`;
+    mainContent.style.marginTop = `${newMarginTop}px`;
+    mainContent.style.marginBottom = `${newMarginBottom}px`;
+
+    console.log(`Updated .main-content padding: top=${newPaddingTop}px, bottom=${newPaddingBottom}px`);
+    console.log(`Updated .main-content margin: top=${newMarginTop}px, bottom=${newMarginBottom}px`);
+}
+// #endregion Dynamic Graphical Adjustments Based on Number of Input Rows
+
 // #endregion UI Update Logic
 
 // #region Losing Messages
 const losingMessages = [
-    { message: "You lose. Try again?", weight: 5 }, // 30.62%
-    { message: "Nice try. Maybe next time!", weight: 1.5 }, // 9.18%
-    { message: "Access denied. Try again?", weight: 1.25 }, // 7.65%
-    { message: "You're not very good at this!", weight: 1.25 }, // 7.65%
-    { message: "Maybe this just isn't your game...", weight: 0.95 }, // 5.82%
-    { message: "Just one more game!", weight: 0.95 }, // 5.82%
-    { message: "Close. I'm sure you'll win the next one!", weight: 0.85 }, // 5.20%
-    { message: "They were right about you...", weight: 0.65 }, // 3.98%
-    { message: "You should stop...", weight: 0.75 }, // 4.59%
-    { message: "Keep trying, script kiddie!", weight: 0.45 }, // 2.76%
-    { message: "Loser! Try again?", weight: 0.5 }, // 3.06%
-    { message: "Sucks 2 suck! Try again?", weight: 0.5 }, // 3.06%
-    { message: "Your $SYPHER = gone!", weight: 0.5 }, // 3.06%
-    { message: "F in chat...", weight: 0.35 }, // 2.14%
-    { message: "Error 404. Skills not found...", weight: 0.25 }, // 1.53%
-    { message: "Skill issue...", weight: 0.15 }, // 0.92%
-    { message: "Thank you but NOPE!", weight: 0.175 }, // 1.07%
-    { message: "Go back 2 skool!", weight: 0.105 }, // 0.64%
-    { message: "Try entering the Konami code!", weight: 0.1 }, // 0.61%
-    { message: "You suck. Try again!", weight: 0.1 }, // 0.61%
-    { message: "残念！再挑戦?", weight: 0.1 }, // 0.61%
-    { message: "tehe! Try again??", weight: 0.001 }, // 0.01%    
+    { message: "You lose. Try again?", weight: 5 },
+    { message: "Maybe next time! Try again?", weight: 1.5 },
+    { message: "Access denied. Try again?", weight: 1.25 },
+    { message: "Maybe this just isn't your game...", weight: 0.95 },
+    { message: "Just one more game!", weight: 0.95 },
+    { message: "Close. I'm sure you'll win the next one!", weight: 0.85 },
+    { message: "They were right about you...", weight: 0.65 },
+    { message: "You should stop...", weight: 0.75 },
+    { message: "Keep trying, script kiddie!", weight: 0.45 },
+    { message: "Loser! Try again?", weight: 0.5 },
+    { message: "Sucks 2 suck! Try again?", weight: 0.5 },
+    { message: "Your $SYPHER = gone!", weight: 0.5 },
+    { message: "F in chat...", weight: 0.35 },
+    { message: "Error 404. Skills not found...", weight: 0.25 },
+    { message: "Skill issue...", weight: 0.15 },
+    { message: "Thank you but NOPE!", weight: 0.175 },
+    { message: "Go back 2 skool!", weight: 0.105 },
+    { message: "Try entering the Konami code!", weight: 0.1 },
+    { message: "You suck. Try again!", weight: 0.1 },
+    { message: "残念！再挑戦?", weight: 0.1 },
+    { message: "tehe! Try again??", weight: 0.001 },
 ];
 function getRandomLosingMessage(messages) {
     let totalWeight = messages.reduce((sum, item) => sum + item.weight, 0);
@@ -356,43 +449,6 @@ addInputListeners(initialInputs);
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 });
-
-// #region Dynamic Graphical Adjustments Based on Number of Input Rows
-// Functions to resize the elements within the page based on the number of input rows
-function updateLogoSize() {
-    const logo = document.querySelector('.game-logo');
-    const inputRows = document.querySelectorAll('.input-fields');
-    const scaleFactor = 1 - (0.15 * (inputRows.length - 1));
-    logo.style.transform = `scale(${Math.max(scaleFactor, 0.5)})`; // Ensuring minimum scale is 0.5
-
-    // Check if the game has started by checking the number of input rows
-    if (inputRows.length > 0) {
-        logo.style.marginBottom = "0px"; // Set margin-bottom to 0px when game starts
-    } else {
-        logo.style.marginBottom = "50px"; // Reset to default when no game is active
-    }
-
-    console.log(`Updated logo scale: ${Math.max(scaleFactor, 0.5)}`);
-}
-function updateMainContentPadding() {
-    const mainContent = document.querySelector('.main-content');
-    const inputRows = document.querySelectorAll('.input-fields');
-    const totalRows = inputRows.length;
-    const basePadding = 200; // Base padding value in pixels
-    const paddingReductionPerRow = 30; // Reduction per row in pixels
-
-    // Calculate new padding values
-    const newPaddingTop = Math.max(basePadding - (paddingReductionPerRow * totalRows), 100); // Ensures minimum padding of 100px
-    const newPaddingBottom = Math.max(basePadding - (paddingReductionPerRow * totalRows), 100);
-
-    // Apply new padding values to .main-content
-    mainContent.style.paddingTop = `${newPaddingTop}px`;
-    mainContent.style.paddingBottom = `${newPaddingBottom}px`;
-
-    console.log(`Updated .main-content padding: top=${newPaddingTop}px, bottom=${newPaddingBottom}px`);
-}
-// #endregion Dynamic Graphical Adjustments Based on Number of Input Rows
-
 // #region Effects & Extras
 
 // #region Cheat Codes
@@ -517,7 +573,6 @@ function lazerRayz() {
     });
 }
 let tukyoModeActive = false;
-
 function tukyoMode() {
     if (tukyoModeActive) {
         console.log("Tukyo mode is already active.");
@@ -630,7 +685,7 @@ window.revealMusicPlayer = function () {
     const loopToggleBtn = document.getElementById('loopToggle');
     const volumeControlsBtn = document.getElementById('volume-button');
     const volumeControls = document.getElementById('volume-controls');
-    const volumeSlider = document.getElementById('volume-slider');
+    const volumeSlider = document.getElementById('volume-bar');
     const music = document.getElementById('music');
     const progressBar = document.getElementById('musicProgressBar');
     const progressContainer = document.getElementById('musicProgressContainer');
@@ -810,7 +865,6 @@ document.getElementById('volume-bar').addEventListener('click', function (event)
     document.getElementById('volume-indicator').style.width = `${volume * 100}%`;
     console.log("Volume set to: " + Math.round(volume * 100) + "%");
 });
-
 // #endregion Music Player
 
 // #region Keyboard Helper
@@ -835,12 +889,12 @@ function updateKeyboardHelper(results) {
 // #region Rules Dropdown
 // Get the dropdown button and content elements
 document.addEventListener('DOMContentLoaded', function () {
-    var dropdown = document.querySelector('.dropdown-button');
-    var dropdownContent = document.querySelector('.dropdown-content');
+    var dropdown = document.querySelector('.how-to-play-button');
+    var dropdownContent = document.querySelector('.how-to-play-container');
 
     dropdown.addEventListener('click', function () {
         if (dropdownContent.classList.contains('show')) {
-            dropdownContent.style.animation = 'tvScreenOff 0.25s ease forwards';
+            dropdownContent.style.animation = 'fadeOut 0.25s ease forwards';
             setTimeout(function () {
                 dropdownContent.style.animation = '';
                 dropdownContent.classList.remove('show');
@@ -983,6 +1037,7 @@ function restoreInputRows(guessResult = []) {
     });
 
     inputContainer.appendChild(row);
+    updateMainContentPaddingAndMargin();
 }
 function restoreKeyboardHelper(allGuesses) {
     const buttons = document.querySelectorAll('.keyboard-button');

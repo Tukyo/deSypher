@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let reCaptchaInitialized = false;
   let keyboardHelperVisible = false;
   let rewardsButtonVisible = false;
+  let walletDetailsSectionVisible = false;
 
   if (window.ethereum) {
     var provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -99,8 +100,6 @@ document.addEventListener('DOMContentLoaded', function () {
     rewardsBalanceEventListeners();
   }
 
-  let walletDetailsSectionVisible = false;
-
   updateWalletConnectionSectionStyle('default');
 
   // #region Manual Wallet Connection
@@ -123,16 +122,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Toggle visibility of wallet-details-section
       if (!walletDetailsSectionVisible) {
-        walletDetailsSection.style.display = 'block';
-        walletDetailsSection.style.animation = 'foldOut .25s forwards';
-        walletDetailsSection.style.animationDelay = '0s';
-        tokenBalanceSection.style.animationDelay = '.1s';
-        rewardsBalanceSection.style.animationDelay = '.2s';
-        claimRewardsButton.style.animationDelay = '.25s';
-
-        console.log("Revealing wallet details section.");
-        walletDetailsSectionVisible = true;
+        showWalletDetails();
       } else {
+        hideWalletDetails();
+      }
+    } else {
+      // Wallet is not connected, connect it
+      connectWallet();
+    }
+  });
+  function showWalletDetails() {
+    walletDetailsSection.style.display = 'block';
+    walletDetailsSection.style.animation = 'foldOut .25s forwards';
+    walletDetailsSection.style.animationDelay = '0s';
+    tokenBalanceSection.style.animationDelay = '.1s';
+    rewardsBalanceSection.style.animationDelay = '.2s';
+    claimRewardsButton.style.animationDelay = '.25s';
+
+    console.log("Revealing wallet details section.");
+    walletDetailsSectionVisible = true;
+  }
+  function hideWalletDetails() {
         // Listen for the end of the animation before setting display to none
         walletDetailsSection.style.animation = 'foldIn .25s forwards';
         walletDetailsSection.addEventListener('animationend', () => {
@@ -140,12 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { once: true }); // Use { once: true } to ensure the event listener is removed after it fires
         console.log("Hiding wallet details section.");
         walletDetailsSectionVisible = false;
-      }
-    } else {
-      // Wallet is not connected, connect it
-      connectWallet();
-    }
-  });
+  }
   // Function to connect to the wallet
   async function connectWallet() {
     if (window.ethereum) {
@@ -829,7 +834,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return data.sypherAllocation;
     } catch (error) {
       console.error("Error fetching sypher allocation from database:", error);
-      // Handle the error appropriately
       throw error;  // Rethrowing the error to be caught by the caller
     }
   }  

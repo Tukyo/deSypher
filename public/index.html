@@ -31,8 +31,8 @@
     <div class="header">
 
         <div class="version-number">
-            <span id="version-number"></span>
-        </div>
+            <a href="changelog.html" class="link" id="version-number"></a>
+        </div>        
 
         <!-- #region Wallet Connectivity Section -->
         <div class="wallet-connection-section" id="wallet-connection-section">
@@ -52,8 +52,8 @@
         <!-- #endregion Wallet Connectivity Section -->
 
         <!-- #region Rules Dropdown -->
-        <div class="rules-dropdown">
-            <button class="dropdown-button">How to Play</button>
+        <div class="how-to-play-button-container">
+            <button class="how-to-play-button">How to Play</button>
             <i id="settings-button" class="fa-solid fa-gear"></i>
             <i id="keyboard-button" class="fa-regular fa-keyboard" style="display: none;"></i>
         </div>
@@ -76,6 +76,7 @@
     <input type="text" id="dev-tools" placeholder="enter command.." style="display: none;">
 
     <div class="main-content">
+
         <div class="game-logo-container">
             <img src="assets/logo_full.webp" alt="Logo of the game" class="game-logo" id="game-logo">
             <div class="mobile-game-logo-container">
@@ -86,17 +87,26 @@
         <div id="lazerContainer"></div>
 
         <!-- #region Help Section Dropdown Content -->
-        <div class="dropdown-content">
-            <h3>The goal of the game is to guess the correct word.</h3>
-            <ul class="color-key">
-                <li><span class="color-box correct"></span> Correct letter, correct position.</li>
-                <li><span class="color-box misplaced"></span> Correct letter, incorrect position.</li>
-                <li><span class="color-box incorrect"></span> Incorrect letter.</li>
-            </ul>
-            <h4>For more help, navigate to the <a href="/about.html" target="_blank" class="link">ABOUT <i
-                        class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a
-                    href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i
-                        class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>
+        <div class="how-to-play-container">
+            <div class="how-to-play-content">
+                <h2>HOW TO PLAY</h2>
+                <h3>The goal of the game is to guess the correct word.</h3>
+                <ul class="color-key">
+                    <li><span class="color-box correct"></span> Correct letter, correct position.</li>
+                    <li><span class="color-box misplaced"></span> Correct letter, incorrect position.</li>
+                    <li><span class="color-box incorrect"></span> Incorrect letter.</li>
+                </ul>
+                <h2>STARTING THE GAME</h2>
+                <p>To start the game press the <span style="font-weight: bold;">play button</span>. Initially, you will be required to allow the deSypher game contract to spend your SYPHER tokens. Upon approval you will be able to enter the SYPHER allocation for that game. Once you submit your SYPHER allocation, you will then be required to approve the transaction, and wait for it to process on the blockchain.</p>
+                <h2>PLAYING THE GAME</h2>
+                <p>Once the game has started, you will be presented with 5 input fields. Each one of these fields must contain a letter. Try to guess the correct word in four tries! You can only guess valid words, meaning any word you can guess could be the correct word.</p>
+                <h2>WIN/LOSS</h2>
+                <p><span style="color: var(--correct); font-weight: bold;">1ST ATTEMPT</span> You will be rewarded with the SYPHER CACHE.</p>
+                <p><span style="color: var(--correct); font-weight: bold;">2ND/3RD ATTEMPT</span> Your SYPHER allocation <span style="color: var(--correct); font-weight: bold;">x2</span> or <span style="color: var(--correct); font-weight: bold;">x1.5</span>.</p>
+                <p><span style="color: var(--correct); font-weight: bold;">4TH ATTEMPT</span> Your SYPHER allocation will be added to your claimable rewards.</p>
+                <p><span style="color: var(--incorrect); font-weight: bold; text-shadow: 0 0 10px var(--incorrect);">FAIL</span> Your SYPHER allocation will be lost. <span style="color: var(--correct); font-weight: bold;">2.5%</span> will be added to the SYPHER CACHE, <span style="color: var(--correct); font-weight: bold;">2.5%</span> will be reserved for the liquidity pool and the remaining <span style="color: var(--correct); font-weight: bold;">5%</span> will be added to the rewards pool for other winners.</p>
+                <h4>More detailed information is available on the <a href="/about.html" target="_blank" class="link">ABOUT <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page. Also, visit the <a href="/tokenomics.html" target="_blank" class="link">TOKENOMICS <i class="fa-solid fa-arrow-up-right-from-square"></i></a> page to learn more about $SYPHER.</h4>    
+            </div>
         </div>
         <!-- #endregion Help Section Dropdown Content -->
 
@@ -127,9 +137,9 @@
 
         <div class="sypher-allocation-container">
             <label for="sypher-allocation-input">SYPHER ALLOCATION:</label>
-            <input type="number" id="sypher-allocation-input" name="wager" placeholder="000" min="1" max="1000" required>
+            <input type="number" id="sypher-allocation-input" name="wager" placeholder="000" min=".1" max="1000" required>
             <button id="allocation-submit">SUBMIT</button>
-        </div>        
+        </div>
 
         <!-- #region Game Buttons -->
         <button id="playButton" type="button" class="game-button play-button"
@@ -212,6 +222,18 @@
         </form>
         <!-- #endregion Puzzle Section -->
 
+        <div id="correct-answer"></div>
+
+        <div class="word-definition-container" id="word-definition-container">
+            <h2 id="definition-header">DEFINITION</h2>
+            <div id="word-definition"></div>
+            <h3><span id="definition-google-results" class="link">Click Here</i></span> to see the definition on Google.</h3>
+        </div>
+
+        <div class="word-defintion-button-container">
+            <button id="word-definition-button">SHOW DEFINITION</button>
+        </div>
+
     </div>
 
     <div class="home-page-footer">
@@ -229,8 +251,8 @@
 
         <!-- #region Page Navigation Section -->
         <div class="page-navigation-section">
-            <a href="/about.html">About</a> • <a href="/tokenomics.html">Tokenomics</a> • <a
-                href="/leaderboards.html">Leaderboards</a>
+            <a href="/about.html">ABOUT</a> • <a href="/tokenomics.html">TOKENOMICS</a> • <a
+                href="/leaderboards.html">LEADERBOARDS</a>
         </div>
         <!-- #endregion Page Navigation Section -->
 
@@ -264,8 +286,8 @@
             <iframe id="iframe"></iframe>
         </div>
         <!-- #endregion Iframe -->
+    
     </div>
-
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="error.js"></script>
@@ -275,7 +297,7 @@
     <script src="wallet.js"></script>
     <script src="rain.js"></script>
     <script src="settings.js"></script>
-    <script src="dev.js"></script>
+    <!-- <script src="dev.js"></script> -->
     <!-- <script type="module" src="analytics.js"></script> -->
 </body>
 

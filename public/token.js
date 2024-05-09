@@ -48,4 +48,4 @@ async function getTokenPriceInWETH() {
 }
 
 getTokenPriceInWETH();
-setInterval(getTokenPriceInWETH, 90000);
+setInterval(getTokenPriceInWETH, 320000);

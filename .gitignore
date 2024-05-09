@@ -1,6 +1,7 @@
 /node_modules
 /contracts/deSypher.sol
 /contracts/gamemanager.sol
+/contracts/test.sol
 /scripts
 /cache
 /artifacts
@@ -18,3 +19,5 @@ firebase-debug.log
 public/five-letter-words
 public/dev.js
 public/endpoints.json
+public/template.html
+public/changelog.json
