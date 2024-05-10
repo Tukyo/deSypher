@@ -1402,29 +1402,6 @@ body {
 #ver-0-1-5 { animation-delay: 1.5s; }
 /* #endregion Changelog Page */
 
-/* #region Page Navigation */
-.page-navigation-section {
-    margin-top: 40px;
-    text-align: center;
-    position: fixed;
-    bottom: 5px;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    color: var(--desypher-green-main);
-    animation: transitionScale 3.5s;
-}
-.page-navigation-section a {
-    text-decoration: none;
-    color: inherit;
-}
-.page-navigation-section a:hover {
-    cursor: pointer;
-    color: var(--desypher-green-main);
-    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-}
-/* #endregion Page Navigation */
-
 /* #region Footer Section */
 .home-page-footer, .about-page-footer, .tokenomics-page-footer, .leaderboards-footer, .four-oh-four-page-footer, .airdrop-page-footer, .whitepaper-page-footer, .changelog-footer {
     padding: 10px;
@@ -1502,6 +1479,30 @@ body {
     }
 
 }
+
+/* #region Page Navigation */
+.page-navigation-section {
+    margin-top: 40px;
+    text-align: center;
+    position: fixed;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    color: var(--desypher-green-main);
+    animation: transitionScale 3.5s;
+}
+.page-navigation-section a {
+    text-decoration: none;
+    color: inherit;
+}
+.page-navigation-section a:hover {
+    cursor: pointer;
+    color: var(--desypher-green-main);
+    text-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+}
+/* #endregion Page Navigation */
+
 /* #endregion Footer Section */
 
 /* #region Loading Bar */
