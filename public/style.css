@@ -1961,11 +1961,8 @@ body {
     }
     .how-to-play-container {
         max-width: 775px;
-        width: 100%;
-        border-left: none;
-        border-right: none;
-        border-top: 2px solid var(--desypher-green-dark);
-        border-bottom: 2px solid var(--desypher-green-dark);
+        width: 90%;
+        font-size: 12px;
     }
     .sypher-cache-section {
         top: 0px;
