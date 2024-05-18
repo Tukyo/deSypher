@@ -1314,13 +1314,80 @@ body {
 /* #endregion Tokenomics Page */
 
 /* #region Leaderboards Page */
-.coming-soon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    animation: fadeInFont 1.25s forwards;
+.leaderboards-page-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    min-height: 100vh;
+}
+.popular-words, .top-players, .biggest-winners, .biggest-losers {
+    opacity: 0%;
+    flex: 1;
+    max-width: 500px;
+    min-width: 500px;
+    text-align: left;
+    font-family: monospace sans-serif;
+    margin: 10px 100px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: black;
+    border: 2px solid var(--desypher-green-main);
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
+    animation: fadeIn .5s forwards;
+}
+.leaderboards-list {
+    opacity: 0%;
+    background-color: black;
+    border-top: 2px solid var(--desypher-green-dark);
+    margin-bottom: 10px;
+    color: var(--font-color);
+    text-shadow:  0 0 5px var(--glow-green-main), 0 0 10px var(--glow-green-secondary);
+    animation: tvScreenOn .5s forwards;
+    animation-delay: .75s;
+}
+.leaderboards-section-header {
+    opacity: 0%;
+    margin: 10px;
+    animation: chromaWarp .5s forwards;
+    animation-delay: .5s;
+}
+.leaderboard-icon {
+    float: center;
+    color: inherit;
+    font-size: inherit;
+    text-decoration: inherit;
+}
+@keyframes chromaWarp {
+    0% {
+        opacity: 0%;
+        text-shadow: -1px 0 red, 2px 0 cyan;
+    }
+    49% {
+        opacity: 35%;
+        text-shadow: -1px 0 red, 2px 0 cyan;
+    }
+    50% {
+        opacity: 50%;
+        text-shadow: 10px 0 red, -8px 0 cyan;
+    }
+    74% {
+        opacity: 50%;
+        text-shadow: 10px 0 red, -8px 0 cyan;
+    }
+    75% {
+        opacity: 100%;
+        text-shadow: -2px 0 red, 2px 0 cyan;
+    }
+    100% {
+        opacity: 100%;
+        text-shadow:  0 0 5px var(--glow-green-main), 0 0 10px var(--glow-green-secondary);
+    }
 }
 /* #endregion Leaderboard Section */
 
@@ -1400,6 +1467,7 @@ body {
 #ver-0-1-3 { animation-delay: 1s; }
 #ver-0-1-4 { animation-delay: 1.25s; }
 #ver-0-1-5 { animation-delay: 1.5s; }
+#ver-0-1-6 { animation-delay: 1.75s; }
 /* #endregion Changelog Page */
 
 /* #region Footer Section */

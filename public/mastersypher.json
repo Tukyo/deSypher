@@ -1,0 +1,15 @@
+{
+  "name": "Master Sypher",
+  "description": "Top deSypher Player",
+  "image": "https://desypher.net/assets/mastersypher.jpg",
+  "attributes": [
+    {
+      "trait_type": "Game",
+      "value": "deSypher"
+    },
+    {
+      "trait_type": "The Master Sypher",
+      "value": "A 1/1 - The best player in the game."
+    }
+  ]
+}

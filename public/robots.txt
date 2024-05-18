@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /public/
+Crawl-delay: 60
+Sitemap: https://desypher.net/sitemap.xml

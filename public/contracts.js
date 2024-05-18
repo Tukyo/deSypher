@@ -34,6 +34,19 @@ var gameManagerABI = [
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newMaxSypherCache",
+        "type": "uint256"
+      }
+    ],
+    "name": "MaxSypherCacheUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -68,8 +81,55 @@ var gameManagerABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "getGameData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "playerReward",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sypherCacheAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "liquidityPoolAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxCache",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getLiquidityPooling",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMaxSypherCache",
     "outputs": [
       {
         "internalType": "uint256",
@@ -141,6 +201,19 @@ var gameManagerABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "_newMaxSypherCache",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMaxSypherCache",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "player",
         "type": "address"
@@ -202,7 +275,7 @@ var gameManagerABI = [
   }
 ];
 // Game Manager Address
-var gameManagerAddress = '0xb3B954fB676538DfED94b8C71C0Dc9695450a9A8'; // GAME MANAGER CONTRACT
+var gameManagerAddress = '0x685752FeeB29E9b1480F106E41Ec6a98779eaE9d'; // GAME MANAGER CONTRACT
 
 // Game Contract ABI
 var gameContractABI = [
@@ -216,6 +289,11 @@ var gameContractABI = [
       {
         "internalType": "address",
         "name": "_gameManagerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_masterSypherAddress",
         "type": "address"
       }
     ],
@@ -465,6 +543,51 @@ var gameContractABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTopPlayer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "masterSypher",
+    "outputs": [
+      {
+        "internalType": "contract IMasterSypher",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxSypherCache",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -499,6 +622,19 @@ var gameContractABI = [
   },
   {
     "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -519,7 +655,7 @@ var gameContractABI = [
   }
 ];
 // Game Contract Address
-var gameContractAddress = '0x03248983A035711670f5A996231e8759379C030A'; // GAME CONTRACT
+var gameContractAddress = '0x4884aE05271547dD5B39b590cF4f3c1Bb81f324F'; // GAME CONTRACT
 
 // Token Contract ABI
 var tokenContractABI = [
@@ -866,6 +1002,12 @@ var tokenContractABI = [
 ];
 // Token Contract Address
 var tokenContractAddress = '0x50590A8612F995b90533C04E60cE07340654E2C3'; // TOKEN CONTRACT
+
+var masterSypherABI = [
+  
+]
+// Master Sypher Contract Address
+var masterSypherAddress = '0xA47372D7b49288d5b7a907cbfC58A80a0cE23433'; // MASTER SYPHER CONTRACT
 
 
 

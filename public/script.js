@@ -14,6 +14,7 @@ window.addEventListener("gameStart", function () {
 window.addEventListener("gameComplete", function () {
     window.gameActive = false;
     console.log("Game completed...");
+    // updateTopPlayers();
 });
 
 let gameOver = false;
@@ -34,7 +35,7 @@ const wordDefinitionButton = document.getElementById('word-definition-button');
 const definitionContainer = document.getElementById('word-definition-container');
 const wordDefinition = document.getElementById('word-definition');
 
-const version = '0.1.5';
+const version = '0.1.6';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -449,6 +450,7 @@ addInputListeners(initialInputs);
 form.addEventListener('submit', function (event) {
     event.preventDefault();
 });
+
 // #region Effects & Extras
 
 // #region Cheat Codes
@@ -711,20 +713,24 @@ window.revealMusicPlayer = function () {
             .then(() => {
                 console.log("Music playback started successfully with " + selectedSong);
                 playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-
+    
                 // Extract artist and song name from the filename
                 const [artist, songWithExtension] = selectedSong.split('-');
                 const songName = songWithExtension.replace('.ogg', '');
-
+    
                 // Update the song info display
                 document.getElementById('song-info').textContent = `${artist} - ${songName}`;
             })
             .catch(error => console.error("Error starting music playback:", error));
+    
+        music.currentTime = 0; // Reset current time for new song
+        progressBar.style.width = '0%'; // Reset progress bar width for new song
     }
 
     function goToNextTrack() {
         currentIndex = (currentIndex + 1) % songs.length; // Go to next track, loop to start if at end
         playSong(currentIndex);
+        music.addEventListener('timeupdate', updateProgressBar);
     }
 
     playSong(currentIndex);
@@ -742,11 +748,13 @@ window.revealMusicPlayer = function () {
     function setPlaybackPosition(e) {
         e.preventDefault();
 
-        const width = progressContainer.clientWidth; // Width of the container
-        const clickX = e.offsetX; // X position of the click within the container
-        const duration = music.duration; // Total duration of the song
+        const width = progressContainer.clientWidth;
+        const clickX = e.offsetX;
+        const duration = music.duration;
 
-        music.currentTime = (clickX / width) * duration; // Calculate and set the new current time
+        const newTime = (clickX / width) * duration;
+        console.log("Setting new playback position:", newTime, "based on click position:", clickX, "and container width:", width);
+        music.currentTime = newTime;
     }
 
     progressContainer.addEventListener('click', setPlaybackPosition);
@@ -919,7 +927,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialize provider using the testnet endpoint from the configuration
         provider = new ethers.providers.JsonRpcProvider(config.testnetEndpoint);
 
-        // Assuming you have the correct addresses and ABIs
         const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
         const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
 
@@ -1060,3 +1067,19 @@ function restoreKeyboardHelper(allGuesses) {
     }
 }
 // #endregion Load Game Logic
+
+// #region Top Players Logic
+async function updateTopPlayers() {
+    console.log("Updating top players list...");
+    try {
+        const response = await fetch('/top-players');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Top players data received:", data);
+    } catch (error) {
+        console.error("Failed to fetch top players:", error);
+    }
+}
+// #endregion Top Players Logic

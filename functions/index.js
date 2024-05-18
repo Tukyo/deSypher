@@ -49,12 +49,15 @@ const sypherGameAddress = config.game.address;
 const sypherGameABI = config.game.abi;
 const gameManagerAddress = config.gameManager.address;
 const gameManagerABI = config.gameManager.abi;
+const masterSypherAddress = config.mastersypher.address;
+const masterSypherABI = config.mastersypher.abi;
 
 const tokenAddress = config.token.address;
 const tokenABI = config.token.abi;
 
 const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI, signer);
 const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+const masterSypherContract = new ethers.Contract(masterSypherAddress, masterSypherABI, signer);
 
 const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
 
@@ -197,16 +200,16 @@ app.post('/game', rateLimiter, async (req, res) => {
           }
         }
         break;
-        case 2:
-          rewardAmount = sypherAllocation * BigInt(maxReward) / BigInt(100);
-          break;
-        case 3:
-          rewardAmount = sypherAllocation * BigInt(minReward) / BigInt(100);
-          break;
-        case 4:
-          rewardAmount = sypherAllocation;
-          break;
-      }
+      case 2:
+        rewardAmount = sypherAllocation * BigInt(maxReward) / BigInt(100);
+        break;
+      case 3:
+        rewardAmount = sypherAllocation * BigInt(minReward) / BigInt(100);
+        break;
+      case 4:
+        rewardAmount = sypherAllocation;
+        break;
+    }
   }
 
   if (isWin || session.guesses.length === maxAttempts) {
@@ -336,6 +339,26 @@ app.post('/get-sypher-allocation', async (req, res) => {
     res.status(500).send({ error: 'Failed to retrieve sypher allocation from the database' });
   }
 });
+app.get('/verify-playgame/:txHash', async (req, res) => {
+  const { txHash } = req.params;
+  try {
+    const transaction = await provider.getTransaction(txHash);
+    if (transaction) {
+      const playGameMethodId = "0x676d7089"; // Method ID for PlayGame
+      const isPlayGame = transaction.data.startsWith(playGameMethodId);
+      if (isPlayGame) {
+        res.send({ message: 'Valid PlayGame transaction', details: transaction });
+      } else {
+        res.status(400).send({ error: 'Not a PlayGame transaction' });
+      }
+    } else {
+      res.status(404).send({ error: 'Transaction not found' });
+    }
+  } catch (error) {
+    console.error(`Error verifying transaction: ${error}`);
+    res.status(500).send({ error: 'Failed to verify transaction' });
+  }
+});
 // #endregion Word Game Main Logic
 
 // #region reCAPTCHA Verification
@@ -371,6 +394,98 @@ app.post('/verify_recaptcha', recaptchaLimiter, express.json(), async (req, res)
   }
 });
 // #endregion reCAPTCHA Verification
+
+// #region Popular Words
+app.get('/popular-words', async (req, res) => {
+  try {
+    const wordsSnapshot = await database.collection('words')
+      .orderBy('timesGuessed', 'desc')
+      .limit(5) // Get top 5 popular words
+      .get();
+
+    const popularWords = [];
+    wordsSnapshot.forEach(doc => {
+      popularWords.push({ word: doc.id, timesGuessed: doc.data().timesGuessed });
+    });
+
+    res.status(200).json(popularWords);
+  } catch (error) {
+    console.error("Failed to fetch popular words:", error);
+    res.status(500).json({ message: "Failed to fetch popular words" });
+  }
+});
+// #endregion Popular Words
+
+// #region Top Players
+app.get('/top-players', async (req, res) => {
+    try {
+        const snapshot = await admin.firestore().collection('players')
+            .orderBy('netWins', 'desc')
+            .limit(5)
+            .get();
+
+        const topPlayers = snapshot.docs.map(doc => ({
+            address: doc.id,
+            netWins: doc.data().netWins
+        }));
+
+        res.json(topPlayers);
+    } catch (error) {
+        console.error("Failed to fetch top players:", error);
+        res.status(500).send("Error fetching top players"); 
+    }
+});
+// #endregion Top Players
+
+exports.updatePlayerWins = functions.firestore.document('sessions/{sessionId}').onWrite(async (change, context) => {
+  if (change.after.exists && change.after.data().gameOver) {
+    const playerAddress = change.after.data().playerAddress;
+    const isWin = change.after.data().isWin;
+
+    const playerDoc = await admin.firestore().collection('players').doc(playerAddress).get();
+    let _netWins = playerDoc.exists ? (playerDoc.data().netWins || 0) + (isWin ? 1 : -1) : (isWin ? 1 : -1);
+    let updates = {
+      netWins: _netWins,
+      wins: isWin ? (playerDoc.data().wins || 0) + 1 : (playerDoc.data().wins || 0),
+      losses: !isWin ? (playerDoc.data().losses || 0) + 1 : (playerDoc.data().losses || 0)
+    };
+
+    if (!playerDoc.exists) {
+      await playerDoc.ref.set(updates);
+      console.log("Initialized player document with address: " + playerAddress);
+    } else {
+      await playerDoc.ref.update(updates);
+      console.log("Updated wins/losses for player with address: " + playerAddress);
+    }
+
+    const masterSypherDoc = await admin.firestore().collection('masterSypher').doc('masterSypher').get();
+    const currentTopPlayer = masterSypherDoc.exists ? masterSypherDoc.data().playerAddress : null;
+
+    if (!masterSypherDoc.exists || playerAddress === masterSypherDoc.data().playerAddress) {
+      await masterSypherDoc.ref.set({
+        playerAddress: playerAddress,
+        netWins: _netWins
+      });
+      console.log("Updated masterSypher with new top player address: " + playerAddress);
+
+      if (currentTopPlayer !== playerAddress) {
+        await transferMasterSypherToken(currentTopPlayer, playerAddress);
+      }
+    }
+  }
+});
+
+async function transferMasterSypherToken(currentTopPlayer, newTopPlayer) {
+  try {
+    const transaction = await masterSypherContract.transferFrom(currentTopPlayer, newTopPlayer, 1);
+    const receipt = await transaction.wait();
+    console.log("Transaction successful: ", receipt.transactionHash);
+    console.log("MasterSypher token transferred from " + currentTopPlayer + " to " + newTopPlayer);
+  } catch (error) {
+    console.error("Failed to transfer MasterSypher token:", error);
+  }
+}
+
 
 // #region Faucet Section
 app.post('/distribute-tokens', rateLimiter, async (req, res) => {
@@ -408,12 +523,13 @@ app.post('/distribute-tokens', rateLimiter, async (req, res) => {
     res.status(500).json({ error: 'Transaction failed', details: error.message });
   }
 });
+
 async function recordTransaction(transactionHash, fromAddress, toAddress, amount) {
   const transactionRecord = {
-      from: fromAddress,
-      to: toAddress,
-      amount,
-      timestamp: Firestore.FieldValue.serverTimestamp()
+    from: fromAddress,
+    to: toAddress,
+    amount,
+    timestamp: Firestore.FieldValue.serverTimestamp()
   };
 
   await database.collection('faucet').doc(transactionHash).set(transactionRecord);

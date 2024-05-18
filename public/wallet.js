@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const bufferSetTime = sessionStorage.getItem('bufferSetTime');
 
-  if (bufferSetTime && (Date.now() - parseInt(bufferSetTime) > 1000)) {
+  if (bufferSetTime && (Date.now() - parseInt(bufferSetTime) > 1500)) {
     sessionStorage.removeItem('reloadBuffer');
     console.log("Stale reload buffer cleared.");
   }
@@ -20,8 +20,9 @@ document.addEventListener('DOMContentLoaded', function () {
       sessionStorage.removeItem('reloadBuffer');
       sessionStorage.removeItem('bufferSetTime');
       console.log("Reload buffer cleared.");
-    }, 1000);
+    }, 1500);
   }
+
 
   const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/tbG9Ls0pfxJL1IGYyoi-eB0AMcgbjc-k');
 
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let keyboardHelperVisible = false;
   let rewardsButtonVisible = false;
   let walletDetailsSectionVisible = false;
+  let returningPlayer = localStorage.getItem('returningPlayer') === 'true';
 
   if (window.ethereum) {
     var provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -143,13 +145,13 @@ document.addEventListener('DOMContentLoaded', function () {
     walletDetailsSectionVisible = true;
   }
   function hideWalletDetails() {
-        // Listen for the end of the animation before setting display to none
-        walletDetailsSection.style.animation = 'foldIn .25s forwards';
-        walletDetailsSection.addEventListener('animationend', () => {
-          walletDetailsSection.style.display = 'none';
-        }, { once: true }); // Use { once: true } to ensure the event listener is removed after it fires
-        console.log("Hiding wallet details section.");
-        walletDetailsSectionVisible = false;
+    // Listen for the end of the animation before setting display to none
+    walletDetailsSection.style.animation = 'foldIn .25s forwards';
+    walletDetailsSection.addEventListener('animationend', () => {
+      walletDetailsSection.style.display = 'none';
+    }, { once: true }); // Use { once: true } to ensure the event listener is removed after it fires
+    console.log("Hiding wallet details section.");
+    walletDetailsSectionVisible = false;
   }
   // Function to connect to the wallet
   async function connectWallet() {
@@ -303,8 +305,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         allocationContainer.style.display = 'none';
-        
+
         try {
+          let transactionPreventClose = function (e) {
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+          };
           if (!useExistingTransaction) {
             console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
             playButton.textContent = "Waiting on transaction...";
@@ -316,7 +323,9 @@ document.addEventListener('DOMContentLoaded', function () {
               const playGameTx = await gameContract.PlayGame(playerAddress, sypherAllocationWei);
               showLoadingAnimation();
               console.log("Waiting for game transaction to be mined...");
+              window.addEventListener('beforeunload', transactionPreventClose);
               await playGameTx.wait();
+              window.removeEventListener('beforeunload', transactionPreventClose);
               console.log("Game started successfully on blockchain");
 
               transactionHash = playGameTx.hash;
@@ -358,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function () {
           // Clear the input fields for the new game
           resetGameInputs();
           showKeyboardHelperButton();
-          if (!keyboardHelperVisible) {
+          if (!returningPlayer) {
             hintBox(true, 'Use the boxes below to input your guess!');
           }
           resolve();
@@ -659,7 +668,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     gameContract.on("GameCompleted", (player, won, rewardAmount, event) => {
       console.log("Game completed event detected", event);
-      updateRewardsBalance();  // Update balance whenever a game is completed
+      updateRewardsBalance();
+      updateReturningPlayerStatus();
     });
 
     gameContract.on("RewardsClaimed", (player, amount, event) => {
@@ -787,9 +797,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(isPlayGame => {
                   console.log(`Is the transaction a 'PlayGame' transaction? ${isPlayGame}`);
                   if (isPlayGame) {
-                    document.dispatchEvent(new Event('hideSessionRecoveryForm'));
-                    startGame(true, transactionHash);
-                  } else {
+                    fetch(`/verify-playgame/${transactionHash}`)
+                      .then(response => response.json())
+                      .then(data => {
+                        if (response.ok) {
+                          console.log('Server confirmed PlayGame transaction:', data);
+                          startGame(true, transactionHash);
+                        } else {
+                          console.error('Server validation failed:', data.error);
+                          document.dispatchEvent(new CustomEvent('appError', { detail: data.error }));
+                        }
+                      })
+                      .catch(error => {
+                        console.error('Error during server verification:', error);
+                        document.dispatchEvent(new CustomEvent('appError', { detail: "Failed to verify transaction on server." }));
+                      });
+                  }
+                  else {
                     console.error('Not a PlayGame transaction: ', transactionHash);
                     document.dispatchEvent(new CustomEvent('appError', { detail: "The transaction is not valid for starting a game." }));
                   }
@@ -836,7 +860,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error("Error fetching sypher allocation from database:", error);
       throw error;  // Rethrowing the error to be caught by the caller
     }
-  }  
+  }
   function triggerGameRestart(data) {
     const gameRestartEvent = new CustomEvent('gameRestart', {
       detail: {
@@ -1024,6 +1048,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
   // #endregion Keyboard Helper Logic
+
+  // #region Data Persistence
+  function updateReturningPlayerStatus() {
+    localStorage.setItem('returningPlayer', 'true');
+    returningPlayer = true;
+    console.log("Player has completed a game, updating returningPlayer status to true.");
+  }
+  // #endregion Data Persistence
 
   // #region Faucet Distribution
   async function faucet() {
