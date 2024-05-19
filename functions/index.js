@@ -19,8 +19,8 @@ admin.initializeApp({
 
 const database = admin.firestore();
 
-const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL); // RPC_URL is your Ethereum node or gateway URL
-const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider); // PRIVATE_KEY of the account that deploys the contract or is authorized to call recordWin
+const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL);
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 const config = require('./config.json');
 const rateLimit = require("express-rate-limit");
@@ -71,8 +71,7 @@ const maxReward = 200;
 const minReward = 150;
 
 // #region Setup & CORS
-// Define your website's origin
-const allowedOrigins = ["http://localhost:5000", "https://desypher.net", "https://desypher-6245f.web.app", "https://desypher-6245f.firebaseapp.com"]; // Add your website's domain here
+const allowedOrigins = ["http://localhost:5000", "https://desypher.net", "https://desypher-6245f.web.app", "https://desypher-6245f.firebaseapp.com"];
 
 // CORS options
 const corsOptions = {
@@ -175,7 +174,6 @@ app.post('/game', rateLimiter, async (req, res) => {
     isWin: isWin
   });
 
-  // In your /game POST route
   const guessedWordRef = database.collection('words').doc(guessedWord.trim().replace(' ', '').toLowerCase());
   database.runTransaction(async (transaction) => {
     const doc = await transaction.get(guessedWordRef);

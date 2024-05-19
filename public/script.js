@@ -444,7 +444,6 @@ function getRandomLosingMessage(messages) {
 }
 // #endregion Losing Messages
 
-// Add listeners to the initial row of inputs
 const initialInputs = document.querySelectorAll('.puzzle-input');
 addInputListeners(initialInputs);
 form.addEventListener('submit', function (event) {

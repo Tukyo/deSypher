@@ -159,7 +159,6 @@ function redrawChart(highlightCategory = null) {
         }
     });
 }
-// Add event listeners to each span
 Object.entries(spanToCategoryMap).forEach(([spanId, category]) => {
     const spanElement = document.getElementById(spanId);
     const originalValue = distributionData[category];
@@ -254,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function () {
 //#endregion Contract Address Matrix load-in effect
 
 // #region Contract Address Copy Functionality
-// Add event listener to the copy icon
 document.getElementById('copy-icon').addEventListener('click', function () {
     const contractAddress = document.getElementById('address-text').textContent.trim(); // Adjust to target the span
     const confirmTime = 2000; // Time until the copy icon changes back from a checkmark to a copy icon

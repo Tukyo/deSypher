@@ -105,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
   updateWalletConnectionSectionStyle('default');
 
   // #region Manual Wallet Connection
-  // Add click event listener to the connect button
   connectButton.addEventListener('click', async () => {
     if (!window.ethereum) {
       // Throw an error and redirect to wallet page if user tries to connect without a wallet installed
@@ -182,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
                   method: 'wallet_addEthereumChain',
                   params: [{
                     chainId: REQUIRED_CHAIN_HEX,
-                    // Add other required parameters such as chainName, nativeCurrency, rpcUrls, blockExplorerUrls
                   }],
                 });
               } catch (addError) {
@@ -974,7 +972,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("Starting to render reCAPTCHA for 'playButton'...");
 
           grecaptcha.render('playButton', {
-            'sitekey': '6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k', // Replace with your actual site key
+            'sitekey': '6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k',
             'callback': onSubmitPlay
           });
 
@@ -983,7 +981,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("Starting to render reCAPTCHA for 'load-button'...");
 
           grecaptcha.render('load-button', {
-            'sitekey': '6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k', // Replace with your actual site key
+            'sitekey': '6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k',
             'callback': onSubmitLoad
           });
 
