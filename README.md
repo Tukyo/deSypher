@@ -17,6 +17,7 @@ To play deSypher, you need to hold $SYPHER tokens. These tokens will be used to 
 
 ### Lose:
 If you fail to guess the correct word within 4 tries, the following happens with the $SYPHER tokens:
-- **2.5%** go to the SYPHER CACHE.
-- **2.5%** are directed to liquidity pooling functionality.
-- **5%** remain in the rewards pool, effectively leaving circulation until another player wins.
+- **1%** goes to the Master Sypher.
+- **24%** is directed to liquidity pooling functionality.
+- **25%** enters the SYPHER CACHE.
+- **50%** remain in the rewards pool, effectively leaving circulation until another player wins.
