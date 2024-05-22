@@ -74,6 +74,16 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+.seo-header {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
 /* #endregion Root Content */
 
 /* #region Home Page */
@@ -1468,6 +1478,7 @@ body {
 #ver-0-1-4 { animation-delay: 1.25s; }
 #ver-0-1-5 { animation-delay: 1.5s; }
 #ver-0-1-6 { animation-delay: 1.75s; }
+#ver-0-1-7 { animation-delay: 2s; }
 /* #endregion Changelog Page */
 
 /* #region Footer Section */

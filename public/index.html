@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>deSypher</title>
+    <title>deSypher - A crypto puzzle game on Base.</title>
     <link rel="stylesheet" href="style.css">
 
     <!-- #region Favicon -->
@@ -13,11 +13,32 @@
     <link rel="icon" sizes="96x96" type="image/png" href="assets/favicon-96x96.png">
     <!-- #endregion Favicon -->
 
-    <!-- #region Social Media Preview Image  -->
+    <!-- #region Meta Tags -->
+    <meta property="og:url" content="https://desypher.net">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="deSypher">
+    <meta property="og:description" content="deSypher - A crypto puzzle game on Base.">
+    <meta property="og:image:type" content="image/webp">
     <meta property="og:image" content="assets/preview_image.webp">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <!-- #endregion Social Media Preview Image -->
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="desypher.net">
+    <meta property="twitter:url" content="https://desypher.net">
+    <meta name="twitter:title" content="deSypher">
+    <meta name="twitter:description" content="deSypher - A crypto puzzle game on Base.">
+    <meta name="twitter:image" content="assets/preview_image.webp">
+    <meta name="twitter:site" content="@tukyowave">
+    <meta name="twitter:creator" content="@tukyowave">
+
+    <meta name="robots" content="index, follow">
+    <!-- #endregion Meta Tags -->
+
+    <meta name="description" content="deSypher is a crypto puzzle game available on Base, challenging players to solve encrypted words with limited attempts. The game is played with SYPHER tokens, and winning players will be rewarded!">
+
+    <link rel="canonical" href="https://desypher.net">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
@@ -29,6 +50,7 @@
     <canvas id="rain"></canvas>
 
     <div class="header">
+        <h1 class="seo-header">deSypher - A crypto puzzle game on Base.</h1>
 
         <div class="version-number">
             <a href="changelog.html" class="link" id="version-number"></a>
@@ -251,8 +273,7 @@
 
         <!-- #region Page Navigation Section -->
         <div class="page-navigation-section">
-            <a href="/about.html">ABOUT</a> • <a href="/tokenomics.html">TOKENOMICS</a> • <a
-                href="/leaderboards.html">LEADERBOARDS</a>
+            <a href="/about.html">ABOUT</a> • <a href="/tokenomics.html">TOKENOMICS</a> • <a href="/leaderboards.html">LEADERBOARDS</a>
         </div>
         <!-- #endregion Page Navigation Section -->
 
@@ -296,9 +317,24 @@
     <script src="script.js"></script>
     <script src="wallet.js"></script>
     <script src="rain.js"></script>
+    <!-- <script src="sypherpals.js"></script> -->
     <script src="settings.js"></script>
-    <script src="dev.js"></script>
+    <!-- <script src="dev.js"></script> -->
     <!-- <script type="module" src="analytics.js"></script> -->
+    <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "VideoGame",
+          "name": "deSypher",
+          "description": "A crypto puzzle game on Base that challenges players with encrypted puzzles.",
+          "image": [
+            "https://desypher.net/assets/preview_image.webp"
+          ],
+          "publisher": {
+            "@type": "Organization",
+            "name": "TUKYO LLC"
+          }
+        }
+    </script>
 </body>
-
 </html>

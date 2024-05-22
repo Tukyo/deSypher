@@ -1,5 +1,6 @@
 /node_modules
 /contracts/test.sol
+/contracts/sypherpals.sol
 /scripts
 /cache
 /artifacts
@@ -18,3 +19,4 @@ public/five-letter-words
 public/dev.js
 public/endpoints.json
 public/template.html
+public/sypherpals.js

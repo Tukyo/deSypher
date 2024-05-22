@@ -82,7 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log(`Connected to ${connectInfo.chainId} network`);
     });
 
-    ethereum.on("disconnect", () => window.location.reload());
+    ethereum.on("disconnect", () => {
+      if (!sessionStorage.getItem('reloadBuffer')) {
+        window.location.reload();
+      }
+    });
     ethereum.on("accountsChanged", (accounts) => {
       console.log('Attempting to switch accounts...');
       if (accounts.length > 0) {
@@ -95,7 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         console.error("0 accounts available!");
         walletDetailsSection.style.display = 'none'; // Hide the token balance section if no accounts are connected
-        window.location.reload();
+        if (!sessionStorage.getItem('reloadBuffer')) {
+          window.location.reload();
+        }
       }
     });
     setupTokenEventListener();

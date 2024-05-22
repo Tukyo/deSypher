@@ -51,6 +51,8 @@ const gameManagerAddress = config.gameManager.address;
 const gameManagerABI = config.gameManager.abi;
 const masterSypherAddress = config.mastersypher.address;
 const masterSypherABI = config.mastersypher.abi;
+// const palsAddress = config.pets.address;
+// const palsABI = config.pets.abi;
 
 const tokenAddress = config.token.address;
 const tokenABI = config.token.abi;
@@ -58,6 +60,7 @@ const tokenABI = config.token.abi;
 const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI, signer);
 const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
 const masterSypherContract = new ethers.Contract(masterSypherAddress, masterSypherABI, signer);
+// const palsContract = new ethers.Contract(petsAddress, petsABI, signer);
 
 const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
 
@@ -69,6 +72,16 @@ const maxAttempts = 4;
 // Reward multipliers
 const maxReward = 200;
 const minReward = 150;
+
+// Pets
+// const petNames = ["kitty", "doggy", "wisps", "fishy", "eagle"];
+// const petTypes = {
+//   kitty: Pets.PetType.Kitty, 
+//   doggy: Pets.PetType.Doggy, 
+//   wisps: Pets.PetType.Wisps, 
+//   fishy: Pets.PetType.Fishy, 
+//   eagle: Pets.PetType.Eagle
+// };
 
 // #region Setup & CORS
 const allowedOrigins = ["http://localhost:5000", "https://desypher.net", "https://desypher-6245f.web.app", "https://desypher-6245f.firebaseapp.com"];
@@ -139,7 +152,7 @@ app.post('/game', rateLimiter, async (req, res) => {
     };
 
     await database.collection('sessions').doc(sessionID).set(session);
-    console.log('New game started, correct word:', correctWord);
+    // console.log('New game started, correct word:', correctWord);
   }
 
   // If the correct word is not set, set it to the session's correct word
@@ -217,8 +230,23 @@ app.post('/game', rateLimiter, async (req, res) => {
     // Log the transaction hash and handle it asynchronously
     console.log(`Transaction submitted: ${tx.hash}`);
 
+    // Add the transaction hash and reward amount to the session
+    session.completionTxHash = tx.hash;
+    session.rewardAmount = ethers.formatUnits(rewardAmount, 18);
+
     handleTransactionConfirmation(tx.hash);
   }
+
+  // if (isWin && petNames.includes(correctWord)) {
+  //   // const petTypeToUnlock = petTypes[correctWord];
+  //   try {
+  //     // const txUnlock = await petsContract.unlockPet(playerAddress, petTypeToUnlock);
+  //     // await txUnlock.wait();
+  //     console.log(`Unlocked pal ${correctWord} for player ${playerAddress}`);
+  //   } catch (error) {
+  //     console.error("Error unlocking pal:", error);
+  //   }
+  // }
 
   session.gameOver = isWin || session.guesses.length >= maxAttempts;
   session.isWin = isWin;
@@ -416,24 +444,48 @@ app.get('/popular-words', async (req, res) => {
 
 // #region Top Players
 app.get('/top-players', async (req, res) => {
-    try {
-        const snapshot = await admin.firestore().collection('players')
-            .orderBy('netWins', 'desc')
-            .limit(5)
-            .get();
+  try {
+    const snapshot = await admin.firestore().collection('players')
+      .orderBy('netWins', 'desc')
+      .limit(5)
+      .get();
 
-        const topPlayers = snapshot.docs.map(doc => ({
-            address: doc.id,
-            netWins: doc.data().netWins
-        }));
+    const topPlayers = snapshot.docs.map(doc => ({
+      address: doc.id,
+      netWins: doc.data().netWins
+    }));
 
-        res.json(topPlayers);
-    } catch (error) {
-        console.error("Failed to fetch top players:", error);
-        res.status(500).send("Error fetching top players"); 
-    }
+    res.json(topPlayers);
+  } catch (error) {
+    console.error("Failed to fetch top players:", error);
+    res.status(500).send("Error fetching top players");
+  }
 });
 // #endregion Top Players
+
+// #region Biggest Winners
+app.get('/biggest-winners', async (req, res) => {
+  try {
+    const sessionsSnapshot = await database.collection('sessions').get();
+
+    const biggestWinners = sessionsSnapshot.docs
+      .map(doc => doc.data())
+      .filter(session => session.sypherAllocation !== undefined && session.rewardAmount !== undefined)
+      .map(session => {
+        return {
+          playerAddress: session.playerAddress,
+          sypherAllocation: session.sypherAllocation,
+          rewardAmount: session.rewardAmount
+        };
+      });
+
+    res.json(biggestWinners);
+  } catch (error) {
+    console.error(`Failed to get biggest winners: ${error}`);
+    res.status(500).send('Failed to get biggest winners');
+  }
+});
+// #endregion Biggest Winners
 
 exports.updatePlayerWins = functions.firestore.document('sessions/{sessionId}').onWrite(async (change, context) => {
   if (change.after.exists && change.after.data().gameOver) {

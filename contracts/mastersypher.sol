@@ -12,6 +12,7 @@ contract MasterSypher {
 
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     event AdminUpdated(address indexed newAdmin);
+    event EtherWithdrawn(address indexed recipient, uint256 amount);
 
     constructor() {
         admin = msg.sender;
@@ -50,5 +51,10 @@ contract MasterSypher {
 
         emit Transfer(from, to, tokenId);
         topPlayer = to;
+    }
+    function withdrawETH() public onlyAdmin {
+        uint256 balance = address(this).balance;
+        payable(admin).transfer(balance);
+        emit EtherWithdrawn(admin, balance);
     }
 }

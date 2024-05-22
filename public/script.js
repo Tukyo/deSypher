@@ -35,7 +35,7 @@ const wordDefinitionButton = document.getElementById('word-definition-button');
 const definitionContainer = document.getElementById('word-definition-container');
 const wordDefinition = document.getElementById('word-definition');
 
-const version = '0.1.6';
+const version = '0.1.7';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -304,6 +304,8 @@ function createInputRow(lastGuessResult = []) {
         input.type = 'text';
         input.maxLength = '1';
         input.className = 'puzzle-input';
+        input.id = `input-${i}`;
+        input.name = `input-${i}`;
 
         // Check if the current letter was correctly guessed
         if (lastGuessResult[i] && lastGuessResult[i].status === 'correct') {

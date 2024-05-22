@@ -106,7 +106,7 @@ function loadSettings() {
 
     // Load the Audio State
     const mutedState = localStorage.getItem('isMuted');
-    isMuted = mutedState;
+    isMuted = mutedState === 'true';
     muteButton.className = isMuted ? 'fa-solid fa-volume-off' : 'fa-solid fa-volume-high';
     audioPool.forEach(audio => audio.muted = isMuted);
     clickAudioPool.forEach(audio => audio.muted = isMuted);
@@ -375,9 +375,9 @@ document.addEventListener('mousemove', drag);
 document.addEventListener('mouseup', endDrag);
 
 // Mobile event listeners
-sliderHandle.addEventListener('touchstart', startDrag);
-document.addEventListener('touchmove', drag);
-document.addEventListener('touchend', endDrag);
+sliderHandle.addEventListener('touchstart', startDrag, { passive: true });
+document.addEventListener('touchmove', drag, { passive: false });
+document.addEventListener('touchend', endDrag, { passive: true });
 
 function startDrag(event) {
     isDragging = true;

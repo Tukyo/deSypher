@@ -116,5 +116,17 @@
         "> Updating local storage for player persistence",
         "> Optimized server-side code for tracking player stats",
         "> Fixed loading issue with metamask on mobile"
+    ],
+    "0-1-7": [
+        ">> Updates & Changes",
+        "> Added Biggest Winners to leaderboards page",
+        "> MasterSypher contract source code updated on github",
+        ">> Bug Fixes",
+        "> Added canonical tag to all pages",
+        "> Improved SEO with more distinct Title Tag",
+        "> Added h1 tag to title of game for search enginges",
+        "> Reload buffer improvements",
+        "> Schema implementation for optimization",
+        "> Fixed an issue with game sounds local storage not setting bool correctly"
     ]
 }

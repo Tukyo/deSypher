@@ -81,4 +81,48 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     // #endregion Top Players 
 
+    // #region Biggest WInners
+    fetch('/biggest-winners')
+        .then(response => response.json())
+        .then(data => {
+            const winnersListDiv = document.querySelector(".biggest-winners-list");
+            winnersListDiv.innerHTML = "";
+
+            const list = document.createElement("ol");
+            winnersListDiv.appendChild(list);
+
+            // Sort the data by net win amount in descending order
+            data.sort((a, b) => (b.rewardAmount - b.sypherAllocation) - (a.rewardAmount - a.sypherAllocation));
+
+            data.forEach((winner, index) => {
+                if (winner.playerAddress !== undefined) {
+                    const winnerElement = document.createElement("li");
+                    const truncatedAddress = `${winner.playerAddress.substring(0, 6)}...${winner.playerAddress.substring(winner.playerAddress.length - 4)}`;
+                    const netWinAmount = winner.rewardAmount - winner.sypherAllocation;
+                    let winnerContent;
+
+                    switch (index) {
+                        case 0:
+                            winnerContent = `${truncatedAddress} (${netWinAmount} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
+                            break;
+                        case 1:
+                            winnerContent = `${truncatedAddress} (${netWinAmount} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
+                            break;
+                        case 2:
+                            winnerContent = `${truncatedAddress} (${netWinAmount} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-award"></i></span>`;
+                            break;
+                        default:
+                            winnerContent = `${truncatedAddress} (${netWinAmount} SYPHER)`;
+                            break;
+                    }
+
+                    winnerElement.innerHTML = winnerContent;
+                    list.appendChild(winnerElement);
+                }
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching biggest winners from server:", error);
+        });
+    // #endregion Biggest Winners
 });
