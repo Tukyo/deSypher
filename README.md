@@ -4,9 +4,18 @@
 
 # deSypher: A DApp Where You Guess Words or Go Broke
 
+## TL;DR
+
 The goal of the game is to guess the correct word within 4 tries. You are only able to guess words that are on the word list, meaning you can never guess a word that could not be the correct word.
 
 To play deSypher, you need to hold $SYPHER tokens. These tokens will be used to grant you access to the puzzle, and you will be rewarded with $SYPHER if you win.
+
+## Info
+### Details
+[Website](https://desypher.net/) • [Telegram]() • [Whitepaper]()
+
+### Contracts
+[SYPHER](https://basescan.org/token/0x21b9d428eb20fa075a29d51813e57bab85406620) • [deSypher]() • [Game Manager]() • [MasterSypher]()
 
 ## Rules
 
@@ -21,3 +30,10 @@ If you fail to guess the correct word within 4 tries, the following happens with
 - **24%** is directed to liquidity pooling functionality.
 - **25%** enters the SYPHER CACHE.
 - **50%** remain in the rewards pool, effectively leaving circulation until another player wins.
+
+## Extras
+### Master Sypher
+The Master Sypher is the #1 player in the game. They receive 1% of all player losses while holding the MSPHR token.
+
+### Sypher Pals
+Coming soon!
