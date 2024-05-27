@@ -38,6 +38,7 @@ contract deSypher {
     event SypherCacheUpdated(uint256 newCacheAmount);
     event LiquidityPoolingUpdated(uint256 newLiquidityAmount);
     event TokensTransferredToTopPlayer(address indexed topPlayer, uint256 amount);
+    event MasterSypherAddressUpdated(address indexed newMasterSypherAddress);
 
     // Admin Events
     event Paused(bool isPaused);
@@ -86,6 +87,9 @@ contract deSypher {
     }
     function getTopPlayer(uint256 _tokenId) external view returns (address) {
         return masterSypher.getTopPlayer(_tokenId);
+    }
+    function isPaused() public view returns (bool) {
+        return paused;
     }
 
     // Admin Functions
@@ -149,6 +153,10 @@ contract deSypher {
     function updateSypherCache(uint256 newCacheAmount) external onlyOwner {
         gameManager.setSypherCache(newCacheAmount);
         emit SypherCacheUpdated(newCacheAmount);
+    }
+    function updateMasterSypher(address _newMasterSypherAddress) external onlyOwner {
+        masterSypher = IMasterSypher(_newMasterSypherAddress);
+        emit MasterSypherAddressUpdated(_newMasterSypherAddress);
     }
     function pause() external onlyOwner {
         paused = true;

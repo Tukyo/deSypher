@@ -35,7 +35,7 @@ const wordDefinitionButton = document.getElementById('word-definition-button');
 const definitionContainer = document.getElementById('word-definition-container');
 const wordDefinition = document.getElementById('word-definition');
 
-const version = '0.1.7';
+const version = '0.1.8';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {

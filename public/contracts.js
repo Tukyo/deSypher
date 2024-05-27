@@ -275,7 +275,7 @@ var gameManagerABI = [
   }
 ];
 // Game Manager Address
-var gameManagerAddress = '0x685752FeeB29E9b1480F106E41Ec6a98779eaE9d'; // GAME MANAGER CONTRACT
+var gameManagerAddress = '0xfb6a7C03Ff5DD3e42823D078B87b453F56D4cc34'; // GAME MANAGER CONTRACT
 
 // Game Contract ABI
 var gameContractABI = [
@@ -399,6 +399,19 @@ var gameContractABI = [
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newMasterSypherAddress",
+        "type": "address"
+      }
+    ],
+    "name": "MasterSypherAddressUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "bool",
         "name": "isPaused",
@@ -438,6 +451,25 @@ var gameContractABI = [
       }
     ],
     "name": "SypherCacheUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "topPlayer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "TokensTransferredToTopPlayer",
     "type": "event"
   },
   {
@@ -563,6 +595,19 @@ var gameContractABI = [
   },
   {
     "inputs": [],
+    "name": "isPaused",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "masterSypher",
     "outputs": [
       {
@@ -603,6 +648,19 @@ var gameContractABI = [
   {
     "inputs": [],
     "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newMasterSypherAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setMasterSypher",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -655,7 +713,7 @@ var gameContractABI = [
   }
 ];
 // Game Contract Address
-var gameContractAddress = '0x4884aE05271547dD5B39b590cF4f3c1Bb81f324F'; // GAME CONTRACT
+var gameContractAddress = '0x5208C0E8f1f65b35576630Abc1397Ad753dD820b'; // GAME CONTRACT
 
 // Token Contract ABI
 var tokenContractABI = [
@@ -1004,7 +1062,214 @@ var tokenContractABI = [
 var tokenContractAddress = '0x50590A8612F995b90533C04E60cE07340654E2C3'; // TOKEN CONTRACT
 
 var masterSypherABI = [
-  
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "AdminUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTopPlayer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tokenId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "topPlayer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "updateAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ]
 // Master Sypher Contract Address
 var masterSypherAddress = '0xA47372D7b49288d5b7a907cbfC58A80a0cE23433'; // MASTER SYPHER CONTRACT
@@ -1015,3 +1280,9 @@ var masterSypherAddress = '0xA47372D7b49288d5b7a907cbfC58A80a0cE23433'; // MASTE
 
 // Base Mainnet Token Address
 var baseMainnetTokenAddress = '0x21b9D428EB20FA075A29d51813E57BAb85406620'; // BASE MAINNET CONTRACT
+
+var baseMainnetGameManagerAddress = '';
+
+var baseMainnetGameContractAddress = '';
+
+var baseMainnetMasterSypherContractAddress = '';

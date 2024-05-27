@@ -8,3 +8,5 @@ updateWordList.js
 five-letter-test.txt
 config.json
 _word-list.json
+checkSessions.js
+updateHardWordList.js

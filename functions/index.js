@@ -36,8 +36,8 @@ const rateLimiter = rateLimit({
 });
 
 const recaptchaLimiter = rateLimit({
-  windowMs: 10 * 1000,
-  max: 1,
+  windowMs: 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {
@@ -138,7 +138,7 @@ app.post('/game', rateLimiter, async (req, res) => {
     }
   } else {
     console.log(`Starting new game for player: ${playerAddress}`);
-    correctWord = await chooseWord();  // Select a new word for the game
+    correctWord = await chooseWord(playerAddress);  // Select a new word for the game
 
     session = {
       result: [],
@@ -274,13 +274,23 @@ async function handleTransactionConfirmation(txHash) {
 }
 
 // Function to grab a random word from the word list
-async function chooseWord() {
+async function chooseWord(playerAddress) {
+  // Retrieve the Master Sypher player address from the database
+  const masterSypherDoc = await database.collection('masterSypher').doc('masterSypher').get();
+  const masterSypherAddress = masterSypherDoc.data().playerAddress;
+
+  console.log("Current Master Sypher:", masterSypherAddress)
+
+  // Retrieve the total count of words from the config document
   let configDoc = await database.collection('config').doc('wordConfig').get();
   let count = configDoc.data().count;
 
-  let randomIndex = Math.floor(Math.random() * count);
-
-  let wordDoc = (await database.collection('words').where('index', '==', randomIndex).get()).docs[0];
+  let wordDoc;
+  do {
+    // Select a random index for the word
+    let randomIndex = Math.floor(Math.random() * count);
+    wordDoc = (await database.collection('words').where('index', '==', randomIndex).get()).docs[0];
+  } while (playerAddress === masterSypherAddress && wordDoc.data().difficulty < 3);
 
   return wordDoc.id;
 }
@@ -422,7 +432,7 @@ app.post('/verify_recaptcha', recaptchaLimiter, express.json(), async (req, res)
 // #endregion reCAPTCHA Verification
 
 // #region Popular Words
-app.get('/popular-words', async (req, res) => {
+app.get('/popular-words', rateLimiter, async (req, res) => {
   try {
     const wordsSnapshot = await database.collection('words')
       .orderBy('timesGuessed', 'desc')
@@ -443,17 +453,37 @@ app.get('/popular-words', async (req, res) => {
 // #endregion Popular Words
 
 // #region Top Players
-app.get('/top-players', async (req, res) => {
+app.get('/top-players', rateLimiter, async (req, res) => {
   try {
     const snapshot = await admin.firestore().collection('players')
       .orderBy('netWins', 'desc')
       .limit(5)
       .get();
 
-    const topPlayers = snapshot.docs.map(doc => ({
+    let topPlayers = snapshot.docs.map(doc => ({
       address: doc.id,
       netWins: doc.data().netWins
     }));
+
+    // Check for the presence of ties
+    const highestNetWins = topPlayers[0].netWins;
+    const tiedPlayers = topPlayers.filter(player => player.netWins === highestNetWins);
+
+    if (tiedPlayers.length > 1) {
+      const masterSypherDoc = await admin.firestore().collection('masterSypher').doc('masterSypher').get();
+      const masterAddress = masterSypherDoc.data()?.playerAddress;
+
+      if (masterAddress) {
+        // Prioritize masterAddress in case of a tie
+        topPlayers = topPlayers.sort((a, b) => {
+          if (a.netWins === b.netWins) {
+            if (a.address === masterAddress) return -1;
+            if (b.address === masterAddress) return 1;
+          }
+          return 0; // Keep existing order if no tie or no masterAddress match
+        });
+      }
+    }
 
     res.json(topPlayers);
   } catch (error) {
@@ -461,6 +491,8 @@ app.get('/top-players', async (req, res) => {
     res.status(500).send("Error fetching top players");
   }
 });
+
+
 // #endregion Top Players
 
 // #region Biggest Winners
@@ -510,21 +542,23 @@ exports.updatePlayerWins = functions.firestore.document('sessions/{sessionId}').
 
     const masterSypherDoc = await admin.firestore().collection('masterSypher').doc('masterSypher').get();
     const currentTopPlayer = masterSypherDoc.exists ? masterSypherDoc.data().playerAddress : null;
+    const currentTopPlayerNetWins = masterSypherDoc.exists ? masterSypherDoc.data().netWins : null;
 
-    if (!masterSypherDoc.exists || playerAddress === masterSypherDoc.data().playerAddress) {
+    console.log("Current top player: " + currentTopPlayer)
+
+    if (!masterSypherDoc.exists || _netWins > currentTopPlayerNetWins) {
       await masterSypherDoc.ref.set({
         playerAddress: playerAddress,
         netWins: _netWins
       });
       console.log("Updated masterSypher with new top player address: " + playerAddress);
+    }
 
-      if (currentTopPlayer !== playerAddress) {
-        await transferMasterSypherToken(currentTopPlayer, playerAddress);
-      }
+    if (currentTopPlayer !== playerAddress && _netWins > currentTopPlayerNetWins) {
+      await transferMasterSypherToken(currentTopPlayer, playerAddress);
     }
   }
 });
-
 async function transferMasterSypherToken(currentTopPlayer, newTopPlayer) {
   try {
     const transaction = await masterSypherContract.transferFrom(currentTopPlayer, newTopPlayer, 1);
@@ -535,7 +569,6 @@ async function transferMasterSypherToken(currentTopPlayer, newTopPlayer) {
     console.error("Failed to transfer MasterSypher token:", error);
   }
 }
-
 
 // #region Faucet Section
 app.post('/distribute-tokens', rateLimiter, async (req, res) => {

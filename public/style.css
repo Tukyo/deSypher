@@ -96,7 +96,7 @@ body {
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
 }
-.game-logo, #mobile-game-logo {
+.game-logo, #mobile-game-logo, .master-sypher-logo {
     max-width: 80%;
     height: auto;
     margin-bottom: 50px;
@@ -106,6 +106,9 @@ body {
 .game-logo {
     animation: fadeInFont 1.5s;
     animation-timing-function: ease-in;
+}
+.master-sypher-logo {
+    display: none;
 }
 .mobile-game-logo-container {
     opacity: 0%;
@@ -451,15 +454,17 @@ body {
     max-width: 50px;
     width: 100%;
 }
-#allocation-submit {
-    background: black;
+#allocation-submit, #allocation-cancel {
+    background: black;;
     color: var(--font-color);
     border: 2px solid var(--desypher-green-main);
     border-radius: 5px;
-    padding: 5px 10px;
+    padding: 2px 5px;
+    font-size: 12px;
     cursor: pointer;
+    margin: 2px;
 }
-#allocation-submit:hover {
+#allocation-submit:hover, #allocation-cancel:hover {
     background: var(--desypher-green-main);
     box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
     color: var(--font-color);
@@ -1399,6 +1404,17 @@ body {
         text-shadow:  0 0 5px var(--glow-green-main), 0 0 10px var(--glow-green-secondary);
     }
 }
+.top-player-container {
+    position: relative;
+}
+
+#master-sypher-leaderboard-icon {
+    position: absolute;
+    width: 5%;
+    right: 1%;
+    top: 50%;
+    transform: translateY(-50%);
+}
 /* #endregion Leaderboard Section */
 
 /* #region Airdrop Page */
@@ -1479,6 +1495,7 @@ body {
 #ver-0-1-5 { animation-delay: 1.5s; }
 #ver-0-1-6 { animation-delay: 1.75s; }
 #ver-0-1-7 { animation-delay: 2s; }
+#ver-0-1-8 { animation-delay: 2.25s; }
 /* #endregion Changelog Page */
 
 /* #region Footer Section */
@@ -2131,6 +2148,10 @@ body {
     .token-price-container {
         font-size: 12px;
         right: 10px;
+    }
+    .sypher-allocation-container {
+        max-width: 250px;
+        margin-top: 10px;
     }
 }
 /* #endregion Responsive Design */

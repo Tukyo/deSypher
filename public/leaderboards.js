@@ -56,10 +56,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 const playerElement = document.createElement("li");
                 const truncatedAddress = `${player.address.substring(0, 6)}...${player.address.substring(player.address.length - 4)}`;
                 let playerContent;
-
+            
                 switch (index) {
                     case 0:
                         playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
+                        playerElement.classList.add("top-player-container");
+            
+                        const img = document.createElement("img");
+                        img.src = "assets/mastersypher_square.webp"; 
+                        img.id = "master-sypher-leaderboard-icon";
+                        playerElement.appendChild(img);
+            
                         break;
                     case 1:
                         playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
@@ -71,15 +78,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         playerContent = `${truncatedAddress} (net wins: ${player.netWins})`;
                         break;
                 }
-
-                playerElement.innerHTML = playerContent;
+            
+                playerElement.innerHTML += playerContent; // Append playerContent to the existing innerHTML
                 list.appendChild(playerElement);
             });
         })
         .catch(error => {
             console.error("Error fetching top players from server:", error);
         });
-    // #endregion Top Players 
+    // #endregion Top Players
 
     // #region Biggest WInners
     fetch('/biggest-winners')

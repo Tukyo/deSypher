@@ -29,7 +29,7 @@
         "- Profectio Airdrop: 5,000 => 10,000",
         "- Sypher Cache: 1,000 => 0.00",
         "> Fixed a bug causing the keyboard helper to not reflect all guess results when loading prior game",
-        "> Updated box color values to return root color values to allow for accesibility for color blind options (accesibility options not available yet...)",
+        "> Updated box color values to return root color values to allow for accessibility for color blind options (accessibility options not available yet...)",
         "> Preview image added for socials when sharing web link externally",
         "> Page indexing setup for google search results to populate",
         "> Faucet added to website",
@@ -124,9 +124,28 @@
         ">> Bug Fixes",
         "> Added canonical tag to all pages",
         "> Improved SEO with more distinct Title Tag",
-        "> Added h1 tag to title of game for search enginges",
+        "> Added h1 tag to title of game for search engines",
         "> Reload buffer improvements",
         "> Schema implementation for optimization",
         "> Fixed an issue with game sounds local storage not setting bool correctly"
+    ],
+    "0-1-8": [
+        ">> Updates & Changes",
+        "> Cancel button added to allocation page + enter button now submits allocation",
+        "> UI Updates for MasterSypher",
+        "- Game logo changed for the master sypher when logged in",
+        "- MasterSypher logo next to top player on leaderboard",
+        "- Top player always the mastersypher when tied",
+        "> MasterSypher now receives harder words",
+        ">> Bug Fixes",
+        "> Extensive testing done to all systems & mainnet deploy checklist created",
+        "- https://trello.com/c/kOZOxsTn",
+        "> RateLimiter settings adjusted and error messages displayed on frontend",
+        "- Ratelimiter added to more endpoints",
+        "> Clicking outside of settings menu closes the menu - mobile tap also",
+        "> Updates to GameManager & Game solidity contracts",
+        "- Get more data publicly, emit events for all actions",
+        "> Changed minimum SYPHER to play from 10 > 1",
+        "> Display error message if attempting to start game when contract is paused"
     ]
 }

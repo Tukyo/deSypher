@@ -6,7 +6,7 @@
 /artifacts
 /assets/logo(old).png
 /public/airdrop.js
-airdrop-list.json
+.obsolete
 hardhat.config.js
 serviceAccountKey.json
 *five-letter-words.txt
@@ -20,3 +20,5 @@ public/dev.js
 public/endpoints.json
 public/template.html
 public/sypherpals.js
+.vscode
+/contractsignore

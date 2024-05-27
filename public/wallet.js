@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/tbG9Ls0pfxJL1IGYyoi-eB0AMcgbjc-k');
 
   const gameLogo = document.getElementById('game-logo');
+  const masterSypherLogo = document.getElementById('master-sypher-logo')
   const mobileGameLogo = document.getElementById('mobile-game-logo');
   const connectButton = document.getElementById('connect-button');
   const claimRewardsButton = document.getElementById('claim-rewards-button');
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const walletDetailsSection = document.getElementById('wallet-details-section');
   const walletConnectionSection = document.getElementById('wallet-connection-section');
   const connectButtonText = document.getElementById('connect-button-text');
-  const minimumBalance = 10; // Cost to play the game
+  const minimumBalance = 1; // Cost to play the game
 
   const faucetButton = document.getElementById('faucet-container');
 
@@ -262,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (balance < minimumBalance) {
           event.preventDefault();
           if (button === playButton) {
-            document.dispatchEvent(new CustomEvent('appError', { detail: `${minimumBalance} SYPHER tokens required!` }));
+            document.dispatchEvent(new CustomEvent('appError', { detail: `${minimumBalance} SYPHER token required to play!` }));
           }
           console.log("Insufficient balance");
           return;
@@ -286,7 +287,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // #region Game Start Processing
   window.startGame = async function (useExistingTransaction = false, existingTransactionHash = null) {
     const allocationContainer = document.querySelector('.sypher-allocation-container');
-    const submitButton = document.getElementById('allocation-submit');
+    const allocationSubmitButton = document.getElementById('allocation-submit');
+    const allocationCancelButton = document.getElementById('allocation-cancel');
     const sypherAllocationInput = document.getElementById('sypher-allocation-input');
 
     allocationContainer.style.display = 'block';
@@ -296,8 +298,15 @@ document.addEventListener('DOMContentLoaded', function () {
     hideLoadButton();
     hideFaucetButton();
 
+    sypherAllocationInput.addEventListener('keyup', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        allocationSubmitButton.click();
+      }
+    });
+
     return new Promise((resolve, reject) => {
-      submitButton.onclick = async () => {
+      allocationSubmitButton.onclick = async () => {
 
         sypherAllocation = sypherAllocationInput.value || '0';  // Default to 0 if no input
         const sypherAllocationWei = ethers.utils.parseUnits(sypherAllocation, 'ether');
@@ -375,12 +384,17 @@ document.addEventListener('DOMContentLoaded', function () {
             hintBox(true, 'Use the boxes below to input your guess!');
           }
           resolve();
-        } catch (error) { // This catch is now correctly positioned to handle errors from any part of the function
+        } catch (error) { // This catch handles errors from any part of the function
           console.error("Failed to start the game on the blockchain:", error);
           window.location.reload();
           reject(error);
         }
       };
+
+      allocationCancelButton.onclick = () => {
+        reject('Game start cancelled by user');
+        window.location.reload();
+      }
     });
   }
   function resetGameInputs() {
@@ -388,6 +402,11 @@ document.addEventListener('DOMContentLoaded', function () {
     inputs.forEach(input => {
       input.value = ''; // Clear each input
     });
+  }
+  async function checkIfGamePaused() {
+    const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+    const isGamePaused = await gameContract.isPaused();
+    return isGamePaused;
   }
   // #endregion Game Start Processing
 
@@ -491,6 +510,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   // #endregion On Page Load Events for Connectivity/Network Checks
 
+
   // #region Wallet Balance Section
   // Function to check the wallet balance
   async function checkTokenBalance() {
@@ -522,6 +542,18 @@ document.addEventListener('DOMContentLoaded', function () {
       const adjustedBalance = ethers.utils.formatUnits(balance, decimals);
       console.log(`Signer address retrieved. Current Sypher balance: ${adjustedBalance}`);
 
+      // Master Sypher Logic
+      const masterSypherContract = new ethers.Contract(masterSypherAddress, masterSypherABI, signer);
+      const topPlayerAddress = await masterSypherContract.getTopPlayer(1);
+      const signerAddress = await signer.getAddress();
+      if (topPlayerAddress === signerAddress) {
+        console.log("Connected user is the Master Sypher.");
+        masterSypherUI();
+
+      } else {
+        console.log("Connected user is not the Master Sypher.");
+      }
+
       if (!reCaptchaInitialized) {
         reCaptchaInitialization();
       }
@@ -537,6 +569,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const formattedBalance = parseFloat(balance).toFixed(1); // Formatting for display
     document.getElementById('token-balance').textContent = formattedBalance; // Update UI
     console.log(`Wallet balance updated: ${formattedBalance}`);
+  }
+  function masterSypherUI() {
+    gameLogo.style.display = 'none';
+    masterSypherLogo.style.display = 'block';
   }
   // Update the displayed wallet balance LIVE when a token transfer event is detected
   async function setupTokenEventListener() {
@@ -896,6 +932,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // #region reCAPTCHA Section
   window.onSubmitPlay = async function (token) {
+    const isPaused = await checkIfGamePaused();
+    if (isPaused) {
+      console.log("Game is paused");
+      document.dispatchEvent(new CustomEvent('appError', { detail: "Game is currently paused. Please try again later." }));
+      return;
+    }
     document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "reCaptcha Verification in Progress..." }));
     console.log("reCAPTCHA token generated:", token);
     try {
@@ -930,13 +972,21 @@ document.addEventListener('DOMContentLoaded', function () {
         await startGame(); // Proceed to start the game if allowance is sufficient or after successful approval
       } else {
         console.log("reCAPTCHA verification failed");
+        document.dispatchEvent(new CustomEvent('appError', { detail: "reCAPTCHA verification failed - Please refresh the page." }))
       }
     } catch (error) {
       console.error("Error during reCAPTCHA verification:", error);
+      document.dispatchEvent(new CustomEvent('appError', { detail: error.message }));
     }
     document.dispatchEvent(new Event('hideSystemMessage'));
   }
   window.onSubmitLoad = async function (token) {
+    const isPaused = await checkIfGamePaused();
+    if (isPaused) {
+      console.log("Game is paused");
+      document.dispatchEvent(new CustomEvent('appError', { detail: "Game is currently paused. Please try again later." }));
+      return;
+    }
     document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "reCaptcha Verification in Progress..." }));
     console.log("reCAPTCHA token generated:", token);
     try {
@@ -961,6 +1011,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     } catch (error) {
       console.error("Error during reCAPTCHA verification:", error);
+      document.dispatchEvent(new CustomEvent('appError', { detail: error.message }));
     }
     document.dispatchEvent(new Event('hideSystemMessage'));
   }

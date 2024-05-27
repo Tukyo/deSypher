@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 if (settingsButton) {
     settingsButton.addEventListener('click', () => {
+        event.stopPropagation();
         settingsMenu();
     });
 } else {
@@ -66,13 +67,35 @@ function settingsMenu() {
         settingsMenuContainer.style.display = "none";
         settingsOpen = false;
         saveSettings();
+        // Remove the click listener when the settings menu is closed
+        removeClickListener();
     } else {
         settingsMenuContainer.style.display = "block";
         settingsMenuContainer.style.animation = "fadeIn 0.5s forwards";
         settingsOpen = true;
         initializeSliderHandleColor();
+        // Add the click listener when the settings menu is opened
+        addClickListener();
     }
 }
+
+function addClickListener() {
+    document.addEventListener('click', listenForClicks);
+}
+
+function removeClickListener() {
+    document.removeEventListener('click', listenForClicks);
+}
+
+function listenForClicks(event) {
+    const isClickInside = settingsMenuContainer.contains(event.target);
+
+    if (!isClickInside) {
+        // The click was outside the settingsMenuContainer, close the menu
+        settingsMenu();
+    }
+}
+
 
 function loadSettings() {
     const colorVariables = [
@@ -425,7 +448,7 @@ function openStatusColorPickerContainer(buttonId) {
     lastButtonId = buttonId; // Remember which button was pressed
     statusColorPickerContainer.style.display = 'block';  // Make it visible
 }
-statusColorPickerContainer.addEventListener('click', function(event) {
+statusColorPickerContainer.addEventListener('click', function (event) {
     if (event.target.className === 'status-color-picker-button') {
         const color = getComputedStyle(event.target).backgroundColor;  // Get the background color of the clicked button
         if (['correct', 'incorrect', 'misplaced'].includes(lastButtonId)) {
