@@ -12,7 +12,7 @@ To play deSypher, you need to hold $SYPHER tokens. These tokens will be used to 
 
 ## Info
 ### Details
-[Website](https://desypher.net/) • [Telegram]() • [Whitepaper]()
+[Website](https://desypher.net/) • [Telegram](https://t.me/tukyogames) • [Whitepaper](https://desypher.net/whitepaper.html)
 
 ### Contracts
 [SYPHER](https://basescan.org/token/0x21b9d428eb20fa075a29d51813e57bab85406620) • [deSypher]() • [Game Manager]() • [MasterSypher]()
@@ -34,6 +34,9 @@ If you fail to guess the correct word within 4 tries, the following happens with
 ## Extras
 ### Master Sypher
 The Master Sypher is the #1 player in the game. They receive 1% of all player losses while holding the MSPHR token.
+
+### Sypher Telegram Bot
+Currently in development!
 
 ### Sypher Pals
 Coming soon!
