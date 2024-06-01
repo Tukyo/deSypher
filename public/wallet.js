@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 1500);
   }
 
-
   const mainnetProvider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/tbG9Ls0pfxJL1IGYyoi-eB0AMcgbjc-k');
 
   const gameLogo = document.getElementById('game-logo');
@@ -38,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const submitLoadButton = document.getElementById('submit-load-button');
   const cancelButton = document.getElementById('cancel-button');
   const retrieveTransaction = document.getElementById('retrieve-transaction');
+  const sessionsContainer = document.getElementById('sessions-container');
   const loadingBar = document.querySelector('.loading-bar');
   const keyboardButton = document.getElementById('keyboard-button');
   const keyboardHelper = document.getElementById('keyboard-helper');
@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
     correctChain: { size: '175px', alignment: 'right' },
   };
 
-  const REQUIRED_CHAIN_ID = 11155111; // Replace with 8453 "Base Mainnet"
+  const SEPOLIA_TESTNET = 11155111;
+  const BASE_MAINNET = 8453;
 
   let reCaptchaInitialized = false;
   let keyboardHelperVisible = false;
@@ -124,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const network = await provider.getNetwork();
     const chainId = network.chainId;
 
-    if (accounts.length !== 0 && chainId === REQUIRED_CHAIN_ID) {
+    if (accounts.length !== 0 && chainId === SEPOLIA_TESTNET) {
       // Wallet is already connected
       console.log("Wallet is already connected.");
 
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const chainId = network.chainId;
         console.log("Connected to chain ID:", chainId);
 
-        const REQUIRED_CHAIN_HEX = '0x' + (REQUIRED_CHAIN_ID).toString(16);
+        const REQUIRED_CHAIN_HEX = '0x' + (SEPOLIA_TESTNET).toString(16);
 
         if (chainId !== REQUIRED_CHAIN_HEX) {
           try {
@@ -251,13 +252,13 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("No wallet connected");
         return;
       }
-      if (chainId !== REQUIRED_CHAIN_ID) {
+      if (chainId !== SEPOLIA_TESTNET) {
         event.preventDefault();
         document.dispatchEvent(new CustomEvent('appError', { detail: `Please connect to Base Mainnet!` }));
         console.log("Wrong chain");
         return;
       }
-      if (chainId === REQUIRED_CHAIN_ID) {
+      if (chainId === SEPOLIA_TESTNET) {
         const balance = await checkTokenBalance();
 
         if (balance < minimumBalance) {
@@ -481,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const network = await provider.getNetwork();
       const chainId = network.chainId;
       const accounts = await provider.listAccounts();
-      if (chainId == REQUIRED_CHAIN_ID && accounts.length > 0) {
+      if (chainId == SEPOLIA_TESTNET && accounts.length > 0) {
         console.log("Connected to base mainnet. Updating button with wallet address.")
         updateButtonWithAddress(accounts[0]); // Update the button if an account is already connected
         updateButtonWithLogo(); // Update the button with the logo
@@ -489,9 +490,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         walletDetailsSection.style.display = 'none'; // Hide the token balance section if no wallet is connected
       }
-      if (chainId !== REQUIRED_CHAIN_ID) {
+      if (chainId !== SEPOLIA_TESTNET) {
         UpdateButtonWithIncorrectChainMessage();
-        console.error(`Please connect to the ${REQUIRED_CHAIN_ID} network`);
+        console.error(`Please connect to the ${SEPOLIA_TESTNET} network`);
         updateWalletConnectionSectionStyle('incorrectChain');
       } else {
         updateWalletConnectionSectionStyle('correctChain');
@@ -510,7 +511,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   // #endregion On Page Load Events for Connectivity/Network Checks
 
-
   // #region Wallet Balance Section
   // Function to check the wallet balance
   async function checkTokenBalance() {
@@ -521,8 +521,8 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       // Check the network
       const network = await provider.getNetwork();
-      if (network.chainId !== REQUIRED_CHAIN_ID) {
-        console.error(`Wrong network connected. Please connect to network with chain ID ${REQUIRED_CHAIN_ID}.`);
+      if (network.chainId !== SEPOLIA_TESTNET) {
+        console.error(`Wrong network connected. Please connect to network with chain ID ${SEPOLIA_TESTNET}.`);
         return;
       }
 
@@ -771,6 +771,8 @@ document.addEventListener('DOMContentLoaded', function () {
     hideLoadButton();
     hideFaucetButton();
 
+    fetchSessions();
+
     // Show the input field for the transaction hash
     retrieveTransaction.style.display = 'block';
     retrieveTransaction.style.animation = 'foldOut .25s forwards';
@@ -782,7 +784,78 @@ document.addEventListener('DOMContentLoaded', function () {
     submitLoadButton.style.display = 'block';
     submitLoadButton.style.animation = 'transitionRight .25s forwards';
     submitLoadButton.style.animationDelay = '.75s';
+
+    sessionsContainer.style.display = 'block';
+    sessionsContainer.style.animation = 'fadeIn .25s forwards';
+    sessionsContainer.style.animationDelay = '1s';
   }
+  async function fetchSessions() {
+    // Ensure provider is set up (assuming `provider` has been instantiated elsewhere)
+    if (!window.ethereum) {
+      console.log("Ethereum provider is not available");
+      document.dispatchEvent(new CustomEvent('appError', { detail: "No Ethereum provider detected!" }));
+      return;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    playerAddress = await signer.getAddress();
+
+    console.log("Fetching sessions for address:", playerAddress);
+    try {
+      const response = await fetch('/fetch-sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playerAddress: playerAddress })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch sessions');
+      }
+      const sessions = await response.json();
+      console.log("Sessions found:", sessions);
+
+      // Populate the session-list div with the retrieved sessions
+      const sessionListDiv = document.getElementById('session-list');
+      sessionListDiv.innerHTML = ''; // Clear the div
+      sessions.forEach(session => {
+          const sessionElement = document.createElement('div');
+          sessionElement.style.padding = '10px';
+          sessionElement.style.border = '1px solid black';
+  
+          // Create a div for the session address and copy icon
+          const sessionDiv = document.createElement('div');
+          sessionDiv.style.cursor = 'pointer';
+          sessionDiv.addEventListener('click', () => {
+              navigator.clipboard.writeText(session);
+              document.dispatchEvent(new CustomEvent('appError', { detail: "Session copied to clipboard!" }));
+          });
+  
+          // Create a span for the session address and apply the "link" class
+          const sessionAddress = document.createElement('span');
+          sessionAddress.textContent = session.substring(0, 6) + '...' + session.substring(session.length - 4);
+          sessionAddress.className = 'link';
+          sessionDiv.appendChild(sessionAddress);
+  
+          // Add a space between the address and the copy icon
+          sessionDiv.appendChild(document.createTextNode(' '));
+  
+          // Add a copy icon to the session div and apply the "link" class
+          const copyIcon = document.createElement('i');
+          copyIcon.className = 'fa-solid fa-copy link';
+          sessionDiv.appendChild(copyIcon);
+  
+          sessionElement.appendChild(sessionDiv);
+          sessionListDiv.appendChild(sessionElement);
+      });
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+      document.dispatchEvent(new CustomEvent('appError', { detail: "Failed to retrieve sessions!" }));
+    }
+  }
+
+
   retrieveTransaction.addEventListener('keypress', async function (event) {
     if (event.key === 'Enter') {
       event.preventDefault();

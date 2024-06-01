@@ -147,5 +147,17 @@
         "- Get more data publicly, emit events for all actions",
         "> Changed minimum SYPHER to play from 10 > 1",
         "> Display error message if attempting to start game when contract is paused"
+    ],
+    "0-1-9": [
+        ">> Updates & Changes",
+        "> Incomplete sessions now displayed when loading",
+        "> Updated How to Play section with mastersypher details",
+        "> Changed sypher cache reward to be + the original sypherAllocation",
+        "- This way you don't lose SYPHER if you win on one try, but the cache is smaller than your allocation",
+        ">> Bug Fixes",
+        "> Optimized loading for top players using an index vs loop",
+        "> Fixed an issue with master sypher logo appearing when no wallet connected",
+        "> Fixed an issue with leaderboards not calculating netWinAmount correctly for biggest winners",
+        "> Completed stress testing"
     ]
 }

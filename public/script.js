@@ -14,7 +14,6 @@ window.addEventListener("gameStart", function () {
 window.addEventListener("gameComplete", function () {
     window.gameActive = false;
     console.log("Game completed...");
-    // updateTopPlayers();
 });
 
 let gameOver = false;
@@ -28,6 +27,8 @@ const submitButton = document.getElementById('submitButton');
 const submitLoadButton = document.getElementById('submit-load-button');
 const cancelButton = document.getElementById('cancel-button');
 const retrieveTransaction = document.getElementById('retrieve-transaction');
+const sessionsContainer = document.getElementById('sessions-container');
+
 const versionNumber = document.getElementById('version-number');
 
 const correctAnswerBox = document.getElementById('correct-answer');
@@ -35,7 +36,7 @@ const wordDefinitionButton = document.getElementById('word-definition-button');
 const definitionContainer = document.getElementById('word-definition-container');
 const wordDefinition = document.getElementById('word-definition');
 
-const version = '0.1.8';
+const version = '0.1.9';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -43,8 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateVersionNumber();
 });
-
-const REQUIRED_CHAIN_ID = 8453; // Base L2
 
 const songs = [
     'tukyo-deSypher.ogg', 'vaang-caliente.ogg', '333amethyst-mantis(P.2).ogg', 'web4-happyhappyjoyjoy.ogg'
@@ -1007,6 +1006,12 @@ function resetUIElements() {
     retrieveTransaction.style.animationDelay = '.1s';
     retrieveTransaction.addEventListener('animationend', () => setDisplayNone(retrieveTransaction));
 
+    sessionsContainer.style.opacity = '1';
+    sessionsContainer.style.display = 'block';
+    sessionsContainer.style.animation = 'fadeOut .1s forwards';
+    sessionsContainer.style.animationDelay = '.15s';
+    sessionsContainer.addEventListener('animationend', () => setDisplayNone(sessionsContainer));
+
     console.log("Session recovery form elements removed...");
 }
 function setDisplayNone(element) {
@@ -1068,19 +1073,3 @@ function restoreKeyboardHelper(allGuesses) {
     }
 }
 // #endregion Load Game Logic
-
-// #region Top Players Logic
-async function updateTopPlayers() {
-    console.log("Updating top players list...");
-    try {
-        const response = await fetch('/top-players');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Top players data received:", data);
-    } catch (error) {
-        console.error("Failed to fetch top players:", error);
-    }
-}
-// #endregion Top Players Logic

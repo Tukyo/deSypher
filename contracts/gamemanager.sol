@@ -94,7 +94,7 @@ contract GameManager {
     }
 
     // Owner Functions
-    function WithdrawTokens(address to, uint256 amount) external onlyOwner {
+    function withdrawTokens(address to, uint256 amount) external onlyOwner {
         require(sypherToken.transfer(to, amount), "Transfer failed");
         emit AdminTokenWithdraw(to, amount);
     }

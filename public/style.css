@@ -96,7 +96,7 @@ body {
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
 }
-.game-logo, #mobile-game-logo, .master-sypher-logo {
+.game-logo, #mobile-game-logo, #master-sypher-logo {
     max-width: 80%;
     height: auto;
     margin-bottom: 50px;
@@ -107,8 +107,10 @@ body {
     animation: fadeInFont 1.5s;
     animation-timing-function: ease-in;
 }
-.master-sypher-logo {
+#master-sypher-logo {
     display: none;
+    animation: fadeInFont 1.5s;
+    animation-timing-function: ease-in;
 }
 .mobile-game-logo-container {
     opacity: 0%;
@@ -569,6 +571,26 @@ body {
     background-color: black;
     border-color: var(--desypher-green-main);
     border-radius: 5px;
+}
+#sessions-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0%;
+    background: black;
+    max-width: 650px;
+    width: 90%;
+    border: 2px solid var(--desypher-green-main);
+    border-radius: 10px;
+    align-self: center;
+}
+#session-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    text-align: center;
 }
 /* #endregion Game Buttons */
 
@@ -1496,6 +1518,7 @@ body {
 #ver-0-1-6 { animation-delay: 1.75s; }
 #ver-0-1-7 { animation-delay: 2s; }
 #ver-0-1-8 { animation-delay: 2.25s; }
+#ver-0-1-9 { animation-delay: 2.5s; }
 /* #endregion Changelog Page */
 
 /* #region Footer Section */
@@ -2132,7 +2155,7 @@ body {
     .mobile-game-logo-container {
         display: flex;
     }
-    #game-logo {
+    #game-logo, #master-sypher-logo {
         display: none;
     }
     #mobile-game-logo {

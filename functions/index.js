@@ -205,7 +205,7 @@ app.post('/game', rateLimiter, async (req, res) => {
         {
           const sypherCache = await gameManagerContract.getSypherCache();
           if (sypherCache > 0) {
-            rewardAmount = sypherCache;
+            rewardAmount = sypherAllocation + sypherCache;
           } else {
             rewardAmount = sypherAllocation + ethers.parseUnits("1", 18);
           }
@@ -324,6 +324,37 @@ function checkWord(inputWord, correctWord) {
   return result;
 }
 
+// #endregion Word Game Main Logic
+
+// #region Load Game
+app.post('/fetch-sessions', rateLimiter, async (req, res) => {
+  const { playerAddress } = req.body;
+  console.log("Server received request to fetch sessions for address:", playerAddress);
+
+  try {
+    const sessionsQuery = await database.collection('sessions')
+      .where('playerAddress', '==', playerAddress)
+      .where('gameOver', '==', false)
+      .get();
+
+    if (sessionsQuery.empty) {
+      console.log("No sessions found for address:", playerAddress);
+      res.status(404).send('No sessions found');
+      return;
+    }
+
+    const sessions = [];
+    sessionsQuery.forEach(doc => {
+      sessions.push(doc.id);
+    });
+
+    console.log("Sessions retrieved for address:", playerAddress, sessions);
+    res.json(sessions);
+  } catch (error) {
+    console.error("Failed to fetch sessions:", error);
+    res.status(500).send('Error retrieving sessions');
+  }
+});
 app.post('/verify-session', rateLimiter, async (req, res) => {
   const { transactionHash, signature } = req.body;
 
@@ -395,7 +426,7 @@ app.get('/verify-playgame/:txHash', async (req, res) => {
     res.status(500).send({ error: 'Failed to verify transaction' });
   }
 });
-// #endregion Word Game Main Logic
+// #endregion Load Game
 
 // #region reCAPTCHA Verification
 app.post('/verify_recaptcha', recaptchaLimiter, express.json(), async (req, res) => {
@@ -499,18 +530,37 @@ app.get('/top-players', rateLimiter, async (req, res) => {
 app.get('/biggest-winners', async (req, res) => {
   try {
     const sessionsSnapshot = await database.collection('sessions').get();
+    const winnersMap = new Map();
 
-    const biggestWinners = sessionsSnapshot.docs
-      .map(doc => doc.data())
-      .filter(session => session.sypherAllocation !== undefined && session.rewardAmount !== undefined)
-      .map(session => {
-        return {
-          playerAddress: session.playerAddress,
-          sypherAllocation: session.sypherAllocation,
-          rewardAmount: session.rewardAmount
-        };
-      });
+    sessionsSnapshot.docs.forEach(doc => {
+      const session = doc.data();
+      // Check if the game is over and both values are defined
+      if (session.gameOver && session.sypherAllocation !== undefined && session.rewardAmount !== undefined) {
+        const sypherAllocation = parseFloat(session.sypherAllocation);
+        const rewardAmount = parseFloat(session.rewardAmount);
 
+        // Skip the session if parsing failed
+        if (isNaN(sypherAllocation) || isNaN(rewardAmount)) {
+          console.error(`Invalid or corrupted data for player ${session.playerAddress}: sypherAllocation = ${session.sypherAllocation}, rewardAmount = ${session.rewardAmount}`);
+          return;
+        }
+
+        const netWinAmount = rewardAmount - sypherAllocation;
+        const existingEntry = winnersMap.get(session.playerAddress);
+        if (existingEntry) {
+          winnersMap.set(session.playerAddress, existingEntry + netWinAmount);
+        } else {
+          winnersMap.set(session.playerAddress, netWinAmount);
+        }
+      }
+    });
+
+    const biggestWinners = Array.from(winnersMap).map(([playerAddress, totalNetWin]) => ({
+      playerAddress,
+      totalNetWin
+    }));
+
+    biggestWinners.sort((a, b) => b.totalNetWin - a.totalNetWin);
     res.json(biggestWinners);
   } catch (error) {
     console.error(`Failed to get biggest winners: ${error}`);
