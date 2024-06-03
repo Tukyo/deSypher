@@ -159,5 +159,8 @@
         "> Fixed an issue with master sypher logo appearing when no wallet connected",
         "> Fixed an issue with leaderboards not calculating netWinAmount correctly for biggest winners",
         "> Completed stress testing"
+    ],
+    "1-0-0": [
+        "Mainnet Released"
     ]
 }

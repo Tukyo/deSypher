@@ -20,5 +20,6 @@ public/dev.js
 public/endpoints.json
 public/template.html
 public/sypherpals.js
+public/analytics.js
 .vscode
 /contractsignore

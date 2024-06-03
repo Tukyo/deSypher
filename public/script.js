@@ -36,7 +36,7 @@ const wordDefinitionButton = document.getElementById('word-definition-button');
 const definitionContainer = document.getElementById('word-definition-container');
 const wordDefinition = document.getElementById('word-definition');
 
-const version = '0.1.9';
+const version = '1.0';
 
 document.addEventListener('DOMContentLoaded', () => {
     function updateVersionNumber() {
@@ -925,20 +925,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         const config = await response.json();
 
         // Initialize provider using the testnet endpoint from the configuration
-        provider = new ethers.providers.JsonRpcProvider(config.testnetEndpoint);
+        provider = new ethers.providers.JsonRpcProvider(config.baseMainnetEndpoint);
 
-        const deSypherContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
-        const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
+        const deSypherContract = new ethers.Contract(baseMainnetGameContractAddress, gameContractABI, provider);
+        const gameManagerContract = new ethers.Contract(baseMainnetGameManagerAddress, gameManagerABI, provider);
 
         // Fetch the sypher cache value from GameManager
         const sypherCache = await gameManagerContract.getSypherCache();
-        const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18); // Assuming 'sypherCache' uses 18 decimal places
+        const formattedSypherCache = ethers.utils.formatUnits(sypherCache, 18);
         sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedSypherCache}</span>`;
         console.log("Sypher Cache loaded: " + formattedSypherCache);
 
         // Event listener for SypherCacheUpdated from deSypher contract
         deSypherContract.on('SypherCacheUpdated', (newCacheAmount) => {
-            // TODO: Shuffle letters or add a visual effect when the cache is updated
             const formattedNewCache = ethers.utils.formatUnits(newCacheAmount, 18);
             sypherCacheElement.innerHTML = `<span style="font-weight: bold;">${formattedNewCache}</span>`;
             console.log("Sypher Cache updated live: " + formattedNewCache);

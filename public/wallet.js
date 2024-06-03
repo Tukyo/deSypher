@@ -46,8 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const connectButtonText = document.getElementById('connect-button-text');
   const minimumBalance = 1; // Cost to play the game
 
-  const faucetButton = document.getElementById('faucet-container');
-
   const walletStylePresets = {
     default: { size: '150px', alignment: 'center' },
     incorrectChain: { size: '150px', alignment: 'right' },
@@ -125,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const network = await provider.getNetwork();
     const chainId = network.chainId;
 
-    if (accounts.length !== 0 && chainId === SEPOLIA_TESTNET) {
+    if (accounts.length !== 0 && chainId === BASE_MAINNET) {
       // Wallet is already connected
       console.log("Wallet is already connected.");
 
@@ -170,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const chainId = network.chainId;
         console.log("Connected to chain ID:", chainId);
 
-        const REQUIRED_CHAIN_HEX = '0x' + (SEPOLIA_TESTNET).toString(16);
+        const REQUIRED_CHAIN_HEX = '0x' + (BASE_MAINNET).toString(16);
 
         if (chainId !== REQUIRED_CHAIN_HEX) {
           try {
@@ -231,11 +229,6 @@ document.addEventListener('DOMContentLoaded', function () {
     loadButton.style.display = 'none';
     console.log("Load button hidden...");
   }
-  function hideFaucetButton() {
-    faucetButton.style.animation = 'foldInRemove .25s forwards';
-    faucetButton.style.display = 'none';
-    console.log("Faucet button hidden...");
-  }
   // #endregion Game Buttons
 
   // #region NEW GAME / LOAD Game Button Processing
@@ -252,13 +245,13 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("No wallet connected");
         return;
       }
-      if (chainId !== SEPOLIA_TESTNET) {
+      if (chainId !== BASE_MAINNET) {
         event.preventDefault();
         document.dispatchEvent(new CustomEvent('appError', { detail: `Please connect to Base Mainnet!` }));
         console.log("Wrong chain");
         return;
       }
-      if (chainId === SEPOLIA_TESTNET) {
+      if (chainId === BASE_MAINNET) {
         const balance = await checkTokenBalance();
 
         if (balance < minimumBalance) {
@@ -273,7 +266,6 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log("All wallet checks passed. Starting reCaptcha verification...");
           playButton.disabled = true;
           loadButton.disabled = true;
-          faucetButton.disabled = true;
         }
       }
     } else {
@@ -297,7 +289,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     playButton.textContent = "Waiting on Allocation...";
     hideLoadButton();
-    hideFaucetButton();
 
     sypherAllocationInput.addEventListener('keyup', function (event) {
       if (event.key === 'Enter') {
@@ -312,9 +303,9 @@ document.addEventListener('DOMContentLoaded', function () {
         sypherAllocation = sypherAllocationInput.value || '0';  // Default to 0 if no input
         const sypherAllocationWei = ethers.utils.parseUnits(sypherAllocation, 'ether');
 
-        if (sypherAllocation > 1000 || sypherAllocation < 1) {
+        if (sypherAllocation > 100 || sypherAllocation < 1) {
           console.error("Invalid Sypher allocation amount:", sypherAllocation);
-          document.dispatchEvent(new CustomEvent('appError', { detail: "SYPHER allocation must be between 1 and 1000." }));
+          document.dispatchEvent(new CustomEvent('appError', { detail: "SYPHER allocation must be between 1 and 100." }));
           return;
         }
 
@@ -330,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Approval to spend tokens successful. Initiating transaction to start the game...");
             playButton.textContent = "Waiting on transaction...";
             const signer = provider.getSigner();
-            const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+            const gameContract = new ethers.Contract(baseMainnetGameContractAddress, gameContractABI, signer);
             try {
               playerAddress = await signer.getAddress();
               console.log("Player address:", playerAddress);
@@ -405,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
   async function checkIfGamePaused() {
-    const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+    const gameContract = new ethers.Contract(baseMainnetGameContractAddress, gameContractABI, provider);
     const isGamePaused = await gameContract.isPaused();
     return isGamePaused;
   }
@@ -482,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const network = await provider.getNetwork();
       const chainId = network.chainId;
       const accounts = await provider.listAccounts();
-      if (chainId == SEPOLIA_TESTNET && accounts.length > 0) {
+      if (chainId == BASE_MAINNET && accounts.length > 0) {
         console.log("Connected to base mainnet. Updating button with wallet address.")
         updateButtonWithAddress(accounts[0]); // Update the button if an account is already connected
         updateButtonWithLogo(); // Update the button with the logo
@@ -490,9 +481,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         walletDetailsSection.style.display = 'none'; // Hide the token balance section if no wallet is connected
       }
-      if (chainId !== SEPOLIA_TESTNET) {
+      if (chainId !== BASE_MAINNET) {
         UpdateButtonWithIncorrectChainMessage();
-        console.error(`Please connect to the ${SEPOLIA_TESTNET} network`);
+        console.error(`Please connect to the ${BASE_MAINNET} network`);
         updateWalletConnectionSectionStyle('incorrectChain');
       } else {
         updateWalletConnectionSectionStyle('correctChain');
@@ -521,8 +512,8 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       // Check the network
       const network = await provider.getNetwork();
-      if (network.chainId !== SEPOLIA_TESTNET) {
-        console.error(`Wrong network connected. Please connect to network with chain ID ${SEPOLIA_TESTNET}.`);
+      if (network.chainId !== BASE_MAINNET) {
+        console.error(`Wrong network connected. Please connect to network with chain ID ${BASE_MAINNET}.`);
         return;
       }
 
@@ -536,14 +527,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const signer = provider.getSigner();
       console.log("Attempting to get signer address...");
-      const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+      const tokenContract = new ethers.Contract(baseMainnetTokenAddress, tokenContractABI, signer);
       const balance = await tokenContract.balanceOf(await signer.getAddress());
       const decimals = await tokenContract.decimals();
       const adjustedBalance = ethers.utils.formatUnits(balance, decimals);
       console.log(`Signer address retrieved. Current Sypher balance: ${adjustedBalance}`);
 
       // Master Sypher Logic
-      const masterSypherContract = new ethers.Contract(masterSypherAddress, masterSypherABI, signer);
+      const masterSypherContract = new ethers.Contract(baseMainnetMasterSypherContractAddress, masterSypherABI, signer);
       const topPlayerAddress = await masterSypherContract.getTopPlayer(1);
       const signerAddress = await signer.getAddress();
       if (topPlayerAddress === signerAddress) {
@@ -591,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const signer = provider.getSigner();
     try {
       const address = await signer.getAddress(); // This throws an error if no accounts are connected
-      const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+      const tokenContract = new ethers.Contract(baseMainnetTokenAddress, tokenContractABI, signer);
 
       console.log("Setting up token balance change listener...");
 
@@ -615,9 +606,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // #region Token Allowance Check & Approval >>> !!! These functions need to be moved to the server side !!! <<<
   async function checkTokenAllowance() {
     const signer = provider.getSigner();
-    const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+    const tokenContract = new ethers.Contract(baseMainnetTokenAddress, tokenContractABI, signer);
     playerAddress = await signer.getAddress();
-    const allowance = await tokenContract.allowance(playerAddress, gameContractAddress);
+    const allowance = await tokenContract.allowance(playerAddress, baseMainnetGameContractAddress);
 
     const costToPlay = ethers.utils.parseUnits("10", 18); // Update with the actual cost
 
@@ -625,12 +616,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   async function approveTokenSpend() {
     const signer = provider.getSigner();
-    const tokenContract = new ethers.Contract(tokenContractAddress, tokenContractABI, signer);
+    const tokenContract = new ethers.Contract(baseMainnetTokenAddress, tokenContractABI, signer);
     const maxAllowance = ethers.utils.parseUnits("1000000", 18); // Update with the actual cost
     // Use maximum value for "unlimited" approval
     playButton.textContent = "Waiting on Approval...";
     try {
-      const approvalTx = await tokenContract.approve(gameContractAddress, maxAllowance);
+      const approvalTx = await tokenContract.approve(baseMainnetGameContractAddress, maxAllowance);
       await approvalTx.wait();
       console.log("Approval transaction for token spend granted...");
       return true;
@@ -657,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
       const signer = provider.getSigner();
-      const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, signer);
+      const gameContract = new ethers.Contract(baseMainnetGameContractAddress, gameContractABI, signer);
 
       console.log("Claiming rewards...");
       const claimTx = await gameContract.ClaimRewards();
@@ -678,7 +669,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const account = accounts[0];
       try {
         const signer = provider.getSigner();
-        const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, signer);
+        const gameManagerContract = new ethers.Contract(baseMainnetGameManagerAddress, gameManagerABI, signer);
         const rewardsBalance = await gameManagerContract.getReward(account);
         console.log("Rewards balance:", rewardsBalance.toString());
         const formattedBalance = ethers.utils.formatUnits(rewardsBalance, 18);
@@ -704,7 +695,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   async function rewardsBalanceEventListeners() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const gameContract = new ethers.Contract(gameContractAddress, gameContractABI, provider);
+    const gameContract = new ethers.Contract(baseMainnetGameContractAddress, gameContractABI, provider);
 
     gameContract.on("GameCompleted", (player, won, rewardAmount, event) => {
       console.log("Game completed event detected", event);
@@ -730,10 +721,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (loadButton) {
         loadButton.style.animation = 'foldInRemove .25s forwards';
         loadButton.style.display = 'none';
-      }
-      if (faucetButton) {
-        faucetButton.style.animation = 'foldInRemove .25s forwards';
-        faucetButton.style.display = 'none';
       }
       console.log("Showing loading bar...");
       loadingBar.style.display = 'inline-block'; // Show the loadingBar
@@ -769,7 +756,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Hide the New Game/Load Game buttons
     hidePlayButton();
     hideLoadButton();
-    hideFaucetButton();
 
     fetchSessions();
 
@@ -995,7 +981,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Check if the transaction is to the game contract and is a PlayGame call
     const playGameMethodId = getMethodId("PlayGame"); // Ensure you have this function defined to get the method ID
-    return transaction.to.toLowerCase() === gameContractAddress.toLowerCase() && transaction.data.startsWith(playGameMethodId);
+    return transaction.to.toLowerCase() === baseMainnetGameContractAddress.toLowerCase() && transaction.data.startsWith(playGameMethodId);
   }
   function getMethodId(methodName) {
     const abi = new ethers.utils.Interface(gameContractABI);
@@ -1184,69 +1170,4 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Player has completed a game, updating returningPlayer status to true.");
   }
   // #endregion Data Persistence
-
-  // #region Faucet Distribution
-  async function faucet() {
-    faucetButton.addEventListener('click', async () => {
-      let signer;
-      let playerAddress;
-
-      try {
-        signer = provider.getSigner();
-        playerAddress = await signer.getAddress();
-      } catch (error) {
-        console.error("Error obtaining signer or address:", error);
-        document.dispatchEvent(new CustomEvent('appError', { detail: "Could not access user's address. Please ensure your wallet is connected." }));
-        return; // Exit the function if we cannot get the signer or the address
-      }
-
-      const recipientAddress = playerAddress; // This should be the address obtained from the user's wallet connection
-
-      // Check the ETH balance first
-      const balance = await provider.getBalance(recipientAddress);
-      if (balance.isZero()) {
-        const noGasContainer = document.getElementById('no-gas-container');
-        noGasContainer.style.display = 'block';
-
-        setTimeout(() => {
-          noGasContainer.style.display = 'none';
-        }, 10000); // 10000 milliseconds = 10 seconds
-
-        return;
-      }
-
-      const tokenAmount = 100; // Define the amount of tokens to send
-
-      console.log("Requesting faucet distribution to:", recipientAddress);
-      document.dispatchEvent(new CustomEvent('appSystemMessage', { detail: "Requesting faucet distribution..." }));
-
-      fetch('/distribute-tokens', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ recipientAddress, tokenAmount })
-      })
-        .then(response => response.json().then(data => ({
-          status: response.status,
-          body: data
-        })))
-        .then(result => {
-          if (result.status === 200) {
-            console.log("Transaction submitted, hash:", result.body.transactionHash);
-            document.dispatchEvent(new CustomEvent('appError', { detail: "Faucet distribution successful!" }));
-          } else {
-            // This handles custom errors from the server, like cooldown
-            console.error("Error distributing tokens:", result.body.error);
-            document.dispatchEvent(new CustomEvent('appError', { detail: result.body.message }));
-          }
-        })
-        .catch(error => {
-          console.error("Network or server error:", error);
-          document.dispatchEvent(new CustomEvent('appError', { detail: "Error distributing tokens. Please try again." }));
-        });
-    });
-  }
-  faucet();
-  // #endregion Faucet Distribution
 });

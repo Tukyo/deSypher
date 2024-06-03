@@ -160,7 +160,7 @@
 
         <div class="sypher-allocation-container">
             <label for="sypher-allocation-input">SYPHER ALLOCATION:</label>
-            <input type="number" id="sypher-allocation-input" name="wager" placeholder="000" min=".1" max="1000" required>
+            <input type="number" id="sypher-allocation-input" name="wager" placeholder="000" min=".1" max="100" required>
             <button id="allocation-submit">SUBMIT</button><button id="allocation-cancel">CANCEL</button>
         </div>
 
@@ -174,13 +174,6 @@
             data-sitekey="6LeUA9ApAAAAAClsfK-owv8_WzHOTx4OJZe5zU9k" data-callback="onSubmitLoad">
             LOAD GAME
         </button>
-        <button id="faucet-container">
-            <i class="fa-solid fa-faucet" id="faucet"></i>
-        </button>
-        
-        <container id="no-gas-container" style="display: none;">
-            <p id="no-gas-message">No Sepolia ETH Detected. Please <a href="https://sepolia-faucet.pk910.de/" class="link" target="_blank">click here <i class="fa-solid fa-arrow-up-right-from-square"></i></a> to obtain.</p>
-        </container>
         <!-- #endregion Game Buttons -->
 
         <!-- #region Transaction Recovery-->
@@ -322,10 +315,7 @@
     <script src="script.js"></script>
     <script src="wallet.js"></script>
     <script src="rain.js"></script>
-    <!-- <script src="sypherpals.js"></script> -->
     <script src="settings.js"></script>
-    <!-- <script src="dev.js"></script> -->
-    <!-- <script type="module" src="analytics.js"></script> -->
     <script type="application/ld+json">
         {
           "@context": "http://schema.org",

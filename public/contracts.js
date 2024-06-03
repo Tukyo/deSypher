@@ -63,38 +63,99 @@ var gameManagerABI = [
     "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
         "internalType": "address",
-        "name": "to",
+        "name": "_gameContract",
         "type": "address"
-      },
+      }
+    ],
+    "name": "SetGameContract",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
+        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "WithdrawTokens",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name": "SetLiquidityPooling",
+    "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
         "internalType": "address",
         "name": "player",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
-    "name": "getGameData",
-    "outputs": [
+    "name": "SetPlayerReward",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
+        "indexed": false,
         "internalType": "uint256",
-        "name": "playerReward",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetSypherCache",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newCacheAmount",
         "type": "uint256"
       },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newLiquidityPoolingAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdateSypherCacheAndLiquidityPooling",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "gameContract",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getGameData",
+    "outputs": [
       {
         "internalType": "uint256",
         "name": "sypherCacheAmount",
@@ -173,6 +234,19 @@ var gameManagerABI = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -243,6 +317,19 @@ var gameManagerABI = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "sypherToken",
+    "outputs": [
+      {
+        "internalType": "contract ISypherToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -269,6 +356,24 @@ var gameManagerABI = [
       }
     ],
     "name": "updateSypherCacheAndLiquidityPooling",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -406,6 +511,25 @@ var gameContractABI = [
       }
     ],
     "name": "MasterSypherAddressUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -653,19 +777,6 @@ var gameContractABI = [
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_newMasterSypherAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setMasterSypher",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "sypherToken",
     "outputs": [
@@ -692,8 +803,34 @@ var gameContractABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "unpause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newMasterSypherAddress",
+        "type": "address"
+      }
+    ],
+    "name": "updateMasterSypher",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1086,6 +1223,25 @@ var masterSypherABI = [
       {
         "indexed": true,
         "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "EtherWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "from",
         "type": "address"
       },
@@ -1269,6 +1425,13 @@ var masterSypherABI = [
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawETH",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]
 // Master Sypher Contract Address
@@ -1279,10 +1442,10 @@ var masterSypherAddress = '0xA47372D7b49288d5b7a907cbfC58A80a0cE23433'; // MASTE
 
 
 // Base Mainnet Token Address
-var baseMainnetTokenAddress = '0x21b9D428EB20FA075A29d51813E57BAb85406620'; // BASE MAINNET CONTRACT
+var baseMainnetTokenAddress = '0x21b9D428EB20FA075A29d51813E57BAb85406620'; 
 
-var baseMainnetGameManagerAddress = '';
+var baseMainnetGameManagerAddress = '0x5d2E974a91c2f434499b9B9C6e47b96C3DC54F3B';
 
-var baseMainnetGameContractAddress = '';
+var baseMainnetGameContractAddress = '0x1634A7E600E65b21B55F0Fe122864E0116547dBa';
 
-var baseMainnetMasterSypherContractAddress = '';
+var baseMainnetMasterSypherContractAddress = '0xc51EC53A668A5430A41144b236E34B4539791a9B';

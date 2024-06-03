@@ -44,6 +44,7 @@ contract deSypher {
     event Paused(bool isPaused);
     event LiquidityPoolingWithdrawn(address indexed to, uint256 amount);
     event AdminTokenWithdraw(address indexed to, uint256 amount);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     constructor(address _sypherTokenAddress, address _gameManagerAddress, address _masterSypherAddress) {
         owner = msg.sender;
@@ -165,5 +166,10 @@ contract deSypher {
     function unpause() external onlyOwner {
         paused = false;
         emit Paused(false);
+    }
+    function transferOwnership(address newOwner) public onlyOwner {
+        require(newOwner != address(0), "New owner is not a valid address");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
     }
 }

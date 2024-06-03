@@ -594,45 +594,6 @@ body {
 }
 /* #endregion Game Buttons */
 
-/* #region Faucet Section */
-#faucet-container {
-    opacity: 0%;
-    display: inline-block;
-    background-color: black;
-    border: var(--desypher-green-dark) 1px solid;
-    border-radius: 5px;
-    max-width: 200px;
-    width: 100%;
-    margin: 0 auto;
-    margin-top: 20px;
-    animation: fadeIn .5s forwards;
-    animation-delay: 1.5s;
-}
-#faucet-container:hover {
-    background: var(--desypher-green-main);
-    box-shadow: 0 0 10px var(--glow-green-main), 0 0 20px var(--glow-green-secondary);
-    cursor: pointer;
-}
-#faucet {
-    color: var(--font-color);
-}
-#no-gas-container {
-    opacity: 0%;
-    z-index: 1000;
-    padding: 5px 10px;
-    max-width: 4000px;
-    background: black;
-    color: var(--font-color);
-    font-family: monospace, sans-serif;
-    outline: 2px solid var(--red);
-    border-radius: 10px;
-    display: block;
-    margin: 30px auto;
-    margin-bottom: none;
-    animation: fadeIn .5s forwards;
-}
-/* #endregion Faucet Section */
-
 /* #region Word Definition Section */
 .word-definition-container {
     opacity: 0%;
@@ -1519,6 +1480,7 @@ body {
 #ver-0-1-7 { animation-delay: 2s; }
 #ver-0-1-8 { animation-delay: 2.25s; }
 #ver-0-1-9 { animation-delay: 2.5s; }
+#ver-1-0-0 { animation-delay: 2.75s; }
 /* #endregion Changelog Page */
 
 /* #region Footer Section */

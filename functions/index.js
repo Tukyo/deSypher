@@ -51,15 +51,21 @@ const gameManagerAddress = config.gameManager.address;
 const gameManagerABI = config.gameManager.abi;
 const masterSypherAddress = config.mastersypher.address;
 const masterSypherABI = config.mastersypher.abi;
+const mainnetSypherGameAddress = config.mainnetGame.address;
+const mainnetSypherGameABI = config.mainnetGame.abi;
+const mainnetGameManagerAddress = config.mainnetGameManager.address;
+const mainnetGameManagerABI = config.mainnetGameManager.abi;
+const mainnetMasterSypherAddress = config.mainnetMasterSypher.address;
+const mainnetMasterSypherABI = config.mainnetMasterSypher.abi;
 // const palsAddress = config.pets.address;
 // const palsABI = config.pets.abi;
 
 const tokenAddress = config.token.address;
 const tokenABI = config.token.abi;
 
-const sypherGameContract = new ethers.Contract(sypherGameAddress, sypherGameABI, signer);
-const gameManagerContract = new ethers.Contract(gameManagerAddress, gameManagerABI, provider);
-const masterSypherContract = new ethers.Contract(masterSypherAddress, masterSypherABI, signer);
+const sypherGameContract = new ethers.Contract(mainnetSypherGameAddress, mainnetSypherGameABI, signer);
+const gameManagerContract = new ethers.Contract(mainnetGameManagerAddress, mainnetGameManagerABI, provider);
+const masterSypherContract = new ethers.Contract(mainnetMasterSypherAddress, mainnetMasterSypherABI, signer);
 // const palsContract = new ethers.Contract(petsAddress, petsABI, signer);
 
 const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -123,8 +129,8 @@ app.post('/game', rateLimiter, async (req, res) => {
   if (!sypherAllocation) {
     return res.status(400).send({ error: 'No sypher allocation provided' });
   }
-  if (sypherAllocation < 1 || sypherAllocation > 1000) {
-    return res.status(400).send({ error: 'Sypher allocation must be between 1 and 1000' });
+  if (sypherAllocation < 1 || sypherAllocation > 100) {
+    return res.status(400).send({ error: 'Sypher allocation must be between 1 and 100' });
   }
 
   var sessionDoc = await database.collection('sessions').doc(sessionID).get();
@@ -522,8 +528,6 @@ app.get('/top-players', rateLimiter, async (req, res) => {
     res.status(500).send("Error fetching top players");
   }
 });
-
-
 // #endregion Top Players
 
 // #region Biggest Winners
@@ -619,82 +623,5 @@ async function transferMasterSypherToken(currentTopPlayer, newTopPlayer) {
     console.error("Failed to transfer MasterSypher token:", error);
   }
 }
-
-// #region Faucet Section
-app.post('/distribute-tokens', rateLimiter, async (req, res) => {
-  const { recipientAddress, tokenAmount } = req.body;
-
-  try {
-    const cooldownStatus = await checkCooldown(recipientAddress);
-    if (cooldownStatus.isWithinCooldown) {
-      return res.status(429).json({
-        error: 'Request too soon',
-        message: `Please wait ${Math.ceil(cooldownStatus.timeRemaining / 60000)} minutes before requesting tokens again.`
-      });
-    }
-
-    const tokenContract = new ethers.Contract(
-      tokenAddress,
-      tokenABI,
-      signer
-    );
-
-    const tokenDecimalAmount = ethers.parseUnits(tokenAmount.toString(), 18);
-    const tx = await tokenContract.transfer(recipientAddress, tokenDecimalAmount);
-
-    // Wait for the transaction to be mined to ensure it's been processed by the network
-    const receipt = await tx.wait();
-
-    // Log the transaction in the database
-    await recordTransaction(tx.hash, signer.address, recipientAddress, tokenAmount);
-
-    console.log("Transaction successful with hash:", tx.hash);
-    res.json({ transactionHash: tx.hash });
-  } catch (error) {
-    console.error("Failed to send transaction:", error);
-    console.error("Detailed Error: ", error.message);
-    res.status(500).json({ error: 'Transaction failed', details: error.message });
-  }
-});
-
-async function recordTransaction(transactionHash, fromAddress, toAddress, amount) {
-  const transactionRecord = {
-    from: fromAddress,
-    to: toAddress,
-    amount,
-    timestamp: Firestore.FieldValue.serverTimestamp()
-  };
-
-  await database.collection('faucet').doc(transactionHash).set(transactionRecord);
-}
-
-const ONE_HOUR = 3600000; // Milliseconds in one hour
-const COOLDOWN_PERIOD = 24 * ONE_HOUR; // 24 hours
-
-async function checkCooldown(recipientAddress) {
-  const now = Date.now();
-  try {
-    const latestTransaction = await database.collection('faucet')
-      .where('to', '==', recipientAddress)
-      .orderBy('timestamp', 'desc')
-      .limit(1)
-      .get();
-
-    if (!latestTransaction.empty) {
-      const lastTransactionTime = latestTransaction.docs[0].data().timestamp.toMillis();
-      if (now - lastTransactionTime < COOLDOWN_PERIOD) {
-        return {
-          isWithinCooldown: true,
-          timeRemaining: COOLDOWN_PERIOD - (now - lastTransactionTime)
-        };
-      }
-    }
-    return { isWithinCooldown: false };
-  } catch (error) {
-    console.error("Error checking cooldown:", error);
-    throw error; // Propagate error
-  }
-}
-// #endregion Faucet Section
 
 exports.app = functions.https.onRequest(app);

@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", function () {
             wordsListDiv.appendChild(list);
 
             data.forEach((wordInfo, index) => {
+                // Ignore words with timesGuessed equal to 0
+                if (wordInfo.timesGuessed === 0) {
+                    return;
+                }
+
                 const wordElement = document.createElement("li");
                 let placeContent;
 
@@ -53,20 +58,23 @@ document.addEventListener("DOMContentLoaded", function () {
             playersListDiv.appendChild(list);
 
             data.forEach((player, index) => {
+                if (player.netWins === 0) {
+                    return;
+                }
                 const playerElement = document.createElement("li");
                 const truncatedAddress = `${player.address.substring(0, 6)}...${player.address.substring(player.address.length - 4)}`;
                 let playerContent;
-            
+
                 switch (index) {
                     case 0:
                         playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
                         playerElement.classList.add("top-player-container");
-            
+
                         const img = document.createElement("img");
-                        img.src = "assets/mastersypher_square.webp"; 
+                        img.src = "assets/mastersypher_square.webp";
                         img.id = "master-sypher-leaderboard-icon";
                         playerElement.appendChild(img);
-            
+
                         break;
                     case 1:
                         playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
@@ -78,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         playerContent = `${truncatedAddress} (net wins: ${player.netWins})`;
                         break;
                 }
-            
+
                 playerElement.innerHTML += playerContent; // Append playerContent to the existing innerHTML
                 list.appendChild(playerElement);
             });
@@ -88,44 +96,44 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     // #endregion Top Players
 
-// #region Biggest Winners
-fetch('/biggest-winners')
-    .then(response => response.json())
-    .then(data => {
-        const winnersListDiv = document.querySelector(".biggest-winners-list");
-        winnersListDiv.innerHTML = "";
+    // #region Biggest Winners
+    fetch('/biggest-winners')
+        .then(response => response.json())
+        .then(data => {
+            const winnersListDiv = document.querySelector(".biggest-winners-list");
+            winnersListDiv.innerHTML = "";
 
-        const list = document.createElement("ol");
-        winnersListDiv.appendChild(list);
+            const list = document.createElement("ol");
+            winnersListDiv.appendChild(list);
 
-        data.forEach((winner, index) => {
-            if (winner.playerAddress !== undefined) {
-                const winnerElement = document.createElement("li");
-                const truncatedAddress = `${winner.playerAddress.substring(0, 6)}...${winner.playerAddress.substring(winner.playerAddress.length - 4)}`;
-                let winnerContent;
+            data.forEach((winner, index) => {
+                if (winner.playerAddress !== undefined) {
+                    const winnerElement = document.createElement("li");
+                    const truncatedAddress = `${winner.playerAddress.substring(0, 6)}...${winner.playerAddress.substring(winner.playerAddress.length - 4)}`;
+                    let winnerContent;
 
-                switch (index) {
-                    case 0:
-                        winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
-                        break;
-                    case 1:
-                        winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
-                        break;
-                    case 2:
-                        winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-award"></i></span>`;
-                        break;
-                    default:
-                        winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER)`;
-                        break;
+                    switch (index) {
+                        case 0:
+                            winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
+                            break;
+                        case 1:
+                            winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
+                            break;
+                        case 2:
+                            winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-award"></i></span>`;
+                            break;
+                        default:
+                            winnerContent = `${truncatedAddress} (${winner.totalNetWin} SYPHER)`;
+                            break;
+                    }
+
+                    winnerElement.innerHTML = winnerContent;
+                    list.appendChild(winnerElement);
                 }
-
-                winnerElement.innerHTML = winnerContent;
-                list.appendChild(winnerElement);
-            }
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching biggest winners from server:", error);
         });
-    })
-    .catch(error => {
-        console.error("Error fetching biggest winners from server:", error);
-    });
-// #endregion Biggest Winners
+    // #endregion Biggest Winners
 });
