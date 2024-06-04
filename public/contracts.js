@@ -1446,6 +1446,6 @@ var baseMainnetTokenAddress = '0x21b9D428EB20FA075A29d51813E57BAb85406620';
 
 var baseMainnetGameManagerAddress = '0x5d2E974a91c2f434499b9B9C6e47b96C3DC54F3B';
 
-var baseMainnetGameContractAddress = '0x1634A7E600E65b21B55F0Fe122864E0116547dBa';
+var baseMainnetGameContractAddress = '0x8590a9eFf78Cd1913F333b44544F40C00F724979';
 
 var baseMainnetMasterSypherContractAddress = '0xc51EC53A668A5430A41144b236E34B4539791a9B';

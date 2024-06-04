@@ -129,12 +129,6 @@ contract deSypher {
         } else {
             uint256 playerReward = gameManager.getReward(player);
             gameManager.setReward(player, playerReward + rewardAmount);
-
-            if (rewardAmount == cacheAmount) {
-                gameManager.setSypherCache(0);
-                emit SypherCacheUpdated(0);
-            }
-
             emit GameCompleted(player, true, rewardAmount);
         }
     }
