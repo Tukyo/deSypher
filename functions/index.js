@@ -133,6 +133,18 @@ app.post('/game', rateLimiter, async (req, res) => {
     return res.status(400).send({ error: 'Sypher allocation must be between 1 and 100' });
   }
 
+  // Initialize player in the players collection if they do not already exist
+  const playerRef = database.collection('players').doc(playerAddress);
+  const playerDoc = await playerRef.get();
+  if (!playerDoc.exists) {
+    console.log(`Initializing new player: ${playerAddress}`);
+    await playerRef.set({
+      wins: 0,
+      losses: 0,
+      netWins: 0
+    });
+  }
+
   var sessionDoc = await database.collection('sessions').doc(sessionID).get();
   var session = sessionDoc.data() ?? {};
   var correctWord = null;

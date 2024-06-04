@@ -106,7 +106,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const list = document.createElement("ol");
             winnersListDiv.appendChild(list);
 
-            data.forEach((winner, index) => {
+            // Filter winners and sort in descending order
+            const winners = data.filter(winner => winner.totalNetWin > 0).sort((a, b) => b.totalNetWin - a.totalNetWin);
+
+            winners.forEach((winner, index) => {
                 if (winner.playerAddress !== undefined) {
                     const winnerElement = document.createElement("li");
                     const truncatedAddress = `${winner.playerAddress.substring(0, 6)}...${winner.playerAddress.substring(winner.playerAddress.length - 4)}`;
@@ -136,4 +139,48 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error fetching biggest winners from server:", error);
         });
     // #endregion Biggest Winners
+
+    // #region Biggest Losers
+    fetch('/biggest-winners')
+        .then(response => response.json())
+        .then(data => {
+            const losersListDiv = document.querySelector(".biggest-losers-list");
+            losersListDiv.innerHTML = "";
+
+            const list = document.createElement("ol");
+            losersListDiv.appendChild(list);
+
+            // Filter losers and sort in ascending order
+            const losers = data.filter(winner => winner.totalNetWin < 0).sort((a, b) => a.totalNetWin - b.totalNetWin);
+
+            losers.forEach((loser, index) => {
+                if (loser.playerAddress !== undefined) {
+                    const loserElement = document.createElement("li");
+                    const truncatedAddress = `${loser.playerAddress.substring(0, 6)}...${loser.playerAddress.substring(loser.playerAddress.length - 4)}`;
+                    let loserContent;
+
+                    switch (index) {
+                        case 0:
+                            loserContent = `${truncatedAddress} (${loser.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
+                            break;
+                        case 1:
+                            loserContent = `${truncatedAddress} (${loser.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
+                            break;
+                        case 2:
+                            loserContent = `${truncatedAddress} (${loser.totalNetWin} SYPHER) <span class="leaderboard-icon"><i class="fa-solid fa-award"></i></span>`;
+                            break;
+                        default:
+                            loserContent = `${truncatedAddress} (${loser.totalNetWin} SYPHER)`;
+                            break;
+                    }
+
+                    loserElement.innerHTML = loserContent;
+                    list.appendChild(loserElement);
+                }
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching biggest winners from server:", error);
+        });
+    // #endregion Biggest Losers
 });
