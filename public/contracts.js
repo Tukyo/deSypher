@@ -634,11 +634,6 @@ var gameContractABI = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "sypherAllocation",
         "type": "uint256"
