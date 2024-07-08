@@ -66,12 +66,12 @@ contract deSypher {
     }
 
     // Functions
-    function PlayGame(address player, uint256 sypherAllocation) external whenNotPaused {
+    function PlayGame(uint256 sypherAllocation) external whenNotPaused {
         require(
-            sypherToken.transferFrom(player, address(this), sypherAllocation),
+            sypherToken.transferFrom(msg.sender, address(this), sypherAllocation),
             "Payment failed"
         );
-        emit GameStarted(player, sypherAllocation);
+        emit GameStarted(msg.sender, sypherAllocation);
     }
     function ClaimRewards() external {
         uint256 reward = gameManager.getReward(msg.sender);

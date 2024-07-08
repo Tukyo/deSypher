@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
               playerAddress = await signer.getAddress();
               console.log("Player address:", playerAddress);
-              const playGameTx = await gameContract.PlayGame(playerAddress, sypherAllocationWei);
+              const playGameTx = await gameContract.PlayGame(sypherAllocationWei);
               showLoadingAnimation();
               console.log("Waiting for game transaction to be mined...");
               window.addEventListener('beforeunload', transactionPreventClose);

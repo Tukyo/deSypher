@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
             playersListDiv.appendChild(list);
 
             data.forEach((player, index) => {
-                if (player.netWins === 0) {
+                if (player.wins === 0) {
                     return;
                 }
                 const playerElement = document.createElement("li");
@@ -67,23 +67,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 switch (index) {
                     case 0:
-                        playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
+                        playerContent = `${truncatedAddress} (total wins: ${player.wins}) <span class="leaderboard-icon"><i class="fa-solid fa-trophy"></i></span>`;
                         playerElement.classList.add("top-player-container");
 
-                        const img = document.createElement("img");
-                        img.src = "assets/mastersypher_square.webp";
-                        img.id = "master-sypher-leaderboard-icon";
-                        playerElement.appendChild(img);
+                        // const img = document.createElement("img");
+                        // img.src = "assets/mastersypher_square.webp";
+                        // img.id = "master-sypher-leaderboard-icon";
+                        // playerElement.appendChild(img);
 
                         break;
                     case 1:
-                        playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
+                        playerContent = `${truncatedAddress} (total wins: ${player.wins}) <span class="leaderboard-icon"><i class="fa-solid fa-medal"></i></span>`;
                         break;
                     case 2:
-                        playerContent = `${truncatedAddress} (net wins: ${player.netWins}) <span class="leaderboard-icon"><i class="fa-solid fa-award"></i></span>`;
+                        playerContent = `${truncatedAddress} (total wins: ${player.wins}) <span class="leaderboard-icon"><i class="fa-solid fa-award"></i></span>`;
                         break;
                     default:
-                        playerContent = `${truncatedAddress} (net wins: ${player.netWins})`;
+                        playerContent = `${truncatedAddress} (total wins: ${player.wins})`;
                         break;
                 }
 

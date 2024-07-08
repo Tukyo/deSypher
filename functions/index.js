@@ -505,18 +505,18 @@ app.get('/popular-words', rateLimiter, async (req, res) => {
 app.get('/top-players', rateLimiter, async (req, res) => {
   try {
     const snapshot = await admin.firestore().collection('players')
-      .orderBy('netWins', 'desc')
+      .orderBy('wins', 'desc')
       .limit(5)
       .get();
 
     let topPlayers = snapshot.docs.map(doc => ({
       address: doc.id,
-      netWins: doc.data().netWins
+      wins: doc.data().wins
     }));
 
     // Check for the presence of ties
-    const highestNetWins = topPlayers[0].netWins;
-    const tiedPlayers = topPlayers.filter(player => player.netWins === highestNetWins);
+    const highestWins = topPlayers[0].wins;
+    const tiedPlayers = topPlayers.filter(player => player.wins === highestWins);
 
     if (tiedPlayers.length > 1) {
       const masterSypherDoc = await admin.firestore().collection('masterSypher').doc('masterSypher').get();
@@ -525,7 +525,7 @@ app.get('/top-players', rateLimiter, async (req, res) => {
       if (masterAddress) {
         // Prioritize masterAddress in case of a tie
         topPlayers = topPlayers.sort((a, b) => {
-          if (a.netWins === b.netWins) {
+          if (a.wins === b.wins) {
             if (a.address === masterAddress) return -1;
             if (b.address === masterAddress) return 1;
           }

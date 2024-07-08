@@ -226,6 +226,7 @@ function updateUI(data) {
         }
 
         showDefinitionButton();
+        // generateResultsButton(); //TODO: Implement functionality to allow users to share their game via screenshot
 
         // Function to fetch and display the definition of the correct word
         async function defineWord(word) {

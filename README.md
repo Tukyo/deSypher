@@ -15,7 +15,7 @@ To play deSypher, you need to hold $SYPHER tokens. These tokens will be used to 
 [Website](https://desypher.net/) • [Telegram](https://t.me/tukyogames) • [Whitepaper](https://desypher.net/whitepaper.html)
 
 ### Contracts
-[SYPHER](https://basescan.org/token/0x21b9d428eb20fa075a29d51813e57bab85406620) • [deSypher]() • [Game Manager]() • [MasterSypher]()
+[SYPHER](https://basescan.org/token/0x21b9d428eb20fa075a29d51813e57bab85406620) • [deSypher](https://basescan.org/address/0xEB8ebDbD4119b52532427148ab9d84b8d41B5457) • [Game Manager](https://basescan.org/address/0x5d2E974a91c2f434499b9B9C6e47b96C3DC54F3B) • [MasterSypher](https://basescan.org/address/0xc51EC53A668A5430A41144b236E34B4539791a9B)
 
 ## Rules
 
