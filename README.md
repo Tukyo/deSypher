@@ -34,9 +34,3 @@ If you fail to guess the correct word within 4 tries, the following happens with
 ## Extras
 ### Master Sypher
 The Master Sypher is the #1 player in the game. They receive 1% of all player losses while holding the MSPHR token.
-
-### Sypher Telegram Bot
-Currently in development!
-
-### Sypher Pals
-Coming soon!

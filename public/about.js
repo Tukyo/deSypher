@@ -69,7 +69,7 @@ document.querySelectorAll('.roadmap-item-container').forEach(function(container)
                 textContent = "$SYPHER launched on April 28th, 2024 with a total supply of 1,000,000 tokens. Liquidity was added 24 hours later on April 29th, 2024. More information can be found on the <a href='/tokenomics.html' class='link'>tokenomics page <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
                 break;
             case "deSypher Launch":
-                textContent = "deSypher will launch shortly after the token. It is currently undergoing beta testing. If you are interested in trying the game on testnet, please reach out on <a href='https://t.me/tukyogames' class='link'>telegram <i class='fa-solid fa-arrow-up-right-from-square link'></i></a>.";
+                textContent = "deSypher is currently live on Mainnet! Please navigate to the homepage to play the game. Or, join the <a href='https://t.me/tukyogames' class='link'>telegram <i class='fa-solid fa-arrow-up-right-from-square link'></i></a> to chat about the game and future developments.";
                 break;
             case "Optimizations":
                 textContent = "After the initial launch, we will be focusing on optimizing the game for a better user experience. This includes bug fixes, performance improvements, and QOL upgrades.";

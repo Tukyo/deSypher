@@ -162,5 +162,14 @@
     ],
     "1-0-0": [
         "Mainnet Released"
+    ],
+    "1-1-0": [
+        ">> Updates & Changes",
+        "> Roadmap Updated",
+        "> Travelled to Permissionless conference in SLC and NY to meet developers",
+        ">> Bug Fixes",
+        "> CDN Migrated (ethers.js)",
+        "> Optimizations to backend loading",
+        "> Bubblemaps loading optimized"
     ]
 }
