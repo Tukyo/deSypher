@@ -1236,7 +1236,7 @@ body {
     padding: 20px;
     padding-bottom: 55px;
 }
-.tokenomics-main-section, .distribution-section, .bubblemap-section {
+.tokenomics-main-section, .distribution-section {
     opacity: 0%;
     position: relative;
     top: 5px;
@@ -1252,7 +1252,7 @@ body {
     margin-bottom: 20px;
     animation: tvScreenOn 0.5s forwards;
 }
-.tokenomics-main-section h1, .distribution-section h1, .bubblemap-section h1 {
+.tokenomics-main-section h1, .distribution-section h1 {
     margin-top: 5px;
     margin-bottom: 5px;
 }
@@ -1261,14 +1261,6 @@ body {
 }
 .distribution-section {
     animation-delay: 0.5s;
-}
-.bubblemap-section {
-    animation-delay: 1s;
-}
-#bubblemap {
-    border: 2px solid var(--desypher-green-main);
-    width: 100%;
-    min-height: 500px;
 }
 .tokenomics-sub-header {
     font-weight: bold;
